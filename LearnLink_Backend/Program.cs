@@ -1,3 +1,5 @@
+using LearnLink_Backend.Migrations;
+using LearnLink_Backend.Repostories.UserRepos;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,16 +9,21 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddDbContext<AppDbContext>(
      options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
      );
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var repo = new UserRepo();
+    repo.SignUp(null);
+}
 
 if (app.Environment.IsDevelopment())
 {
