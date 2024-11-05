@@ -1,0 +1,6 @@
+@LearnLink_Backend_HostAddress = http://localhost:5054
+
+GET {{LearnLink_Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
