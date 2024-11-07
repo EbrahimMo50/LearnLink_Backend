@@ -1,6 +1,7 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Repostories.UserRepos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

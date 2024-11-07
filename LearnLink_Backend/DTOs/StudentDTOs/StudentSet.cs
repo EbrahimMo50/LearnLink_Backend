@@ -26,13 +26,13 @@ namespace LearnLink_Backend.DTOs.StudentDTOs
                 HashedPassword = hashedPassword,
                 Salt = salt,
                 Balance = 0.0M,
-                CreatedById = this.CreatedBy,
+                CreatedBy = this.CreatedBy,
                 AtDate = DateTime.Now,
-                UpdatedById = this.UpdatedBy ?? this.UpdatedBy | this.CreatedBy,
+                UpdatedBy = this.UpdatedBy ?? this.UpdatedBy | this.CreatedBy,
                 UpdateTime = DateTime.Now
             };
         }
-        //test releated will be deleted on production
+        //test releated will be deleted in production
         public static StudentSet GenerateRandomStudent()
         {
             Random random = new();
