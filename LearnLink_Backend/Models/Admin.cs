@@ -12,8 +12,7 @@ namespace LearnLink_Backend.Models
         public string Salt { get; set; }
         public string HashedPassword { get; set; }
         public string Email { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime AtDate { get; set; }
+        public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public int CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
         public int? UpdatedBy { get; set; }

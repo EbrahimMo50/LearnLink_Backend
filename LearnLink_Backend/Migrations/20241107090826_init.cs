@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-//no sign of assigning createdAt with a default value
+
 namespace LearnLink_Backend.Migrations
 {
     /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace LearnLink_Backend.Migrations
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
@@ -29,6 +29,28 @@ namespace LearnLink_Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Admins", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Applications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Messsage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Applications", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,7 +66,7 @@ namespace LearnLink_Backend.Migrations
                     FeesPerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
@@ -68,7 +90,7 @@ namespace LearnLink_Backend.Migrations
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
@@ -88,7 +110,7 @@ namespace LearnLink_Backend.Migrations
                     StartsAt = table.Column<TimeOnly>(type: "time", nullable: false),
                     EndsAt = table.Column<TimeOnly>(type: "time", nullable: false),
                     Day = table.Column<DateOnly>(type: "date", nullable: false),
-                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
@@ -114,7 +136,7 @@ namespace LearnLink_Backend.Migrations
                     InstructorId = table.Column<int>(type: "int", nullable: false),
                     StartsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
@@ -175,6 +197,9 @@ namespace LearnLink_Backend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Admins");
+
+            migrationBuilder.DropTable(
+                name: "Applications");
 
             migrationBuilder.DropTable(
                 name: "Meetings");

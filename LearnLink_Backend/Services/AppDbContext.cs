@@ -42,6 +42,7 @@ namespace LearnLink_Backend.Services
             modelBuilder.Entity<InstructorApplication>()
                 .ToTable("Applications")
                 .HasKey(u => u.Id);
+
         }
     }
 }

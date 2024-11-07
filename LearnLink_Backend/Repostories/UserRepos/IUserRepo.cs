@@ -6,9 +6,9 @@ namespace LearnLink_Backend.Repostories.UserRepos
 {
     public interface IUserRepo
     {
-        public void SignUp(StudentSet student);
-        public void Login(LoginViewModel user);
+        public Task<string> SignUp(StudentSet student);
+        public string Login(LoginViewModel user);
         public void ChangePassword(LoginViewModel user, string newPass); //security wise this is so down bad the data are passed in the headers
-        public void ApplyForInstructor(InstructorAppDto instructorApp);
+        public string ApplyForInstructor(InstructorAppDto instructorApp);
     }
 }

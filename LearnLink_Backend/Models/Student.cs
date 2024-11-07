@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace LearnLink_Backend.Models
 {
@@ -17,8 +15,7 @@ namespace LearnLink_Backend.Models
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
         public string Address { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime AtDate { get; set; }
+        public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public int CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
         public int? UpdatedBy { get; set; }
