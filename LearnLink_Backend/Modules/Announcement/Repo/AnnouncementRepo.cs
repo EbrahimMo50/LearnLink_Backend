@@ -1,15 +1,27 @@
-﻿using LearnLink_Backend.Modules.Announcement.DTOs;
+﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Modules.Announcement.DTOs;
+using LearnLink_Backend.Modules.Courses.Models;
+using LearnLink_Backend.Modules.Notification;
 using LearnLink_Backend.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Announcement.Repo
 {
     public class AnnouncementRepo(AppDbContext DbContext, IHttpContextAccessor httpContextAccess) : IAnnouncementRepo
     {
-        public Task<AnnouncementGet> CreateAnnouncement(AnnouncementSet announcement)
+        public async Task<ResponseAPI> CreateAnnouncement(AnnouncementSet announcement)
         {
-            // Console.WriteLine(httpContextAccess.HttpContext.User.FindFirstValue("Role"));
+            if (httpContextAccess.HttpContext == null || httpContextAccess.HttpContext.User.FindFirstValue("Role") == null)
+                return new ResponseAPI() { Message = "Error in handling the context of the request"};
 
+            string createrId = httpContextAccess.HttpContext.User.FindFirstValue("Role")!;
+            CourseModel? course = await DbContext.Courses.FirstOrDefaultAsync(x => x.Id == announcement.CourseId);
+
+            if (course == null)
+                return new ResponseAPI() { Message = "course could not be found" };
+
+            AnnouncementModel obj = new() { Title = announcement.Title, Description = announcement.Description, CourseId = announcement.CourseId, AtDate = DateTime.UtcNow, CreatedBy = createrId};
             return null;
         }
 
@@ -18,17 +30,17 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
             throw new NotImplementedException();
         }
 
-        public Task<AnnouncementGet> FindById(int id)
+        public Task<ResponseAPI> FindById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<AnnouncementGet>> GetAll()
+        public Task<List<ResponseAPI>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<AnnouncementGet> UpdateRepo(int id, AnnouncementSet announcement)
+        public Task<ResponseAPI> UpdateRepo(int id, AnnouncementSet announcement)
         {
             throw new NotImplementedException();
         }

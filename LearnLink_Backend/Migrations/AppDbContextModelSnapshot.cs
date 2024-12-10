@@ -46,8 +46,9 @@ namespace LearnLink_Backend.Migrations
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -88,8 +89,9 @@ namespace LearnLink_Backend.Migrations
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -148,8 +150,9 @@ namespace LearnLink_Backend.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -205,8 +208,9 @@ namespace LearnLink_Backend.Migrations
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -254,13 +258,11 @@ namespace LearnLink_Backend.Migrations
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InstructorId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("InstructorId1")
+                    b.Property<Guid?>("InstructorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -275,7 +277,7 @@ namespace LearnLink_Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InstructorId1");
+                    b.HasIndex("InstructorId");
 
                     b.ToTable("Courses", (string)null);
                 });
@@ -290,9 +292,6 @@ namespace LearnLink_Backend.Migrations
 
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndsAt")
                         .HasColumnType("datetime2");
@@ -329,8 +328,11 @@ namespace LearnLink_Backend.Migrations
 
             modelBuilder.Entity("LearnLink_Backend.Modules.Notification.AnnouncementModel", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AtDate")
                         .HasColumnType("datetime2");
@@ -338,8 +340,9 @@ namespace LearnLink_Backend.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -374,9 +377,6 @@ namespace LearnLink_Backend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("Day")
@@ -432,9 +432,7 @@ namespace LearnLink_Backend.Migrations
                 {
                     b.HasOne("LearnLink_Backend.Models.Instructor", "Instructor")
                         .WithMany("Courses")
-                        .HasForeignKey("InstructorId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InstructorId");
 
                     b.Navigation("Instructor");
                 });

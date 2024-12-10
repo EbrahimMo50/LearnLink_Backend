@@ -21,7 +21,7 @@ namespace LearnLink_Backend.Migrations
                     HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -43,7 +43,7 @@ namespace LearnLink_Backend.Migrations
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -65,7 +65,7 @@ namespace LearnLink_Backend.Migrations
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -81,10 +81,9 @@ namespace LearnLink_Backend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InstructorId = table.Column<int>(type: "int", nullable: false),
-                    InstructorId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -92,23 +91,23 @@ namespace LearnLink_Backend.Migrations
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Courses_Instructors_InstructorId1",
-                        column: x => x.InstructorId1,
+                        name: "FK_Courses_Instructors_InstructorId",
+                        column: x => x.InstructorId,
                         principalTable: "Instructors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Announcements",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -135,7 +134,6 @@ namespace LearnLink_Backend.Migrations
                     EndsAt = table.Column<TimeOnly>(type: "time", nullable: false),
                     Day = table.Column<DateOnly>(type: "date", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -170,7 +168,7 @@ namespace LearnLink_Backend.Migrations
                     SpokenLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true),
                     SessionModelId = table.Column<int>(type: "int", nullable: true)
@@ -222,7 +220,6 @@ namespace LearnLink_Backend.Migrations
                     StartsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
@@ -260,9 +257,9 @@ namespace LearnLink_Backend.Migrations
                 column: "StudentsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_InstructorId1",
+                name: "IX_Courses_InstructorId",
                 table: "Courses",
-                column: "InstructorId1");
+                column: "InstructorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Instructors_Email",

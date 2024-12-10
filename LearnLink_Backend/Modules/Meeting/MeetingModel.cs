@@ -13,7 +13,8 @@ namespace LearnLink_Backend.Modules.Meeting
         public DateTime StartsAt { get; set; }
         public DateTime EndsAt { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public int CreatedBy { get; set; }
+        
+
         public DateTime? UpdateTime { get; set; }
         public int? UpdatedBy { get; set; }
     }

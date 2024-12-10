@@ -8,7 +8,7 @@
         public string Messsage { get; set; }
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
-        public int CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
     }
 }

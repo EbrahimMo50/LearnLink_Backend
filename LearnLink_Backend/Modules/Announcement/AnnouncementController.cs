@@ -8,11 +8,14 @@ namespace LearnLink_Backend.Modules.Announcement
     public class AnnouncementController(AnnouncementService service) : ControllerBase
     {
 
-        [HttpGet("")]
-        public IActionResult CreateAnnouncement(AnnouncementSet announcement)
+        [HttpPost("createAnnouncement")]
+        public async Task<IActionResult> CreateAnnouncement(AnnouncementSet announcement)
         {
-            service.CreateAnnouncement(announcement);
-            return Ok();
+            var response = await service.CreateAnnouncement(announcement);
+            if(response.StatusCode == 200)
+                return Ok(response);
+            return BadRequest(response);
         }
+
     }
 }

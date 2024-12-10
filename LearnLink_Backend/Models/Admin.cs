@@ -13,7 +13,7 @@ namespace LearnLink_Backend.Models
         public string HashedPassword { get; set; }
         public string Email { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public int CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
         public int? UpdatedBy { get; set; }
 

@@ -1,13 +1,14 @@
-﻿using LearnLink_Backend.Modules.Announcement.DTOs;
+﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Modules.Announcement.DTOs;
 
 namespace LearnLink_Backend.Modules.Announcement.Repo
 {
     public interface IAnnouncementRepo
     {
-        public Task<AnnouncementGet> CreateAnnouncement(AnnouncementSet announcement);
-        public Task<List<AnnouncementGet>> GetAll();
-        public Task<AnnouncementGet> FindById(int id);
+        public Task<ResponseAPI> CreateAnnouncement(AnnouncementSet announcement);
+        public Task<List<ResponseAPI>> GetAll();
+        public Task<ResponseAPI> FindById(int id);
         public void DeleteRepo(int id);
-        public Task<AnnouncementGet> UpdateRepo(int id, AnnouncementSet announcement);
+        public Task<ResponseAPI> UpdateRepo(int id, AnnouncementSet announcement);
     }
 }
