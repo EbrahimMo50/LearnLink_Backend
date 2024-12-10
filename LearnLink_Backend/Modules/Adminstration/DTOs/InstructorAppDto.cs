@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace LearnLink_Backend.DTOs.InstructorDTOs
+﻿namespace LearnLink_Backend.Modules.Adminstration.DTOs
 {
     public class InstructorAppDto
     {

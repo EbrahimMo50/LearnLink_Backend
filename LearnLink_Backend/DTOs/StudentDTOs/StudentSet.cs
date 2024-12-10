@@ -12,8 +12,6 @@ namespace LearnLink_Backend.DTOs.StudentDTOs
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
         public string Address { get; set; }
-        public int CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
 
         public Student ToStudent(string hashedPassword, string salt)
         {
@@ -26,9 +24,7 @@ namespace LearnLink_Backend.DTOs.StudentDTOs
                 HashedPassword = hashedPassword,
                 Salt = salt,
                 Balance = 0.0M,
-                CreatedBy = this.CreatedBy,
                 AtDate = DateTime.Now,
-                UpdatedBy = this.UpdatedBy ?? this.UpdatedBy | this.CreatedBy,
                 UpdateTime = DateTime.Now
             };
         }
@@ -45,13 +41,11 @@ namespace LearnLink_Backend.DTOs.StudentDTOs
             StudentSet student = new()
             {
                 Name = names[random.Next(names.Length)],
-                Password = Guid.NewGuid().ToString().Substring(0, 8),
+                Password = Guid.NewGuid().ToString()[..8],
                 Email = $"{names[random.Next(names.Length)]}@{names[random.Next(names.Length)]}.com",
                 Nationality = nationalities[random.Next(nationalities.Length)],
                 SpokenLanguage = languages[random.Next(languages.Length)],
                 Address = addresses[random.Next(addresses.Length)],
-                CreatedBy = random.Next(1, 10),
-                UpdatedBy = random.Next(1, 10)
             };
 
             return student;

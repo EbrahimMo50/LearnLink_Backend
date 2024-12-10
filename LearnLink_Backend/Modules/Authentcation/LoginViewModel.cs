@@ -1,4 +1,4 @@
-﻿namespace LearnLink_Backend.DTOs
+﻿namespace LearnLink_Backend.Modules.Authentcation
 {
     public class LoginViewModel
     {

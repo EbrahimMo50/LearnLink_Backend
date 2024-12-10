@@ -7,7 +7,7 @@ namespace LearnLink_Backend.Models
     [Index(nameof(Email), IsUnique = true)]
     public class Admin
     {
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; set; }
         public string Salt { get; set; }
         public string HashedPassword { get; set; }

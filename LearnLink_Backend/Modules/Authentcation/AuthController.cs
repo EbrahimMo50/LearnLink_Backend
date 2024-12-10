@@ -1,21 +1,17 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.DTOs.StudentDTOs;
-using LearnLink_Backend.Repostories.UserRepos;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using LearnLink_Backend.DTOs.StudentDTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LearnLink_Backend.Controllers
+namespace LearnLink_Backend.Modules.Authentcation
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(IUserRepo _repo) : ControllerBase
+    public class AuthController(AuthServices _auth) : ControllerBase
     {
         [HttpPost("SignUp")]
         public async Task<ActionResult> SignUp(StudentSet student)
         {
-            var result = await _repo.SignUp(student);
-            if(result == "Success")
+            var result = await _auth.SignUp(student);
+            if (result == "Success")
                 return Ok(result);
 
             return BadRequest(result);
@@ -23,7 +19,7 @@ namespace LearnLink_Backend.Controllers
         [HttpPut("Login")]
         public IActionResult Login(LoginViewModel user)
         {
-            var result = _repo.Login(user);
+            var result = _auth.Login(user);
             if (result == "invalid")
                 return NotFound("could not find user");
 

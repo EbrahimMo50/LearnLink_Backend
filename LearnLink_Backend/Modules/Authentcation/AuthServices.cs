@@ -1,17 +1,16 @@
 ﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.DTOs.InstructorDTOs;
 using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Services;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace LearnLink_Backend.Repostories.UserRepos
+namespace LearnLink_Backend.Modules.Authentcation
 {
-    public class UserRepo : IUserRepo
+    public class AuthServices
     {
-        private AppDbContext _context;
-        private Authentaction _authService;
-        public UserRepo(AppDbContext context, Authentaction authService)
+        private readonly AppDbContext _context;
+        private readonly TokenService _authService;
+        public AuthServices(AppDbContext context, TokenService authService)
         {
             _context = context;
             _authService = authService;
@@ -35,32 +34,23 @@ namespace LearnLink_Backend.Repostories.UserRepos
         public string Login(LoginViewModel user)
         {
             var StudentUser = _context.Students.FirstOrDefault(x => user.Email == x.Email);
-            if (StudentUser != null)            
+            if (StudentUser != null)
                 if (StudentUser.HashedPassword == Hash(StudentUser.Salt, user.Password))
                     return _authService.GenerateToken(UniversalUser.ToUser(StudentUser));
 
-     
-            var InstructorUser = _context.Instructors.FirstOrDefault(x=> x.Email == user.Email);
+
+            var InstructorUser = _context.Instructors.FirstOrDefault(x => x.Email == user.Email);
             if (InstructorUser != null)
                 if (InstructorUser.HashedPassword == Hash(InstructorUser.Salt, user.Password))
                     return _authService.GenerateToken(UniversalUser.ToUser(InstructorUser));
 
-            
-            var AdminUser = _context.Admins.FirstOrDefault(x=> x.Email == user.Email);
+
+            var AdminUser = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
             if (AdminUser != null)
                 if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
                     return _authService.GenerateToken(UniversalUser.ToUser(AdminUser));
 
             return "invalid";
-        }
-        public string ApplyForInstructor(InstructorAppDto instructorApp)
-        {
-            throw new NotImplementedException("shutup");
-            //if (EmailExists(instructorApp.Email))
-            //    return "Email Exists";
-
-            //_context.InstructorApplications.Add(instructorApp);
-            //_context.SaveChanges();
         }
 
         public void ChangePassword(LoginViewModel user, string newPass)

@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace LearnLink_Backend.Services
+namespace LearnLink_Backend.Modules.Authentcation
 {
-    public class Authentaction
+    public class TokenService
     {
         public string GenerateToken(UniversalUser user)
         {

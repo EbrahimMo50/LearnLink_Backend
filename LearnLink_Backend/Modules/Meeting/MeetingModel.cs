@@ -1,14 +1,17 @@
-﻿
-namespace LearnLink_Backend.Models
+﻿using LearnLink_Backend.Models;
+
+namespace LearnLink_Backend.Modules.Meeting
 {
-    public class Schedule
+    //a set up meeting between stuent and instructor
+    public class MeetingModel
     {
         public int Id { get; }
+        public int StudentId { get; set; }
+        public Student Student { get; set; }
         public int InstructorId { get; set; }
         public Instructor Instructor { get; set; }
-        public TimeOnly StartsAt { get; set; }
-        public TimeOnly EndsAt { get; set; }
-        public DateOnly Day {  get; set; }
+        public DateTime StartsAt { get; set; }
+        public DateTime EndsAt { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public int CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }

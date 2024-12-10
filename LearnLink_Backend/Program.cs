@@ -1,7 +1,9 @@
+using LearnLink_Backend.Modules.Announcement;
+using LearnLink_Backend.Modules.Announcement.Repo;
+using LearnLink_Backend.Modules.Authentcation;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
 using LearnLink_Backend.Policies.StudentPolicy;
-using LearnLink_Backend.Repostories.UserRepos;
 using LearnLink_Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -59,11 +61,15 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<AppDbContext>(
      options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
      );
-builder.Services.AddScoped<Authentaction>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IAuthorizationHandler, StudentRequirmentHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, AdminRequirmentHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, InstructorRequirmentHandler>();
-builder.Services.AddScoped<IUserRepo,UserRepo>();
+builder.Services.AddScoped<AuthServices>();
+builder.Services.AddScoped<AnnouncementService>();
+builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 builder.Services
     .AddAuthentication(x =>
     {
@@ -81,7 +87,7 @@ builder.Services
         x.SaveToken = true;
         x.TokenValidationParameters = new TokenValidationParameters
         {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(PrivateKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(PrivateKey!)),
             ValidateIssuer = false,
             ValidateAudience = false
         };

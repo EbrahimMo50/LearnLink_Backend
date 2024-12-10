@@ -1,7 +1,6 @@
-﻿
-namespace LearnLink_Backend.Models
+﻿namespace LearnLink_Backend.Modules.Adminstration.Models
 {
-    public class InstructorApplication
+    public class InstructorApplicationModel
     {
         public int Id { get; }
         public string Name { get; set; }
