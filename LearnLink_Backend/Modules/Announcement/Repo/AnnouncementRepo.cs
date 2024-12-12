@@ -1,7 +1,7 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Modules.Announcement.DTOs;
 using LearnLink_Backend.Modules.Courses.Models;
-using LearnLink_Backend.Modules.Notification;
+using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -30,7 +30,7 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
         public ResponseAPI GetAllForCourse(int courseId)
         {
             var announcements = DbContext.Announcements.Where(x => x.CourseId == courseId);
-            return new ResponseAPI() { Data = announcements };
+            return new ResponseAPI() { Data = AnnouncementGet.ToDTO(announcements) };
         }
 
         public void DeleteAnnouncement(int id)
@@ -47,12 +47,12 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
             if(announcement == null)
                 return new ResponseAPI() { Message = "could not find the announcement with given id" , StatusCode = 404 };
 
-            return new ResponseAPI() {Data = announcement};
+            return new ResponseAPI() {Data = AnnouncementGet.ToDTO(announcement) };
         }
 
         public async Task<ResponseAPI> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
         {
-            var elementToBeUpdated = DbContext.Announcements.FirstOrDefault(x => x.Id == id);
+            var elementToBeUpdated = await DbContext.Announcements.FirstOrDefaultAsync(x => x.Id == id);
             if(elementToBeUpdated == null)
                 return new ResponseAPI() { Message = "could not find the announcement with given id", StatusCode = 404 };
             elementToBeUpdated.Title = announcement.Title;
@@ -60,7 +60,7 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
             elementToBeUpdated.UpdateTime = DateTime.UtcNow;
             string createrId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             elementToBeUpdated.UpdatedBy = createrId;
-            return null;
+            return new ResponseAPI() { Data = elementToBeUpdated };
         }
     }
 }

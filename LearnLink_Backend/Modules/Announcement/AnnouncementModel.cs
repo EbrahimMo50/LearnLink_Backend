@@ -1,6 +1,6 @@
 ﻿using LearnLink_Backend.Modules.Courses.Models;
 
-namespace LearnLink_Backend.Modules.Notification
+namespace LearnLink_Backend.Modules.Announcement
 {
     public class AnnouncementModel
     {

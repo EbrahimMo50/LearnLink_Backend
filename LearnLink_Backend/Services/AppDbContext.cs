@@ -2,7 +2,7 @@
 using LearnLink_Backend.Modules.Adminstration.Models;
 using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Modules.Meeting;
-using LearnLink_Backend.Modules.Notification;
+using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Session;
 using Microsoft.EntityFrameworkCore;
 
