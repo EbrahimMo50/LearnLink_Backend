@@ -142,3 +142,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//TODO next test the app importantly because the system was not tested at all
+//finish the rest of the modules and keep hating my self for the poor decision of seperating users to 3 tables
