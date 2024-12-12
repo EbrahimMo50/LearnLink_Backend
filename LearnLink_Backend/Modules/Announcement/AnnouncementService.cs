@@ -10,5 +10,21 @@ namespace LearnLink_Backend.Modules.Announcement
         {
             return repo.CreateAnnouncement(announcement);
         }
+        public ResponseAPI GetAllForCourse(int courseId)
+        {
+            return repo.GetAllForCourse(courseId);
+        }
+        public Task<ResponseAPI> FindById(int id)
+        {
+            return repo.FindById(id);
+        }
+        public void DeleteAnnouncement(int id)
+        {
+            repo.DeleteAnnouncement(id);
+        }
+        public Task<ResponseAPI> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
+        {
+            return repo.UpdateAnnouncement(id, announcement);
+        }
     }
 }

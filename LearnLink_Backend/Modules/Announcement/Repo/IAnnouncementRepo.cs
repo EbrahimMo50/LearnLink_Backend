@@ -6,9 +6,9 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
     public interface IAnnouncementRepo
     {
         public Task<ResponseAPI> CreateAnnouncement(AnnouncementSet announcement);
-        public Task<List<ResponseAPI>> GetAll();
+        public ResponseAPI GetAllForCourse(int courseId);
         public Task<ResponseAPI> FindById(int id);
-        public void DeleteRepo(int id);
-        public Task<ResponseAPI> UpdateRepo(int id, AnnouncementSet announcement);
+        public void DeleteAnnouncement(int id);
+        public Task<ResponseAPI> UpdateAnnouncement(int id, AnnouncementUpdate announcement);
     }
 }

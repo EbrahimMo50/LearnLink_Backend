@@ -15,34 +15,52 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
             if (httpContextAccess.HttpContext == null || httpContextAccess.HttpContext.User.FindFirstValue("Role") == null)
                 return new ResponseAPI() { Message = "Error in handling the context of the request"};
 
-            string createrId = httpContextAccess.HttpContext.User.FindFirstValue("Role")!;
+            string createrId = httpContextAccess.HttpContext.User.FindFirstValue("id")!;
             CourseModel? course = await DbContext.Courses.FirstOrDefaultAsync(x => x.Id == announcement.CourseId);
 
             if (course == null)
-                return new ResponseAPI() { Message = "course could not be found" };
+                return new ResponseAPI() { Message = "course could not be found" , StatusCode = 404 };
 
-            AnnouncementModel obj = new() { Title = announcement.Title, Description = announcement.Description, CourseId = announcement.CourseId, AtDate = DateTime.UtcNow, CreatedBy = createrId};
+            AnnouncementModel obj = new() { Title = announcement.Title, Description = announcement.Description, CourseId = announcement.CourseId, AtDate = DateTime.UtcNow, CreatedBy = createrId, Course = course};
+            await DbContext.Announcements.AddAsync(obj);
+            await DbContext.SaveChangesAsync();
+            return new ResponseAPI() { Message = "Added Succefully", Data = obj };
+        }
+
+        public ResponseAPI GetAllForCourse(int courseId)
+        {
+            var announcements = DbContext.Announcements.Where(x => x.CourseId == courseId);
+            return new ResponseAPI() { Data = announcements };
+        }
+
+        public void DeleteAnnouncement(int id)
+        {
+            var element = DbContext.Announcements.FirstOrDefault(x => x.Id == id);
+            if(element == null) return;
+            DbContext.Announcements.Remove(element);
+            DbContext.SaveChanges();
+        }
+
+        public async Task<ResponseAPI> FindById(int id)
+        {
+            var announcement = await DbContext.Announcements.FirstOrDefaultAsync(x => x.Id == id);
+            if(announcement == null)
+                return new ResponseAPI() { Message = "could not find the announcement with given id" , StatusCode = 404 };
+
+            return new ResponseAPI() {Data = announcement};
+        }
+
+        public async Task<ResponseAPI> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
+        {
+            var elementToBeUpdated = DbContext.Announcements.FirstOrDefault(x => x.Id == id);
+            if(elementToBeUpdated == null)
+                return new ResponseAPI() { Message = "could not find the announcement with given id", StatusCode = 404 };
+            elementToBeUpdated.Title = announcement.Title;
+            elementToBeUpdated.Description = announcement.Description;
+            elementToBeUpdated.UpdateTime = DateTime.UtcNow;
+            string createrId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            elementToBeUpdated.UpdatedBy = createrId;
             return null;
-        }
-
-        public void DeleteRepo(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseAPI> FindById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ResponseAPI>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseAPI> UpdateRepo(int id, AnnouncementSet announcement)
-        {
-            throw new NotImplementedException();
         }
     }
 }

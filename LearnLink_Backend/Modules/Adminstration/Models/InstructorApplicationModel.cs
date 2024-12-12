@@ -12,6 +12,6 @@
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }

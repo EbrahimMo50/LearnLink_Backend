@@ -14,9 +14,7 @@ namespace LearnLink_Backend.Modules.Session
         public TimeOnly EndsAt { get; set; }
         public DateOnly Day { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        
-
         public DateTime? UpdateTime { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }
