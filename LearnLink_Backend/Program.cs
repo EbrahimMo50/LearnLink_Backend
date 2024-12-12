@@ -1,3 +1,4 @@
+using LearnLink_Backend.Modules.Adminstration;
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Modules.Authentcation;
@@ -14,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-//will not use an initializer for the database this time
+//will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
 //the application should have followed an inheritance logic between admin student and instructor with them sharing an abstraction, but lack of knowledge about EF Core handling denyed that :/
 //such implementation will limit scalability and checking the user login will occur on 3 tables adding more roles will require more checks further look up for a better method should be carried
@@ -81,6 +82,7 @@ builder.Services.AddScoped<AnnouncementService>();
 builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
+builder.Services.AddScoped<AdministrationService>();
 
 builder.Services
     .AddAuthentication(x =>

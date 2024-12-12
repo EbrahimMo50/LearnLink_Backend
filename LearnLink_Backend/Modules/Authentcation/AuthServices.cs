@@ -1,5 +1,7 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.DTOs.StudentDTOs;
+using LearnLink_Backend.Models;
+using LearnLink_Backend.Modules.Adminstration.DTOs;
 using LearnLink_Backend.Services;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,10 +28,31 @@ namespace LearnLink_Backend.Modules.Authentcation
             var Salt = GenerateSalt();
             var HashedPassword = Hash(Salt, studentVM.Password);
 
-            await _context.Students.AddAsync(studentVM.ToStudent(HashedPassword, Salt));
+            var student = studentVM.ToStudent(HashedPassword, Salt);
+            student.CreatedBy = "self";
+            await _context.Students.AddAsync(student);
             await _context.SaveChangesAsync();
 
             return "Success";
+        }
+        //could go with abstraction for admin and instructor to solve redundancy buy alot of changes must take place bad design should be avoided in future projects
+        public void SignInstructor(Instructor instructor, string password)
+        {
+            var Salt = GenerateSalt();
+            var HashedPassword = Hash(Salt, password);
+            instructor.HashedPassword = HashedPassword;
+            instructor.Salt = Salt;
+            _context.Instructors.Add(instructor);
+            _context.SaveChanges();
+        }
+        public void SignAdmin(Admin admin, string password)
+        {
+            var Salt = GenerateSalt();
+            var HashedPassword = Hash(Salt, password);
+            admin.HashedPassword = HashedPassword;
+            admin.Salt = Salt;
+            _context.Admins.Add(admin);
+            _context.SaveChanges();
         }
         public string Login(LoginViewModel user)
         {
