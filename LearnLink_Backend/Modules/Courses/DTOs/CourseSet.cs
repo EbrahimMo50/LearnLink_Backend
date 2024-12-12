@@ -7,6 +7,6 @@ namespace LearnLink_Backend.Modules.Courses.DTOs
     public class CourseSet
     {
         public string Name { get; set; }
-        public int InstructorId { get; set; }
+        public string InstructorId { get; set; }
     }
 }

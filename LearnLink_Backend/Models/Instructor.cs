@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LearnLink_Backend.Models
 {
     [Index(nameof(Email), IsUnique = true)]
+    //shall i add the instructor scehdule here?
     public class Instructor
     {
         public Guid Id { get; }
