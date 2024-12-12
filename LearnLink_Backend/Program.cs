@@ -1,6 +1,8 @@
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Modules.Authentcation;
+using LearnLink_Backend.Modules.Courses;
+using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
 using LearnLink_Backend.Policies.StudentPolicy;
@@ -62,14 +64,24 @@ builder.Services.AddDbContext<AppDbContext>(
      options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
      );
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<TokenService>();
+// .NET libs dependecny injection 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton
+
+// policies injection
 builder.Services.AddScoped<IAuthorizationHandler, StudentRequirmentHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, AdminRequirmentHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, InstructorRequirmentHandler>();
+
+// auth releated injections
 builder.Services.AddScoped<AuthServices>();
+builder.Services.AddScoped<TokenService>();
+
+// modules structure injections
 builder.Services.AddScoped<AnnouncementService>();
 builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
+builder.Services.AddScoped<CourseService>();
+builder.Services.AddScoped<ICourseRepo, CourseRepo>();
+
 builder.Services
     .AddAuthentication(x =>
     {
