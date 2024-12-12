@@ -8,7 +8,7 @@ namespace LearnLink_Backend.Policies.InstructorPolicy
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, InstructorRequirment requirement)
         {
-            var IdClaim = context.User.Claims.FirstOrDefault(x => x.Type == "Id");
+            var IdClaim = context.User.Claims.FirstOrDefault(x => x.Type == "id");
             if (IdClaim == null)
                 return Task.CompletedTask;
 

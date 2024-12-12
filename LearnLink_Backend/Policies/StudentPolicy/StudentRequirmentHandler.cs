@@ -7,7 +7,7 @@ namespace LearnLink_Backend.Policies.StudentPolicy
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, StudentRequirment requirement)
         {
-            var IdClaim = context.User.Claims.FirstOrDefault(x => x.Type == "Id");
+            var IdClaim = context.User.Claims.FirstOrDefault(x => x.Type == "id");
             if(IdClaim== null)
                 return Task.CompletedTask;
 
