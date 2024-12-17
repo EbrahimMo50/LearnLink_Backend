@@ -4,6 +4,7 @@ using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnLink_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241217104312_Reroll")]
+    partial class Reroll
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,14 +145,7 @@ namespace LearnLink_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AtDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("AvilableDays")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -161,12 +157,6 @@ namespace LearnLink_Backend.Migrations
 
                     b.Property<int>("StartHour")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -363,59 +353,6 @@ namespace LearnLink_Backend.Migrations
                     b.ToTable("Courses", (string)null);
                 });
 
-            modelBuilder.Entity("LearnLink_Backend.Modules.Meeting.MeetingModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AtDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EndsAt")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InstructorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("InstructorId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("StartsAt")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("StudentId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InstructorId1");
-
-                    b.HasIndex("StudentId1");
-
-                    b.ToTable("Meetings", (string)null);
-                });
-
             modelBuilder.Entity("LearnLink_Backend.Modules.Session.SessionModel", b =>
                 {
                     b.Property<int>("Id")
@@ -506,25 +443,6 @@ namespace LearnLink_Backend.Migrations
                         .HasForeignKey("InstructorId");
 
                     b.Navigation("Instructor");
-                });
-
-            modelBuilder.Entity("LearnLink_Backend.Modules.Meeting.MeetingModel", b =>
-                {
-                    b.HasOne("LearnLink_Backend.Models.Instructor", "Instructor")
-                        .WithMany()
-                        .HasForeignKey("InstructorId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LearnLink_Backend.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Instructor");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LearnLink_Backend.Modules.Session.SessionModel", b =>

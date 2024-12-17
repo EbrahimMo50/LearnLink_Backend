@@ -30,5 +30,9 @@ namespace LearnLink_Backend.Models
         public List<int> AvilableDays { get; set; } = []; // this will have values from 0 to 6
         public int StartHour { get; set; }
         public int EndHour { get; set; }                  // from 0 to 24
+        public DateTime AtDate { get; set; } = DateTime.UtcNow;
+        public string CreatedBy { get; set; }
+        public DateTime? UpdateTime { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }

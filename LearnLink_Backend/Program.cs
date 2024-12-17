@@ -4,6 +4,8 @@ using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Modules.Authentcation;
 using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
+using LearnLink_Backend.Modules.Meeting;
+using LearnLink_Backend.Modules.Meeting.Repos;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
 using LearnLink_Backend.Policies.StudentPolicy;
@@ -61,12 +63,12 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(securityRequirement);
 });
 
-builder.Services.AddDbContext<AppDbContext>(
-     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
-     );
 
 // .NET libs dependecny injection 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton
+builder.Services.AddDbContext<AppDbContext>(
+     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
+     );
 
 // policies injection
 builder.Services.AddScoped<IAuthorizationHandler, StudentRequirmentHandler>();
@@ -82,6 +84,8 @@ builder.Services.AddScoped<AnnouncementService>();
 builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
+builder.Services.AddScoped<MeetingService>();
+builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<AdministrationService>();
 
 builder.Services

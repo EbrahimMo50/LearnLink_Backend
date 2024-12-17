@@ -6,13 +6,15 @@ namespace LearnLink_Backend.Modules.Meeting
     public class MeetingModel
     {
         public int Id { get; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public Student Student { get; set; }
-        public int InstructorId { get; set; }
+        public string InstructorId { get; set; }
         public Instructor Instructor { get; set; }
-        public DateTime StartsAt { get; set; }
-        public DateTime EndsAt { get; set; }
+        public int Day { get; set; }
+        public int StartsAt { get; set; }
+        public int EndsAt { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
+        public string CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
     }
