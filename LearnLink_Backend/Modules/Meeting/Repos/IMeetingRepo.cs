@@ -7,8 +7,8 @@ namespace LearnLink_Backend.Modules.Meeting.Repos
     {
         public Task<ResponseAPI> Create(MeetingSet meeting);
         public ResponseAPI FindById(int id);
-        public Task<ResponseAPI> FindMeetingsForInstructor(string userId);
-        public Task<ResponseAPI> FindMeetingsForStudent(string userId);
+        public Task<ResponseAPI> FindMeetingsForInstructor();
+        public Task<ResponseAPI> FindMeetingsForStudent();
         public void Delete(int id);
     }
 }

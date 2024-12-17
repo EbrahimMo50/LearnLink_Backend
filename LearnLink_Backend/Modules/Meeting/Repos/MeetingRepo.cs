@@ -64,31 +64,41 @@ namespace LearnLink_Backend.Modules.Meeting.Repos
             return new ResponseAPI() { Data = MeetingGet.ToDTO(result) };
         }
 
-        public async Task<ResponseAPI> FindMeetingsForInstructor(string userId)
+        public async Task<ResponseAPI> FindMeetingsForInstructor()
         {
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;  
+            
             var result = await DbContext.Meetings
-                .Where(x => x.StudentId == userId)
+                .Where(x => x.StudentId == issuerId)
                 .ToListAsync();
             return new ResponseAPI() { Data = MeetingGet.ToDTO(result) };
         }
-
-        public async Task<ResponseAPI> FindMeetingsForStudent(string userId)
+        
+        public async Task<ResponseAPI> FindMeetingsForStudent()
         {
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+
             var result = await DbContext.Meetings
-             .Where(x => x.InstructorId == userId)
+             .Where(x => x.InstructorId == issuerId)
              .ToListAsync();
             return new ResponseAPI() { Data = MeetingGet.ToDTO(result) };
         }
 
         public void Delete(int id)
         {
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var meeting = DbContext.Meetings.Include(x => x.Student).Include(x => x.Instructor).FirstOrDefault(x => x.Id == id);
             if (meeting == null)
                 return;
-            var student = meeting.Student;
-            student.Balance += meeting.Instructor.FeesPerHour * (meeting.EndsAt - meeting.StartsAt);
-            DbContext.Meetings.Remove(meeting);
-            DbContext.SaveChanges();
+
+            if (issuerId == meeting.StudentId || issuerId == meeting.InstructorId || DbContext.Admins.Any(x => x.Id.ToString() == issuerId))
+            {    
+                var student = meeting.Student;
+                student.Balance += meeting.Instructor.FeesPerHour * (meeting.EndsAt - meeting.StartsAt);
+                DbContext.Meetings.Remove(meeting);
+                DbContext.SaveChanges();
+                return;
+            }
         }
     }
 }

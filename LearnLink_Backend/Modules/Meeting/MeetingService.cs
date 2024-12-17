@@ -17,13 +17,13 @@ namespace LearnLink_Backend.Modules.Meeting
         {
             return repo.FindById(id);
         }
-        public Task<ResponseAPI> FindMeetingsForInstructor(string userId)
+        public Task<ResponseAPI> FindMeetingsForInstructor()
         {
-            return repo.FindMeetingsForInstructor(userId);
+            return repo.FindMeetingsForInstructor();
         }
-        public Task<ResponseAPI> FindMeetingsForStudent(string userId)
+        public Task<ResponseAPI> FindMeetingsForStudent()
         {
-            return repo.FindMeetingsForStudent(userId);
+            return repo.FindMeetingsForStudent();
         }
         public void Delete(int id)
         {
@@ -42,22 +42,20 @@ namespace LearnLink_Backend.Modules.Meeting
             DbContext.SaveChanges();
             return new ResponseAPI() { Message = "updated user balance", Data = student };
         }
-        public ResponseAPI UpdateSchedule(string instructorId, ScheduleSet scheduleSet)
+        public ResponseAPI UpdateSchedule(ScheduleSet scheduleSet)
         {
-            var instructor = DbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == instructorId);
             string initiatorId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            var instructor = DbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+
             if (instructor == null)
                 return new ResponseAPI() { Message = "could not find instructor", StatusCode = 404 };
-
-            if(instructorId != initiatorId)
-                return new ResponseAPI() { Message = "only the instructor can update his schedule", StatusCode = 403 };
 
             Schedule schedule = new() { 
                 AvilableDays = scheduleSet.AvilableDays,
                 EndHour = scheduleSet.EndHour,
                 InstructorId = instructor.Id,
                 StartHour = scheduleSet.StartHour, 
-                CreatedBy = instructorId,
+                CreatedBy = initiatorId,
             };
 
             DbContext.Schedules.Add(schedule);
