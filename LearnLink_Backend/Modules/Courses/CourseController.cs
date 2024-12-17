@@ -44,5 +44,23 @@ namespace LearnLink_Backend.Modules.Courses
             var response = await service.UpdateCourse(id, course);
             return response.StatusCode == 200 ? Ok(response) : BadRequest(response);
         }
+        [HttpPut("joinCourse/{studentId}/{courseId}")] 
+        [Authorize(Policy = "StudentPolicy")]
+        public async Task<IActionResult> JoinCourse(String studentId, int courseId)
+        {
+            var result = await service.JoinCourse(studentId, courseId);
+            if(result.StatusCode != 200)
+                return BadRequest(result);
+            return Ok(result);
+        }
+        [HttpPut("leaveCourse/{studentId}/{courseId}")]
+        [Authorize(Policy = "StudentPolicy")]
+        public async Task<IActionResult> LeaveCourse(String studentId, int courseId)
+        {
+            var result = await service.LeaveCourse(studentId, courseId);
+            if (result.StatusCode != 200)
+                return BadRequest(result);
+            return Ok(result);
+        }
     }
 }
