@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.Modules.Courses.Models;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.Models
 {
@@ -15,10 +16,19 @@ namespace LearnLink_Backend.Models
         public decimal FeesPerHour { get; set; } = 0;   //this is meeting releated
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
-        public List<CourseModel> Courses { get; set; } = new List<CourseModel>();
+        public List<CourseModel> Courses { get; set; } = [];
+        public virtual Schedule? Schedule { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; }
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
+    }
+    public class Schedule
+    {        
+        public int Id { get; }
+        public Guid InstructorId { get; set; }
+        public List<int> AvilableDays { get; set; } = []; // this will have values from 0 to 6
+        public int StartHour { get; set; }
+        public int EndHour { get; set; }                  // from 0 to 24
     }
 }
