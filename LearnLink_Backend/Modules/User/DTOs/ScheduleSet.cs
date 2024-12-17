@@ -1,4 +1,4 @@
-﻿namespace LearnLink_Backend.Modules.Meeting.DTOs
+﻿namespace LearnLink_Backend.Modules.User.DTOs
 {
     public class ScheduleSet
     {

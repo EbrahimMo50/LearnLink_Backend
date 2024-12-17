@@ -6,6 +6,7 @@ using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Meeting.Repos;
+using LearnLink_Backend.Modules.User.Services;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
 using LearnLink_Backend.Policies.StudentPolicy;
@@ -87,6 +88,7 @@ builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<MeetingService>();
 builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<AdministrationService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services
     .AddAuthentication(x =>
@@ -147,5 +149,5 @@ app.MapControllers();
 
 app.Run();
 
-//TODO next test the app importantly because the system was not tested at all
-//finish the rest of the modules and keep hating my self for the poor decision of seperating users to 3 tables
+// TODO next test the app importantly because the system was not tested at all
+// add option for users to apply for instructor in user module

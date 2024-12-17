@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Meeting.DTOs;
+using LearnLink_Backend.Modules.User.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,22 +52,6 @@ namespace LearnLink_Backend.Modules.Meeting
         {
             service.Delete(id);
             return Ok();
-        }
-
-        [HttpPut("updateBalance/{studentId}/{amount}")]
-        [Authorize(Policy = "AdminPolicy")]
-        public IActionResult AddBalance(string studentId, decimal amount)
-        {
-            var result = service.AddBalance(studentId, amount);
-            if(result.StatusCode != 200)
-                return BadRequest(result);
-            return Ok(result);
-        }
-        [HttpPut("updateSchedule")]
-        [Authorize(Policy = "InstructorPolicy")]
-        public IActionResult UpdateSchedule(ScheduleSet scheduleSet)
-        {
-            return Ok(service.UpdateSchedule(scheduleSet));
         }
     }
 }
