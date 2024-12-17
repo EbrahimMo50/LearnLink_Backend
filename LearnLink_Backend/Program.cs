@@ -150,4 +150,4 @@ app.MapControllers();
 app.Run();
 
 // TODO next test the app importantly because the system was not tested at all
-// add option for users to apply for instructor in user module
+// add option for users to apply for instructor in user module add range on days and hours in meetings
