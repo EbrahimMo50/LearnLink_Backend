@@ -41,6 +41,10 @@ namespace LearnLink_Backend.Modules.Courses
 
             student.Courses.Add(course);
             course.Students.Add(student);
+
+            student.UpdatedBy = studentId;
+            student.UpdateTime = DateTime.UtcNow;
+
             await DbContext.SaveChangesAsync();
 
             return new ResponseAPI() { Message = "joined succefully", StatusCode = 200 };
@@ -57,6 +61,10 @@ namespace LearnLink_Backend.Modules.Courses
 
             student.Courses.Remove(course);
             course.Students.Remove(student);
+
+            student.UpdatedBy = studentId;
+            student.UpdateTime = DateTime.UtcNow;
+
             await DbContext.SaveChangesAsync();
 
             return new ResponseAPI() { Message = "left succefully", StatusCode = 200 };
