@@ -20,9 +20,7 @@ namespace LearnLink_Backend.Modules.Meeting
         }
 
         [HttpGet("findById/{id}")]
-        [Authorize(Policy = "StudentPolicy")]
-        [Authorize(Policy = "InstructorPoilcy")]
-        [Authorize(Policy = "AdminPoilcy")]
+        [Authorize(Policy = "User")]
         public IActionResult FindById(int id)
         {
             var result = service.FindById(id);
@@ -45,9 +43,7 @@ namespace LearnLink_Backend.Modules.Meeting
         }
 
         [HttpDelete("delete/{id}")]
-        [Authorize(Policy = "StudentPolicy")]
-        [Authorize(Policy = "InstructorPoilcy")]
-        [Authorize(Policy = "AdminPoilcy")]
+        [Authorize(Policy = "User")]
         public IActionResult DeleteMeeting(int id)
         {
             service.Delete(id);

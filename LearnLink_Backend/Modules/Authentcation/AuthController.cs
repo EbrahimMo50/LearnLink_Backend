@@ -28,7 +28,7 @@ namespace LearnLink_Backend.Modules.Authentcation
             return Ok(result);
         }
         [HttpPatch("changePassword")]
-        [Authorize(Policy = "AdminPolicy, InstructorPolicy")]
+        [Authorize(Policy = "User")]
         public IActionResult ChangePass(ChangePassDTO passModel)
         {
             return Ok(_auth.ChangePassword(passModel.Email, passModel.OldPassword, passModel.NewPassword));

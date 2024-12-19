@@ -6,6 +6,8 @@ using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Meeting.Repos;
+using LearnLink_Backend.Modules.Session;
+using LearnLink_Backend.Modules.Session.Repos;
 using LearnLink_Backend.Modules.User.Services;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
@@ -16,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
@@ -88,6 +91,8 @@ builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<MeetingService>();
 builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<AdministrationService>();
+builder.Services.AddScoped<SessionService>();
+builder.Services.AddScoped<ISessionRepo, SessionRepo>();
 builder.Services.AddScoped<UserService>();
 
 builder.Services
@@ -134,15 +139,14 @@ builder.Services
     {
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Instructor"));
+        policy.RequireRole("Admin", "Instructor");
     })
     .AddPolicy("User", policy =>
     {
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Instructor" || c.Type == "Student"));
-    })
-    ;
+        policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == ClaimTypes.Role));
+    });
 
 var app = builder.Build();
 
