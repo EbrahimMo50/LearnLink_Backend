@@ -1,10 +1,15 @@
-﻿namespace LearnLink_Backend.Modules.User.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LearnLink_Backend.Modules.User.DTOs
 {
     public class ScheduleSet
     {
         public string InstructorId { get; set; }
+        [Range(0, 6)]
         public List<int> AvilableDays { get; set; } = []; // this will have values from 0 to 6
+        [Range(0, 24)]
         public int StartHour { get; set; }
+        [Range(0, 24)]
         public int EndHour { get; set; }                  // from 0 to 24
     }
 }

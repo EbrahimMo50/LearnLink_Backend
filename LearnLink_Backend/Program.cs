@@ -32,37 +32,37 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    var securityScheme = new OpenApiSecurityScheme
+    builder.Services.AddSwaggerGen(c =>
     {
-        Name = "JWT Authentication",
-        Description = "Enter your JWT token in this field",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    };
-
-    c.AddSecurityDefinition("Bearer", securityScheme);
-
-    var securityRequirement = new OpenApiSecurityRequirement
-    {
+        var securityScheme = new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    };
+            Name = "JWT Authentication",
+            Description = "Enter your JWT token in this field",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        };
 
-    c.AddSecurityRequirement(securityRequirement);
-});
+        c.AddSecurityDefinition("Bearer", securityScheme);
+
+        var securityRequirement = new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        };
+
+        c.AddSecurityRequirement(securityRequirement);
+    });
 
 
 // .NET libs dependecny injection 
