@@ -4,6 +4,7 @@ namespace LearnLink_Backend.Modules.Adminstration.DTOs
 {
     public class InstructorAppGet
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Messsage { get; set; }
@@ -11,7 +12,7 @@ namespace LearnLink_Backend.Modules.Adminstration.DTOs
         public string SpokenLanguage { get; set; }
         public static InstructorAppGet ToDTO(InstructorApplicationModel app)
         {
-            return new InstructorAppGet { Name = app.Name, Email = app.Email, Messsage = app.Messsage, Nationality = app.Nationality, SpokenLanguage = app.Nationality };
+            return new InstructorAppGet {Id = app.Id, Name = app.Name, Email = app.Email, Messsage = app.Messsage, Nationality = app.Nationality, SpokenLanguage = app.Nationality };
         }
 
         public static IEnumerable<InstructorAppGet> ToDTO(IEnumerable<InstructorApplicationModel> app)
