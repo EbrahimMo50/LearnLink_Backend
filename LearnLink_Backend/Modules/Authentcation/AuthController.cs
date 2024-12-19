@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.DTOs.StudentDTOs;
+using LearnLink_Backend.Modules.Authentcation.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,12 +28,10 @@ namespace LearnLink_Backend.Modules.Authentcation
             return Ok(result);
         }
         [HttpPatch("changePassword")]
-        [Authorize(Policy = "StudentPolicy")]
-        [Authorize(Policy = "InstructorPolicy")]
-        [Authorize(Policy = "AdminPolicy")]
-        public IActionResult ChangePass(string email, string oldPassword, string newPassword)
+        [Authorize(Policy = "AdminPolicy, InstructorPolicy")]
+        public IActionResult ChangePass(ChangePassDTO passModel)
         {
-            return Ok(_auth.ChangePassword(email, oldPassword, newPassword));
+            return Ok(_auth.ChangePassword(passModel.Email, passModel.OldPassword, passModel.NewPassword));
         }
     }
 }

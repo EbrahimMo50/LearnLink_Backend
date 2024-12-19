@@ -129,7 +129,20 @@ builder.Services
         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
         policy.Requirements.Add(new AdminRequirment());
-    });
+    })
+    .AddPolicy("AdminOrInstructor", policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Instructor"));
+    })
+    .AddPolicy("User", policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Instructor" || c.Type == "Student"));
+    })
+    ;
 
 var app = builder.Build();
 
