@@ -73,7 +73,7 @@ namespace LearnLink_Backend.Modules.Session
             var session = DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefault(x => x.Id == sessionId);
 
             if(session == null)
-                return new ResponseAPI() { Message = "could not find session", StatusCode = 200 };
+                return new ResponseAPI() { Message = "could not find session", StatusCode = 404 };
 
             return new ResponseAPI() { Data = session.AttendendStudent.ToList() };
         }
