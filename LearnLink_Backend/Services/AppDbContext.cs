@@ -5,6 +5,7 @@ using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Session;
 using Microsoft.EntityFrameworkCore;
+using LearnLink_Backend.Modules.Post;
 
 namespace LearnLink_Backend.Services
 {
@@ -21,6 +22,7 @@ namespace LearnLink_Backend.Services
         public DbSet<CourseModel> Courses { get; set; }
         public DbSet<AnnouncementModel> Announcements { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<PostModel> Posts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +62,10 @@ namespace LearnLink_Backend.Services
 
             modelBuilder.Entity<Schedule>()
                 .ToTable("Schedules")
+                .HasKey(u => u.Id);
+
+            modelBuilder.Entity<PostModel>()
+                .ToTable("Posts")
                 .HasKey(u => u.Id);
         }
     }
