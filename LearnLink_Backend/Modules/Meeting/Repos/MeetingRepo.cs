@@ -8,6 +8,8 @@ namespace LearnLink_Backend.Modules.Meeting.Repos
 {
     public class MeetingRepo(AppDbContext DbContext, IHttpContextAccessor httpContextAccess) : IMeetingRepo
     {
+
+        // the logic and validations is too much to be included in a repo, this must be seperated in the service asap
         public async Task<ResponseAPI> Create(MeetingSet meeting)
         {
             var student = await DbContext.Students.FirstOrDefaultAsync(x => x.Id.ToString() == meeting.StudentId);
