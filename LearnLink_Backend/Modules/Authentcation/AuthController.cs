@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.DTOs.StudentDTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnLink_Backend.Modules.Authentcation
@@ -16,7 +17,7 @@ namespace LearnLink_Backend.Modules.Authentcation
 
             return BadRequest(result);
         }
-        [HttpPut("Login")]
+        [HttpPost("Login")]
         public IActionResult Login(LoginViewModel user)
         {
             var result = _auth.Login(user);
@@ -24,6 +25,14 @@ namespace LearnLink_Backend.Modules.Authentcation
                 return NotFound("could not find user");
 
             return Ok(result);
+        }
+        [HttpPatch("changePassword")]
+        [Authorize(Policy = "StudentPolicy")]
+        [Authorize(Policy = "InstructorPolicy")]
+        [Authorize(Policy = "AdminPolicy")]
+        public IActionResult ChangePass(string email, string oldPassword, string newPassword)
+        {
+            return Ok(_auth.ChangePassword(email, oldPassword, newPassword));
         }
     }
 }

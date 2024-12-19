@@ -3,6 +3,8 @@ using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.DTOs;
 using LearnLink_Backend.Services;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,10 +14,13 @@ namespace LearnLink_Backend.Modules.Authentcation
     {
         private readonly AppDbContext _context;
         private readonly TokenService _authService;
-        public AuthServices(AppDbContext context, TokenService authService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AuthServices(AppDbContext context, TokenService authService, IHttpContextAccessor contexAccess)
         {
             _context = context;
             _authService = authService;
+            _httpContextAccessor = contexAccess;
+
         }
         public async Task<string> SignUp(StudentSet studentVM)
         {
@@ -76,10 +81,43 @@ namespace LearnLink_Backend.Modules.Authentcation
             return "invalid";
         }
 
-        public void ChangePassword(LoginViewModel user, string newPass)
+        public string ChangePassword(string email , string oldPass, string newPass)
         {
-            throw new NotImplementedException();
+            string initiatorId = _httpContextAccessor.HttpContext!.User.FindFirstValue("id")!;
+
+            var student = _context.Students.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            if (student != null)
+                if (Hash(student.Salt, oldPass) == student.HashedPassword && student.Email == email)
+                {
+                    student.HashedPassword = Hash(student.Salt, newPass);
+                    student.UpdatedBy = initiatorId;
+                    student.UpdateTime = DateTime.UtcNow;
+                    return "updated pass for student";
+                }
+
+            var instructor = _context.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            if (instructor != null)
+                if (Hash(instructor.Salt, oldPass) == instructor.HashedPassword && instructor.Email == email)
+                {
+                    instructor.HashedPassword = Hash(instructor.Salt, newPass);
+                    instructor.UpdatedBy = initiatorId;
+                    instructor.UpdateTime = DateTime.UtcNow;
+                    return "updated pass for instructor";
+                }
+
+            var admin = _context.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            if (admin != null)
+                if (Hash(admin.Salt, oldPass) == admin.HashedPassword && admin.Email == email)
+                {
+                    admin.HashedPassword = Hash(admin.Salt, newPass);
+                    admin.UpdatedBy = initiatorId;
+                    admin.UpdateTime = DateTime.UtcNow;
+                    return "updated pass for admin";
+                }
+
+            return "could not find cerdintals";
         }
+
         private static string Hash(string salt, string pass)
         {
             var InputBytes = Encoding.UTF8.GetBytes(salt + pass);
