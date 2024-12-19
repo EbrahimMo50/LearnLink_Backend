@@ -12,6 +12,7 @@ namespace LearnLink_Backend.Models
         public string Name { get; set; }
         public string Salt { get; set; }
         public string HashedPassword { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         public decimal FeesPerHour { get; set; } = 0;   //this is meeting releated
         public string Nationality { get; set; }

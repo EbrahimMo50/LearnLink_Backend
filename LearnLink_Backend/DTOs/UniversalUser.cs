@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Models;
+using System.ComponentModel.DataAnnotations;
 //class for mimicing polymorphism between users
 
 namespace LearnLink_Backend.DTOs
@@ -7,6 +8,7 @@ namespace LearnLink_Backend.DTOs
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         public string Role { get; set; }
         public static UniversalUser ToUser(Admin a)

@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.Modules.Courses.Models;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace LearnLink_Backend.Models
@@ -13,6 +14,7 @@ namespace LearnLink_Backend.Models
         public string HashedPassword { get; set; }
         public decimal Balance { get; set; }
         public string Email { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
         public string Address { get; set; }

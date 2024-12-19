@@ -1,6 +1,7 @@
 ﻿
 
 using LearnLink_Backend.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs.StudentDTOs
 {
@@ -8,6 +9,7 @@ namespace LearnLink_Backend.DTOs.StudentDTOs
     {
         public string Name { get; set; }
         public string Password { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         public string Nationality { get; set; }
         public string SpokenLanguage { get; set; }
