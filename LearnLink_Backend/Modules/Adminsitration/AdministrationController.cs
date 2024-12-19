@@ -37,18 +37,25 @@ namespace LearnLink_Backend.Modules.Adminsitration
             return Ok(service.GetAllInstructors());
         }
 
-        [HttpPut("acceptApplication{id}")]
+        [HttpPut("acceptApplication/{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> AcceptApplication(int id)
         {
             return Ok(await service.AcceptApplication(id));
         }
 
-        [HttpDelete("deleteUser{id}")]
+        [HttpDelete("deleteUser/{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult DeleteUser(string id)
         {
             return Ok(service.RemoveUser(id));
+        }
+        [HttpDelete("deleteApplication/{id}")]
+        [Authorize(Policy = "AdminPolicy")]
+        public IActionResult DeleteApplication(int id)
+        {
+            service.DeleteApplication(id);
+            return Ok();
         }
     }
 }

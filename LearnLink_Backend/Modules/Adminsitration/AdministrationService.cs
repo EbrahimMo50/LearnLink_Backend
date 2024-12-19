@@ -79,5 +79,13 @@ namespace LearnLink_Backend.Modules.Adminstration
 
             return new ResponseAPI() { Message = "could not find the user", StatusCode = 404 };
         }
+
+        public void DeleteApplication(int id)
+        {
+            var application = DbContext.InstructorApplications.FirstOrDefault(x => x.Id == id);
+            if (application != null)
+                DbContext.InstructorApplications.Remove(application);
+            DbContext.SaveChanges();
+        }
     }
 }   
