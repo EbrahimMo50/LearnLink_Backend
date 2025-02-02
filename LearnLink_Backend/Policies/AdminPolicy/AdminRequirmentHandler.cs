@@ -10,10 +10,6 @@ namespace LearnLink_Backend.Policies.AdminPolicy
         {
             var IdClaim = context.User.Claims.FirstOrDefault(x => x.Type == "id");
 
-            Console.WriteLine("hello world");
-            Console.WriteLine(IdClaim);
-
-
             if (IdClaim == null)
                 return Task.CompletedTask;
 
