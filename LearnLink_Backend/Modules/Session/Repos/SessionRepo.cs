@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Modules.Session.DTOs;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -6,12 +7,13 @@ using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session.Repos
 {
-    public class SessionRepo(AppDbContext DbContext, IHttpContextAccessor httpContextAccess) : ISessionRepo
+    public class SessionRepo(AppDbContext DbContext) : ISessionRepo
     {
-        public async Task<ResponseAPI> Create(SessionModel session)
+        public async Task<SessionModel> Create(SessionModel session)
         {
             await DbContext.Sessions.AddAsync(session);
-            return new ResponseAPI() { Data = session };
+            await DbContext.SaveChangesAsync();
+            return session;
         }
 
         public void Delete(int id)
@@ -22,53 +24,48 @@ namespace LearnLink_Backend.Modules.Session.Repos
             DbContext.SaveChanges();
         }
 
-        public ResponseAPI FindById(int id)
+        public SessionModel FindById(int id)
         {
-            var session = DbContext.Sessions.FirstOrDefault(x => x.Id == id);
+            var session = DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefault(x => x.Id == id);
             if (session != null)
-                return new ResponseAPI() { Data = session };
-            return new ResponseAPI() { Message = "could not find session" , StatusCode = 404};
+                return session;
+            throw new NotFoundException("could not find session");
         }
 
-        public ResponseAPI GetAll()
-        {
-            return new ResponseAPI() { Data = DbContext.Sessions.ToList() };
+        public IEnumerable<SessionModel> GetAll()
+        { 
+            return [.. DbContext.Sessions.Include(x => x.AttendendStudent)];
         }
 
-        public async Task<ResponseAPI> Update(int id, SessionSet sessionSet)
+        public async Task<SessionModel> Update(int id, SessionSet sessionSet, string issuerId)
         {
             var session = await DbContext.Sessions.FirstOrDefaultAsync(x => x.Id == id);
 
-            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-
             if (session == null)
-                return new ResponseAPI() { Message = "course not found", StatusCode = 404 };
+                throw new NotFoundException("course not found");
 
             if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
-                return new ResponseAPI() { Message = "invalid time line", StatusCode = 400 };
+               throw new BadRequestException("invalid time line");
 
             var course = await DbContext.Courses.Include(x => x.Instructor).FirstOrDefaultAsync(x => x.Id == sessionSet.CourseId);
 
             if (course == null || course.Instructor == null)
-                return new ResponseAPI() { Message = "course not found", StatusCode = 404 };
+                throw new NotFoundException("course not found");
 
             if (course.Instructor.Id.ToString() != issuerId)
-                return new ResponseAPI() { Message = "only instructors of the course can create sessions", StatusCode = 400 };
+                throw new BadRequestException("only instructors of the course can create sessions");
 
             session.UpdatedBy = issuerId;
             session.UpdateTime = DateTime.Now;
-
- 
             session.CourseId = course.Id;
             session.Course = course;
-
             session.MeetingLink = sessionSet.MeetingLink;
             session.StartsAt = sessionSet.StartsAt;
-            sessionSet.EndsAt = sessionSet.EndsAt;
+            session.EndsAt = sessionSet.EndsAt;
             session.Day = sessionSet.Day;
-
+    
             await DbContext.SaveChangesAsync();
-            return new ResponseAPI() { Data = session };
+            return session;
         }
     }
 }

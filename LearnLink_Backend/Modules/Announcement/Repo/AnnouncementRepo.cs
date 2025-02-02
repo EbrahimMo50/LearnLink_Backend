@@ -5,32 +5,23 @@ using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using LearnLink_Backend.Exceptions;
 
 namespace LearnLink_Backend.Modules.Announcement.Repo
 {
-    public class AnnouncementRepo(AppDbContext DbContext, IHttpContextAccessor httpContextAccess) : IAnnouncementRepo
+    public class AnnouncementRepo(AppDbContext DbContext) : IAnnouncementRepo
     {
-        public async Task<ResponseAPI> CreateAnnouncement(AnnouncementSet announcement)
+        public async Task<AnnouncementModel> CreateAnnouncement(AnnouncementModel announcement)
         {
-            if (httpContextAccess.HttpContext == null || httpContextAccess.HttpContext.User.FindFirstValue("Role") == null)
-                return new ResponseAPI() { Message = "Error in handling the context of the request"};
-
-            string createrId = httpContextAccess.HttpContext.User.FindFirstValue("id")!;
-            CourseModel? course = await DbContext.Courses.FirstOrDefaultAsync(x => x.Id == announcement.CourseId);
-
-            if (course == null)
-                return new ResponseAPI() { Message = "course could not be found" , StatusCode = 404 };
-
-            AnnouncementModel obj = new() { Title = announcement.Title, Description = announcement.Description, CourseId = announcement.CourseId, AtDate = DateTime.UtcNow, CreatedBy = createrId, Course = course};
-            await DbContext.Announcements.AddAsync(obj);
+            await DbContext.Announcements.AddAsync(announcement);
             await DbContext.SaveChangesAsync();
-            return new ResponseAPI() { Message = "Added Succefully", Data = obj };
+            return announcement;
         }
 
-        public ResponseAPI GetAllForCourse(int courseId)
+        public IEnumerable<AnnouncementModel> GetAllForCourse(int courseId)
         {
             var announcements = DbContext.Announcements.Where(x => x.CourseId == courseId);
-            return new ResponseAPI() { Data = AnnouncementGet.ToDTO(announcements) };
+            return announcements;
         }
 
         public void DeleteAnnouncement(int id)
@@ -41,26 +32,24 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
             DbContext.SaveChanges();
         }
 
-        public async Task<ResponseAPI> FindById(int id)
+        public async Task<AnnouncementModel> FindById(int id)
         {
             var announcement = await DbContext.Announcements.FirstOrDefaultAsync(x => x.Id == id);
-            if(announcement == null)
-                return new ResponseAPI() { Message = "could not find the announcement with given id" , StatusCode = 404 };
-
-            return new ResponseAPI() {Data = AnnouncementGet.ToDTO(announcement) };
+            return announcement == null ? throw new NotFoundException("could not find the announcement with given id") : announcement;
         }
 
-        public async Task<ResponseAPI> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
+        public async Task<AnnouncementModel> UpdateAnnouncement(int id, AnnouncementUpdate announcement, string createrId)
         {
             var elementToBeUpdated = await DbContext.Announcements.FirstOrDefaultAsync(x => x.Id == id);
             if(elementToBeUpdated == null)
-                return new ResponseAPI() { Message = "could not find the announcement with given id", StatusCode = 404 };
+                throw new NotFoundException("could not find the announcement with given id");
+
             elementToBeUpdated.Title = announcement.Title;
             elementToBeUpdated.Description = announcement.Description;
             elementToBeUpdated.UpdateTime = DateTime.UtcNow;
-            string createrId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             elementToBeUpdated.UpdatedBy = createrId;
-            return new ResponseAPI() { Data = elementToBeUpdated };
+            await DbContext.SaveChangesAsync();
+            return elementToBeUpdated;
         }
     }
 }

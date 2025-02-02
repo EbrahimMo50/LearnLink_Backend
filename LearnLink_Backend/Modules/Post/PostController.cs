@@ -1,64 +1,45 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace LearnLink_Backend.Modules.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController(IWebHostEnvironment hostingEnvironment) : ControllerBase
+    public class PostController() : ControllerBase
     {
-
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile imageFile)
+        public async Task<IActionResult> UploadImage()
         {
-            try
+            if (Request.Form.Files.Count == 0)
             {
-                if (imageFile == null || imageFile.Length == 0)
-                {
-                    return BadRequest("No image file selected.");
-                }
-
-                string allowedExtensions = ".jpg;.jpeg;.png;.gif";
-                string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
-                if (!allowedExtensions.Contains(fileExtension))
-                {
-                    return BadRequest("Invalid file type. Only " + allowedExtensions + " are allowed.");
-                }
-
-                string filePath = Path.Combine(hostingEnvironment.WebRootPath, "uploads", Guid.NewGuid().ToString() + fileExtension);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(stream);
-                }
-
-                return Ok(new { message = "Image uploaded successfully.", filePath });
+                return BadRequest("No file uploaded.");
             }
-            catch (Exception ex)
+
+            var file = Request.Form.Files[0]; 
+
+            if (file.Length == 0)
             {
-                return StatusCode(500, "Internal Server Error");
+                return BadRequest("Empty file uploaded.");
             }
-        }
 
-        [HttpGet("{fileName}")]
-        public async Task<IActionResult> GetImage(string fileName)
-        {
-            try
+            if (file.ContentType.StartsWith("image/") == false)
             {
-                string filePath = Path.Combine(hostingEnvironment.WebRootPath, "uploads", fileName);
-
-                if (!System.IO.File.Exists(filePath))
-                {
-                    return NotFound("Image not found.");
-                }
-
-                byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(filePath);
-
-                return File(imageBytes, "image/" + Path.GetExtension(fileName).Substring(1));
+                return BadRequest("Invalid file type. Only images are allowed.");
             }
-            catch (Exception ex)
+
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName!.Trim('"');
+            fileName = $"{Guid.NewGuid()}_{fileName}"; 
+            var filePath = Path.Combine("Uploads", fileName); 
+
+            Directory.CreateDirectory("Uploads");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                return StatusCode(500, "Internal Server Error");
+                await file.CopyToAsync(stream);
             }
+
+            return Ok(new { FileName = fileName, FilePath = filePath });
         }
     }
 }

@@ -2,14 +2,15 @@
 using LearnLink_Backend.Modules.Authentcation.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Authentcation
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AuthServices _auth) : ControllerBase
+    public class AuthController(AuthServices _auth, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("SignUp")]
+        [HttpPost("sign-up")]
         public async Task<ActionResult> SignUp(StudentSet student)
         {
             var result = await _auth.SignUp(student);
@@ -18,7 +19,7 @@ namespace LearnLink_Backend.Modules.Authentcation
 
             return BadRequest(result);
         }
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public IActionResult Login(LoginViewModel user)
         {
             var result = _auth.Login(user);
@@ -27,11 +28,12 @@ namespace LearnLink_Backend.Modules.Authentcation
 
             return Ok(result);
         }
-        [HttpPatch("changePassword")]
+        [HttpPatch("change-password")]
         [Authorize(Policy = "User")]
         public IActionResult ChangePass(ChangePassDTO passModel)
         {
-            return Ok(_auth.ChangePassword(passModel.Email, passModel.OldPassword, passModel.NewPassword));
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            return Ok(_auth.ChangePassword(issuerId, passModel.Email, passModel.OldPassword, passModel.NewPassword));
         }
     }
 }

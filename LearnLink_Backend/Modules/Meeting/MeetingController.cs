@@ -1,52 +1,55 @@
 ﻿using LearnLink_Backend.Modules.Meeting.DTOs;
 using LearnLink_Backend.Modules.User.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Meeting
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MeetingController(MeetingService service) : ControllerBase
+    public class MeetingController(MeetingService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("makeMeeting")]
+        [HttpPost()]
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> MakeMeeting(MeetingSet meeting)
         {
-            var result = await service.Create(meeting);
-            if (result.StatusCode != 200)
-                return BadRequest(result);
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            var result = await service.Create(meeting, issuerId);
             return Ok(result);
         }
 
-        [HttpGet("findById/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Policy = "User")]
         public IActionResult FindById(int id)
         {
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var result = service.FindById(id);
-            if (result.StatusCode != 200) 
-                return BadRequest(result);
             return Ok(result);
         }
 
-        [HttpGet("instructorMeetings")]
+        [HttpGet("instructors")]
         [Authorize(Policy = "InstructorPoilcy")]
         public async Task<IActionResult> GetMeetingsForInstructor()
         {
-            return Ok(await service.FindMeetingsForInstructor());
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            return Ok(await service.FindMeetingsForInstructor(issuerId));
         }
-        [HttpGet("studentMeetings")]
+        [HttpGet("students")]
         [Authorize(Policy = "StudentPoilcy")]
         public async Task<IActionResult> GetMeetingsForStudent()
         {
-            return Ok(await service.FindMeetingsForStudent());
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            return Ok(await service.FindMeetingsForStudent(issuerId));
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Policy = "User")]
         public IActionResult DeleteMeeting(int id)
         {
-            service.Delete(id);
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            service.Delete(id,issuerId);
             return Ok();
         }
     }

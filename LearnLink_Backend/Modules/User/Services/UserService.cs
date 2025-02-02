@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.Models;
 using LearnLink_Backend.Modules.User.DTOs;
@@ -7,15 +8,14 @@ using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.User.Services
 {
-    public class UserService(IHttpContextAccessor httpContextAccess,AppDbContext DbContext)
+    public class UserService(AppDbContext DbContext)
     {
-        public ResponseAPI UpdateSchedule(ScheduleSet scheduleSet)
+        public Schedule UpdateSchedule(ScheduleSet scheduleSet, string initiatorId)
         {
-            string initiatorId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var instructor = DbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
 
             if (instructor == null)
-                return new ResponseAPI() { Message = "could not find instructor", StatusCode = 404 };
+                throw new NotFoundException("could not find instructor");
 
             Schedule schedule = new()
             {
@@ -28,25 +28,21 @@ namespace LearnLink_Backend.Modules.User.Services
 
             DbContext.Schedules.Add(schedule);
             DbContext.SaveChanges();
-            return new ResponseAPI() { Data = schedule };
+            return schedule;
         }
-        public ResponseAPI AddBalance(string id, decimal balance)
+        public Student AddBalance(string id, decimal balance, string updaterId)
         {
-            var student = DbContext.Students.FirstOrDefault(x => x.Id.ToString() == id);
-            string updaterId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            if (student == null)
-                return new ResponseAPI() { Message = "could not find user", StatusCode = 404 };
-
+            var student = DbContext.Students.FirstOrDefault(x => x.Id.ToString() == id) ?? throw new NotFoundException("could not find user");
             student.UpdatedBy = updaterId;
             student.UpdateTime = DateTime.UtcNow;
             student.Balance += balance;
             DbContext.SaveChanges();
-            return new ResponseAPI() { Message = "updated user balance", Data = student };
+            return student;
         }
-        public ResponseAPI ApplyForInstructor(InstructorAppSet applicationSet)
+        public string ApplyForInstructor(InstructorAppSet applicationSet)
         {
             if (DbContext.InstructorApplications.Any())
-                return new ResponseAPI() { Message = "application already exists", StatusCode = 400 };
+                throw new BadRequestException("application already exists");
             
             InstructorApplicationModel application = new()
             {
@@ -60,7 +56,7 @@ namespace LearnLink_Backend.Modules.User.Services
             };
             DbContext.InstructorApplications.Add(application);
             DbContext.SaveChanges();
-            return new ResponseAPI() { Message = "succefully applied" };
+            return"succefully applied";
         }
     }
 }

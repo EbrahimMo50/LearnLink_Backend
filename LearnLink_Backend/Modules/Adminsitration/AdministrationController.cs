@@ -2,55 +2,58 @@
 using LearnLink_Backend.Modules.Adminstration.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Adminsitration
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdministrationController(AdministrationService service) : ControllerBase
+    public class AdministrationController(AdministrationService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("addAdmin")]
+        [HttpPost("admins")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult AddAdmin(AdminSignVM adminAccount)
         {
-            return Ok(service.AddAdmin(adminAccount));
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            return Ok(service.AddAdmin(adminAccount,issuerId));
         }
 
-        [HttpGet("getApplications")]
+        [HttpGet("applications")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetApplications()
         {
             return Ok(await service.GetApplications());
         }
 
-        [HttpGet("getStudents")]
+        [HttpGet("students")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult GetStudents()
         {
             return Ok(service.GetAllStudents());
         }
 
-        [HttpGet("getInstructors")]
+        [HttpGet("instructors")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult GetInstructors()
         {
             return Ok(service.GetAllInstructors());
         }
 
-        [HttpPut("acceptApplication/{id}")]
+        [HttpPut("application/{id}/accept")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> AcceptApplication(int id)
         {
-            return Ok(await service.AcceptApplication(id));
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            return Ok(await service.AcceptApplication(id, issuerId));
         }
 
-        [HttpDelete("deleteUser/{id}")]
+        [HttpDelete("user/{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult DeleteUser(string id)
         {
             return Ok(service.RemoveUser(id));
         }
-        [HttpDelete("deleteApplication/{id}")]
+        [HttpDelete("application/{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult DeleteApplication(int id)
         {

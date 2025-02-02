@@ -1,43 +1,69 @@
 ﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Courses.DTOs;
+using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Courses
 {
     public class CourseService(ICourseRepo repo,AppDbContext DbContext)
     {
-        public Task<ResponseAPI> CreateCourse(CourseSet course)
+        public async Task<CourseModel> CreateCourse(CourseSet course, string createrId)
         {
-            return repo.CreateCourse(course);
+            Instructor? instructor = await DbContext.Instructors.FirstOrDefaultAsync(x => x.Id.ToString() == course.InstructorId);
+
+            if (instructor == null)
+                throw new NotFoundException("could not find specified instructor");
+
+            CourseModel obj = new() { Name = course.Name, Instructor = instructor, CreatedBy = createrId, AtDate = DateTime.UtcNow };
+
+            return await repo.CreateCourse(obj);
         }
-        public ResponseAPI GetAllCourses()
+        public IEnumerable<CourseGet> GetAllCourses()
         {
-            return repo.GetAllCourses();
+            return CourseGet.ToDTO(repo.GetAllCourses());
         }
-        public Task<ResponseAPI> FindById(int id)
+        public async Task<CourseGet> FindById(int id)
         {
-            return repo.FindById(id);
+            return CourseGet.ToDTO(await repo.FindById(id));
         }
         public void Delete(int id)
         {
             repo.Delete(id);
         }
-        public Task<ResponseAPI> UpdateCourse(int id, CourseSet course)
+        public async Task<CourseModel> UpdateCourse(int id, CourseSet course, string updaterId)
         {
-            return repo.UpdateCourse(id, course);
+            var updatedElement = await DbContext.Courses.FirstOrDefaultAsync(x => x.Id == id);
+            var instructor = await DbContext.Instructors.FirstOrDefaultAsync(x => x.Id.ToString() == course.InstructorId);
+
+            if (instructor == null)
+                throw new NotFoundException("could not find the instructor");
+
+            if (updatedElement == null)
+                throw new NotFoundException("could not find the course");
+
+            if (updaterId == null)
+                throw new BadRequestException("corrupted payload");
+
+            return await repo.UpdateCourse(id, course, updaterId);
         }
-        public async Task<ResponseAPI> JoinCourse(string studentId, int courseId)
+        public async Task<string> JoinCourse(int courseId, string studentId)
         {
+            if (studentId == null)
+                throw new BadRequestException("corrupted payload");
+
             var student = await DbContext.Students.Include(x => x.Courses).FirstOrDefaultAsync(x => x.Id.ToString() == studentId);
             var course = await DbContext.Courses.Include(x => x.Students).FirstOrDefaultAsync(x => x.Id == courseId);
             if (student == null || course == null)
-                return new ResponseAPI() { Message = "could not find quered data" , StatusCode = 404};
+                throw new NotFoundException("could not find quered data");
 
-            if(student.Courses.FirstOrDefault(x => x.Id == courseId) != null)
-                return new ResponseAPI() { Message = "student already registered", StatusCode = 409};  //Conflict status code
+            if (student.Courses.FirstOrDefault(x => x.Id == courseId) != null)
+                throw new ConfilctException("student already registered");
 
             student.Courses.Add(course);
             course.Students.Add(student);
@@ -47,17 +73,17 @@ namespace LearnLink_Backend.Modules.Courses
 
             await DbContext.SaveChangesAsync();
 
-            return new ResponseAPI() { Message = "joined succefully", StatusCode = 200 };
+            return "joined succefully";
         }
-        public async Task<ResponseAPI> LeaveCourse(string studentId, int courseId)
+        public async Task<string> LeaveCourse(string studentId, int courseId)
         {
             var student = await DbContext.Students.Include(x => x.Courses).FirstOrDefaultAsync(x => x.Id.ToString() == studentId);
             var course = await DbContext.Courses.Include(x => x.Students).FirstOrDefaultAsync(x => x.Id == courseId);
             if (student == null || course == null)
-                return new ResponseAPI() { Message = "could not find quered data", StatusCode = 404 };
+                throw new NotFoundException("could not find quered data");
 
             if (student.Courses.FirstOrDefault(x => x.Id == courseId) == null)
-                return new ResponseAPI() { Message = "student is not registered to this course", StatusCode = 409 };  //Conflict status code
+               throw new ConfilctException("student is not registered to this course");  //Conflict status code
 
             student.Courses.Remove(course);
             course.Students.Remove(student);
@@ -67,7 +93,7 @@ namespace LearnLink_Backend.Modules.Courses
 
             await DbContext.SaveChangesAsync();
 
-            return new ResponseAPI() { Message = "left succefully", StatusCode = 200 };
+            return "left succefully";
         }
     }
 }

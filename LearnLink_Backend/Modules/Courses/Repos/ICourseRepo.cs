@@ -1,14 +1,15 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Modules.Courses.DTOs;
+using LearnLink_Backend.Modules.Courses.Models;
 
 namespace LearnLink_Backend.Modules.Courses.Repos
 {
     public interface ICourseRepo
     {
-        public Task<ResponseAPI> CreateCourse(CourseSet course);
-        public ResponseAPI GetAllCourses();
-        public Task<ResponseAPI> FindById(int id);
+        public Task<CourseModel> CreateCourse(CourseModel course);
+        public IEnumerable<CourseModel> GetAllCourses();
+        public Task<CourseModel> FindById(int id);
         public void Delete(int id);
-        public Task<ResponseAPI> UpdateCourse(int id, CourseSet course);
+        public Task<CourseModel> UpdateCourse(int id, CourseSet course, string updaterId);
     }
 }

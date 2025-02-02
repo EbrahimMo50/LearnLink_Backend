@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Modules.Session.DTOs;
 using LearnLink_Backend.Modules.Session.Repos;
 using LearnLink_Backend.Services;
@@ -7,75 +8,72 @@ using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session
 {
-    public class SessionService(AppDbContext DbContext, IHttpContextAccessor httpContextAccess, ISessionRepo repo)
+    public class SessionService(AppDbContext DbContext, ISessionRepo repo)
     {
-       public async Task<ResponseAPI> Create(SessionSet sessionSet)
+       public async Task<SessionModel> Create(SessionSet sessionSet, string issuerId)
         {
-            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
-                return new ResponseAPI() { Message = "invalid time line", StatusCode = 400 };
+                throw new BadRequestException("invalid time line");
 
             var course = await DbContext.Courses.Include(x => x.Instructor).FirstOrDefaultAsync(x => x.Id == sessionSet.CourseId);
 
             if (course == null || course.Instructor == null)
-                return new ResponseAPI() { Message = "course not found", StatusCode = 404 };
+                throw new NotFoundException("course not found");
 
             if (course.Instructor.Id.ToString() != issuerId)
-                return new ResponseAPI() { Message = "only instructors of the course can create sessions", StatusCode = 400 };
+                throw new BadRequestException("only instructors of the course can create sessions");
 
             SessionModel session = new() { Day = sessionSet.Day, CreatedBy = issuerId, CourseId = sessionSet.CourseId, EndsAt = sessionSet.EndsAt, Course = course, MeetingLink = sessionSet.MeetingLink };
             return await repo.Create(session);
         }
-        public ResponseAPI FindById(int id)
+        public SessionGet FindById(int id)
         {
-            return repo.FindById(id);
+            return SessionGet.ToDTO(repo.FindById(id));
         }
-        public ResponseAPI GetAll()
+        public IEnumerable<SessionGet> GetAll()
         {
-            return repo.GetAll();
+            return SessionGet.ToDTO(repo.GetAll());
         }
-        public async Task<ResponseAPI> Update(int id, SessionSet sessionSet)
+        public async Task<SessionModel> Update(int id, SessionSet sessionSet, string issuerId)
         {
-            return await repo.Update(id, sessionSet);
+            return await repo.Update(id, sessionSet, issuerId);
         }
         public void Delete(int id)
         {
             repo.Delete(id);
         }
-        public async Task<ResponseAPI> AttendSession(int sessionId)
+        public async Task<string> AttendSession(int sessionId, string studentId)
         {
-            var studentId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var student = await DbContext.Students.FirstOrDefaultAsync(x => x.Id.ToString() == studentId);
             if (student == null)
-                return new ResponseAPI() { Message = "invalid user", StatusCode = 400 };
+                throw new BadRequestException("invalid user");
             
             var session = await DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefaultAsync(x => x.Id == sessionId);
             if (session == null)
-                return new ResponseAPI() { Message = "could not find session", StatusCode = 404 };
+                throw new NotFoundException("could not find session");
 
             if(session.Day == DateOnly.FromDateTime(DateTime.Now)){
 
                 if (session.EndsAt < TimeOnly.FromDateTime(DateTime.Now) || session.StartsAt > TimeOnly.FromDateTime(DateTime.Now))
-                    return new ResponseAPI() { Message = "session is inavtice currently", StatusCode = 400 };
+                   throw new BadRequestException("session is inavtice currently");
 
                 session.AttendendStudent.Add(student);
                 await DbContext.SaveChangesAsync();
 
-                return new ResponseAPI() { Message = "student attended", Data = session.MeetingLink };
+                return session.MeetingLink;
             }
 
-            return new ResponseAPI() { Message = "session is not due today", StatusCode = 400 };
-
+            throw new BadRequestException("session is not due today");
         }
 
-        public ResponseAPI GetAttendance(int sessionId)
+        public IEnumerable<string> GetAttendance(int sessionId)
         {
             var session = DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefault(x => x.Id == sessionId);
 
             if(session == null)
-                return new ResponseAPI() { Message = "could not find session", StatusCode = 404 };
+               throw new NotFoundException("could not find session");
 
-            return new ResponseAPI() { Data = session.AttendendStudent.ToList() };
+            return session.AttendendStudent.ToList().Select(x => x.Id).Select(x => x.ToString());
         }
     }
 }

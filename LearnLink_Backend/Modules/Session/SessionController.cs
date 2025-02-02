@@ -4,71 +4,64 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SessionController(SessionService service) : ControllerBase
+    public class SessionController(SessionService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("create")]
+        [HttpPost()]
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> Create(SessionSet sessionSet)
         {
-            var result = await service.Create(sessionSet);
-
-            if(result.StatusCode != 200)
-                return BadRequest(result);
+            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            var result = await service.Create(sessionSet,issuerId);
             return Ok(result);
         }
 
-        [HttpGet("findById/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Policy = "User")]
         public IActionResult FindById(int id)
         {
             var result = service.FindById(id);
-
-            if (result.StatusCode != 200)
-                return BadRequest(result);
             return Ok(result);
         }
 
-        [HttpGet("getAll")]
+        [HttpGet()]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult GetAll()
         {
             return Ok(service.GetAll());
         }
 
-        [HttpGet("attendance")]
+        [HttpGet("{sessionId}/attendance")]
         [Authorize(Policy = "AdminOrInstructor")]
         public IActionResult GetAttendance(int sessionId)
         {
             return Ok(service.GetAttendance(sessionId));
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> Update(int id, SessionSet sessionSet)
         {
-            var result = await service.Update(id,sessionSet);
-
-            if (result.StatusCode != 200)
-                return BadRequest(result);
+            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            var result = await service.Update(id,sessionSet,issuerId);
             return Ok(result);
         }
 
-        [HttpPatch("attendSession/{sessionId}")]
+        [HttpPatch("{sessionId}/attend")]
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> AttendSession(int sessionId)
         {
-            var result = await service.AttendSession(sessionId);
-            if (result.StatusCode != 200)
-                return BadRequest(result);
+            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            var result = await service.AttendSession(sessionId,issuerId);
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete()]
         [Authorize(Policy = "AdminOrInstructor")]
         public IActionResult Delete(int id)
         {

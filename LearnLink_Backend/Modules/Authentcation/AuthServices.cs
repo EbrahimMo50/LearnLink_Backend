@@ -15,12 +15,10 @@ namespace LearnLink_Backend.Modules.Authentcation
     {
         private readonly AppDbContext _context;
         private readonly TokenService _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public AuthServices(AppDbContext context, TokenService authService, IHttpContextAccessor contexAccess)
+        public AuthServices(AppDbContext context, TokenService authService)
         {
             _context = context;
             _authService = authService;
-            _httpContextAccessor = contexAccess;
 
         }
         public async Task<string> SignUp(StudentSet studentVM)
@@ -82,10 +80,8 @@ namespace LearnLink_Backend.Modules.Authentcation
             return "invalid";
         }
 
-        public string ChangePassword(string email , string oldPass, string newPass)
+        public string ChangePassword(string initiatorId, string email , string oldPass, string newPass)
         {
-            string initiatorId = _httpContextAccessor.HttpContext!.User.FindFirstValue("id")!;
-
             var student = _context.Students.FirstOrDefault(x => x.Id.ToString() == initiatorId);
             if (student != null)
                 if (Hash(student.Salt, oldPass) == student.HashedPassword && student.Email == email)

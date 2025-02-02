@@ -1,3 +1,4 @@
+using LearnLink_Backend.MiddleWares;
 using LearnLink_Backend.Modules.Adminstration;
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
@@ -155,6 +156,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleWare>();
 
 app.UseHttpsRedirection();
 
