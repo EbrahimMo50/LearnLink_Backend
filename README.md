@@ -14,4 +14,10 @@ clone the repo using
 ```bash
 git clone https://github.com/EbrahimMo50/LearnLink_Backend.git
 ```
-run <mark>**dotnet restore**</mark> to reload the nugget packags
+run **dotnet restore** to reload the nugget packags
+
+adjust the database configuration in **appsettings.json** (sqlserver provider)
+
+build the project using **dotnet build**
+
+the application is configured to run with swagger displaying the endpoints on run
