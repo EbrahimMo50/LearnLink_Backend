@@ -16,7 +16,7 @@ namespace LearnLink_Backend.Modules.Post
                 return BadRequest("No file uploaded.");
             }
 
-            var file = Request.Form.Files[0]; 
+            var file = Request.Form.Files[0]; // this will take the first file to be found not multiple files
 
             if (file.Length == 0)
             {
