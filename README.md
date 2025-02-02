@@ -21,3 +21,5 @@ adjust the database configuration in **appsettings.json** (sqlserver provider)
 build the project using **dotnet build**
 
 the application is configured to run with swagger displaying the endpoints on run
+
+## Status
