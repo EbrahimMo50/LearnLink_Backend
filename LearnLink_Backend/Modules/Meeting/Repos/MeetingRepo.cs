@@ -44,7 +44,6 @@ namespace LearnLink_Backend.Modules.Meeting.Repos
 
         public void Delete(int id, string issuerId)
         {
-            //string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var meeting = DbContext.Meetings.Include(x => x.Student).Include(x => x.Instructor).FirstOrDefault(x => x.Id == id);
             if (meeting == null)
                 return;
