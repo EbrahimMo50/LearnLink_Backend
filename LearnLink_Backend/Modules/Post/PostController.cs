@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using LearnLink_Backend.Modules.Post.DTOs;
 using LearnLink_Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
@@ -24,6 +25,7 @@ namespace LearnLink_Backend.Modules.Post
             this._mediaService = mediaService;
         }
         [HttpPost()]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreatePost(PostSet post)
         {
             bool fileExists = true;
@@ -45,12 +47,14 @@ namespace LearnLink_Backend.Modules.Post
             return Ok(result);
         }
         [HttpGet("{id}")]
+        [Authorize(Policy = "User")]
         public IActionResult GetPost(int id)
         {
             var result = _service.GetPost(id);
             return Ok(result);
         }
         [HttpGet("recent")]
+        [Authorize(Policy = "User")]
         public IActionResult GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
         {
             var result = _service.GetRecentPosts(10,page);  // limit is hard coded to 10 for now
@@ -58,6 +62,7 @@ namespace LearnLink_Backend.Modules.Post
         }
 
         [HttpGet("media/{fileName}")]
+        [Authorize(Policy = "User")]
         public IActionResult GetMedia(string fileName)
         {
             var filePath = Path.Combine("Uploads", fileName);
