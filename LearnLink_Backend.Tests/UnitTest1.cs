@@ -4,7 +4,6 @@ using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Moq;
 
