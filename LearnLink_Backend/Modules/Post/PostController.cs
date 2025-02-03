@@ -23,7 +23,7 @@ namespace LearnLink_Backend.Modules.Post
         [HttpPost()]
         public IActionResult CreatePost(PostSet post)
         {
-            var result = _service.CreatePost(post);
+            var result = _service.CreatePost(post, IssuerId);
             return Ok(result);
         }
         [HttpGet("{id}")]
@@ -33,10 +33,9 @@ namespace LearnLink_Backend.Modules.Post
             return Ok(result);
         }
         [HttpGet("recent")]
-        public IActionResult GetRecentPosts(int page = 1)
+        public IActionResult GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
         {
-            // var result = _service.GetRecentPosts(10,page);
-            Console.WriteLine(page);
+            var result = _service.GetRecentPosts(10,page);  // limit is hard coded to 10 for now
             return Ok();
         }
     }

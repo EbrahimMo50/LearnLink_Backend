@@ -1,10 +1,12 @@
 ﻿using LearnLink_Backend.Modules.Post.DTOs;
+using LearnLink_Backend.Modules.Post.Repos;
 
 namespace LearnLink_Backend.Modules.Post
 {
-    public class PostService
+    public class PostService(IPostRepo repo)
     {
-        internal object CreatePost(PostSet post)
+
+        internal object CreatePost(PostSet post, string IssuerId)
         {
             throw new NotImplementedException();
         }
@@ -14,7 +16,7 @@ namespace LearnLink_Backend.Modules.Post
             throw new NotImplementedException();
         }
 
-        internal object GetRecentPosts(int v, int page)
+        internal object GetRecentPosts(int limit, int page)
         {
             throw new NotImplementedException();
         }
