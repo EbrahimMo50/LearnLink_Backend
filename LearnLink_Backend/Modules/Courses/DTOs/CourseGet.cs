@@ -9,11 +9,11 @@ namespace LearnLink_Backend.Modules.Courses.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Instructor Instructor { get; set; }
+        public string Instructor { get; set; }
 
         public static CourseGet ToDTO(CourseModel course)
         {
-            return new CourseGet() { Id = course.Id, Instructor = course.Instructor, Name = course.Name };
+            return new CourseGet() { Id = course.Id, Instructor = course.Instructor!.Id.ToString(), Name = course.Name };
         }
         public static IEnumerable<CourseGet> ToDTO(IEnumerable<CourseModel> courses)
         {

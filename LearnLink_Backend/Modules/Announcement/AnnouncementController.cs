@@ -20,12 +20,14 @@ namespace LearnLink_Backend.Modules.Announcement
             return Ok(response);
         }
         [HttpGet()]
+        [Authorize(Policy = "User")]
         public IActionResult GetAllForCourse(int courseId)
         {
             var response = service.GetAllForCourse(courseId);
             return Ok(response);
         }
         [HttpGet("{id}")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> FindById(int id)
         {
             var response = await service.FindById(id);
