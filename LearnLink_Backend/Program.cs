@@ -7,6 +7,8 @@ using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Meeting.Repos;
+using LearnLink_Backend.Modules.Post;
+using LearnLink_Backend.Modules.Post.Repos;
 using LearnLink_Backend.Modules.Session;
 using LearnLink_Backend.Modules.Session.Repos;
 using LearnLink_Backend.Modules.User.Services;
@@ -94,7 +96,10 @@ builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<AdministrationService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<ISessionRepo, SessionRepo>();
+builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<UserService>();
+
 
 builder.Services
     .AddAuthentication(x =>
