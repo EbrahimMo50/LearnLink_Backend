@@ -34,5 +34,20 @@ namespace LearnLink_Backend.Modules.User.Controllers
             var result = service.AddBalance(studentId, amount, issuerId);
             return Ok(result);
         }
+
+        //two methods to get students and instructors for performance
+        [HttpGet("students")]
+        [Authorize(Policy = "AdminOrInstructor")]
+        public IActionResult GetStudents([FromBody] List<string> ids)  
+        {
+            return Ok(service.GetStudents(ids));
+        }
+
+        [HttpGet("instructors")]
+        [Authorize(Policy = "Admin")]
+        public IActionResult GetInstructors([FromBody] List<string> ids)
+        {
+            return Ok(service.GetInstructors(ids));
+        }
     }
 }

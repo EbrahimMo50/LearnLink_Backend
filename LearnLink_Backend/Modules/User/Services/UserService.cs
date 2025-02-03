@@ -4,6 +4,7 @@ using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.Models;
 using LearnLink_Backend.Modules.User.DTOs;
 using LearnLink_Backend.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.User.Services
@@ -57,6 +58,16 @@ namespace LearnLink_Backend.Modules.User.Services
             DbContext.InstructorApplications.Add(application);
             DbContext.SaveChanges();
             return"succefully applied";
+        }
+
+        internal IActionResult GetStudents(List<string> ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IActionResult GetInstructors(List<string> ids)
+        {
+            throw new NotImplementedException();
         }
     }
 }

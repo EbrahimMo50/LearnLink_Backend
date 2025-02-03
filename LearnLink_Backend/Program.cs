@@ -72,10 +72,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 // .NET libs dependecny injection 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton
-builder.Services.AddDbContext<AppDbContext>(
-     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
-     );
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton and reduce redundancy
 
 // policies injection
 builder.Services.AddScoped<IAuthorizationHandler, StudentRequirmentHandler>();
@@ -93,12 +90,18 @@ builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<MeetingService>();
 builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
-builder.Services.AddScoped<AdministrationService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<ISessionRepo, SessionRepo>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<IPostRepo, PostRepo>();
+builder.Services.AddScoped<AdministrationService>();
 builder.Services.AddScoped<UserService>();
+
+// independent services injections
+builder.Services.AddDbContext<AppDbContext>(
+     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
+     );
+builder.Services.AddScoped<MediaService>();
 
 
 builder.Services
