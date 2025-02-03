@@ -23,3 +23,5 @@ build the project using **dotnet build**
 the application is configured to run with swagger displaying the endpoints on run
 
 ## Status
+
+tests are being implemented to prepare for publishing
