@@ -25,3 +25,9 @@ the application is configured to run with swagger displaying the endpoints on ru
 ## Status
 
 tests are being implemented to prepare for publishing
+
+## MarkDowns
+
+file structure is not in the best shape. seprating the layers to infrastructure, core and presentation is recommended
+
+user tables follow table per concerete denying scalabillity since there are 3 tables for users; consider following table per type design
