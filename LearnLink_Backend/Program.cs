@@ -26,8 +26,8 @@ using System.Text;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
-//the application should have followed an inheritance logic between admin student and instructor with them sharing an abstraction, but lack of knowledge about EF Core handling denyed that :/
-//such implementation will limit scalability and checking the user login will occur on 3 tables adding more roles will require more checks further look up for a better method should be carried
+//database uses TBC(table per conc) for each type of user
+//such implementation limit scalability and checking the user login will occur on 3 tables adding more roles will require more checks further look up for a better method should be carried
 
 //the app will follow the failfast design no try catches will be used to stress the program for bugs and potential errors
 
@@ -176,6 +176,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-// TODO next test the app importantly because the system was not tested at all
-// add option for users to apply for instructor in user module add range on days and hours in meetings

@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using LearnLink_Backend.Modules.Post.DTOs;
+using LearnLink_Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
@@ -14,15 +15,32 @@ namespace LearnLink_Backend.Modules.Post
         private string IssuerId;
         private readonly PostService _service;
         private readonly IHttpContextAccessor _httpContextAccess;
-        PostController(PostService service, IHttpContextAccessor httpContextAccess)
+        private readonly MediaService _mediaService;
+        public PostController(PostService service, IHttpContextAccessor httpContextAccess, MediaService mediaService)
         {
             this._httpContextAccess = httpContextAccess;
             this._service = service;
             this.IssuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            this._mediaService = mediaService;
         }
         [HttpPost()]
-        public IActionResult CreatePost(PostSet post)
+        public async Task<IActionResult> CreatePost(PostSet post)
         {
+            bool fileExists = true;
+            if (Request.Form.Files.Count == 0)
+                fileExists = false;
+
+            var file = Request.Form.Files[0]; 
+
+            if (file.Length == 0)
+                fileExists = false;
+            
+            string? imageName = null;
+
+            if (fileExists)
+                imageName = await _mediaService.SaveImage(file);
+
+            post.ImageName = imageName;
             var result = _service.CreatePost(post, IssuerId);
             return Ok(result);
         }
@@ -36,67 +54,32 @@ namespace LearnLink_Backend.Modules.Post
         public IActionResult GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
         {
             var result = _service.GetRecentPosts(10,page);  // limit is hard coded to 10 for now
-            return Ok();
+            return Ok(result);
+        }
+
+        [HttpGet("media/{fileName}")]
+        public IActionResult GetMedia(string fileName)
+        {
+            var filePath = Path.Combine("Uploads", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, GetContentType(fileName), fileName);
+        }
+
+        private static string GetContentType(string fileName)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+
+            if (provider.TryGetContentType(fileName, out string contentType))
+            {
+                return contentType;
+            }
+            return "application/octet-stream";
         }
     }
 }
-
-
-//[HttpPost("upload")]
-//public async Task<IActionResult> UploadImage()
-//{
-//    if (Request.Form.Files.Count == 0)
-//    {
-//        return BadRequest("No file uploaded.");
-//    }
-
-//    var file = Request.Form.Files[0]; // this will take the first file to be found not multiple files
-
-//    if (file.Length == 0)
-//    {
-//        return BadRequest("Empty file uploaded.");
-//    }
-
-//    if (file.ContentType.StartsWith("image/") == false)
-//    {
-//        return BadRequest("Invalid file type. Only images are allowed.");
-//    }
-
-//    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName!.Trim('"');
-//    fileName = $"{Guid.NewGuid()}_{fileName}";
-//    var filePath = Path.Combine("Uploads", fileName);
-
-//    Directory.CreateDirectory("Uploads");
-
-//    using (var stream = new FileStream(filePath, FileMode.Create))
-//    {
-//        await file.CopyToAsync(stream);
-//    }
-
-//    return Ok(new { FileName = fileName, FilePath = filePath });
-//}
-
-//[HttpGet("media/{fileName}")]
-//public IActionResult GetMedia(string fileName)
-//{
-//    var filePath = Path.Combine("Uploads", fileName);
-
-//    if (!System.IO.File.Exists(filePath))
-//    {
-//        return NotFound();
-//    }
-
-//    var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-//    return File(fileStream, GetContentType(fileName), fileName);
-//}
-
-//private static string GetContentType(string fileName)
-//{
-//    var provider = new FileExtensionContentTypeProvider();
-
-//    if (provider.TryGetContentType(fileName, out string contentType))
-//    {
-//        return contentType;
-//    }
-//    return "application/octet-stream";
-//}

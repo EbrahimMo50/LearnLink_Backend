@@ -1,24 +1,50 @@
-﻿using LearnLink_Backend.Modules.Post.DTOs;
+﻿using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Models;
+using LearnLink_Backend.Modules.Post.DTOs;
 using LearnLink_Backend.Modules.Post.Repos;
+using LearnLink_Backend.Services;
 
 namespace LearnLink_Backend.Modules.Post
 {
-    public class PostService(IPostRepo repo)
+    public class PostService(IPostRepo repo, MediaService mediaService, AppDbContext DbContext)
     {
 
-        internal object CreatePost(PostSet post, string IssuerId)
+        public async Task<PostModel> CreatePost(PostSet postSet, string IssuerId)
         {
-            throw new NotImplementedException();
+            PostModel post = new();
+            Admin admin = DbContext.Admins.Where(x => x.Id.ToString() == IssuerId).FirstOrDefault() ?? throw new NotFoundException("Admin not found");
+            post.Author = admin;
+            post.Title = postSet.Title;
+            post.Description = postSet.Description;
+            post.CreatedBy = IssuerId;
+            post.ImagePath = postSet.ImageName;
+            return await repo.CreatePost(post);
         }
 
-        internal object GetPost(int id)
+        public PostGet GetPost(int id)
         {
-            throw new NotImplementedException();
+            return PostGet.ToDTO(repo.GetPost(id));
         }
 
-        internal object GetRecentPosts(int limit, int page)
+        public async Task<IEnumerable<PostGet>> GetRecentPosts(int limit, int page)
         {
-            throw new NotImplementedException();
+            return PostGet.ToDTO(await repo.GetRecentPosts(limit, page));
+        }
+
+        public void DeleteTask(int id)
+        {
+            repo.DeleteTask(id);
+        }
+
+        public PostModel UpdatePost(int id, PostSet newPost, string IssuerId)
+        {
+            if(DbContext.Admins.Where(x => x.Id.ToString() == IssuerId).FirstOrDefault() == null)
+                throw new NotFoundException("Admin not found");
+
+            if(DbContext.Posts.Where(x => x.Id == id).FirstOrDefault() == null)
+                throw new NotFoundException("Post not found");
+
+            return repo.UpdatePost(id, newPost, IssuerId);
         }
     }
 }

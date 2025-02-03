@@ -27,28 +27,5 @@ namespace LearnLink_Backend.Services
             }
             return fileName;
         }
-
-        [HttpGet("media/{fileName}")]
-        public void GetMedia(string fileName)
-        {
-            var filePath = Path.Combine("Uploads", fileName);
-
-            if (!File.Exists(filePath))
-                throw new NotFoundException("file could not be found");
-
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            //return FileStreamResult(fileStream, GetContentType(fileName), fileName);
-        }
-
-        private static string GetContentType(string fileName)
-        {
-            var provider = new FileExtensionContentTypeProvider();
-
-            if (provider.TryGetContentType(fileName, out string contentType))
-            {
-                return contentType;
-            }
-            return "application/octet-stream";
-        }
     }
 }
