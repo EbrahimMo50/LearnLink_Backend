@@ -10,24 +10,25 @@ namespace LearnLink_Backend.Modules.User.Controllers
     [ApiController]
     public class UserController(UserService service,IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("applyForInstructor")]
+        [HttpPost("instructors/applications")]
         public IActionResult Apply(InstructorAppSet app)
         {
             var result = service.ApplyForInstructor(app);
             return Ok(result);
         }
 
-        [HttpPut("updateSchedule")]
+        [HttpPut("instructor/{instructorId}/schedule")]
         [Authorize(Policy = "InstructorPolicy")]
-        public IActionResult UpdateSchedule(ScheduleSet scheduleSet)
+        public IActionResult UpdateSchedule(string instructorId, ScheduleSet scheduleSet)
         {
+            scheduleSet.SetInstructorId(instructorId);
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             return Ok(service.UpdateSchedule(scheduleSet,issuerId));
         }
 
-        [HttpPut("updateBalance/{studentId}/{amount}")]
+        [HttpPatch("student/{studentId}/balance")]
         [Authorize(Policy = "AdminPolicy")]
-        public IActionResult AddBalance(string studentId, decimal amount)
+        public IActionResult AddBalance(string studentId,[FromHeader] decimal amount)
         {
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var result = service.AddBalance(studentId, amount, issuerId);
