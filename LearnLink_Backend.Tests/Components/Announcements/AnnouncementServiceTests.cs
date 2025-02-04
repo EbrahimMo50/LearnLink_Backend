@@ -1,0 +1,97 @@
+﻿using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Modules.Announcement.Repo;
+using LearnLink_Backend.Modules.Announcement;
+using LearnLink_Backend.Services;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using LearnLink_Backend.Modules.Announcement.DTOs;
+using LearnLink_Backend.Modules.Courses.Models;
+
+namespace LearnLink_Backend.Tests.Components.Announcements
+{
+    [TestClass]
+    public class AnnouncementServiceTests
+    {
+        [TestMethod]
+        public void CreateAnnouncement_InvalidCourse_NotFoundExceptionThrown()
+        {
+            var mockedRepo = new Mock<IAnnouncementRepo>();
+            var mockedContext = new Mock<AppDbContext>();
+            var service = new AnnouncementService(mockedRepo.Object, mockedContext.Object);
+        }
+
+        // integration test ?
+        [TestMethod]
+        public async Task CreateAnnouncement_ValidInput_AnnouncementCreated()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                            .UseInMemoryDatabase("CreateAnnouncement_ValidInput_AnnouncementCreated")
+                            .Options;
+            using (var context = new AppDbContext(options))
+            {
+                context.Courses.Add(new CourseModel() { Name = "Course", CreatedBy = "self" });
+                context.SaveChanges();
+                var repo = new AnnouncementRepo(context);
+                var service = new AnnouncementService(repo, context);
+                var result = await service.CreateAnnouncement(new AnnouncementSet() { Title = "hello", Description = "this is hello" }, 1, "self");
+                Assert.IsTrue(context.Announcements.Any());
+            }
+        }
+
+        [TestMethod]
+        public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                            .UseInMemoryDatabase("GetAllForCourse_ValidCourseId_AnnouncementsReturned")
+                            .Options;
+            var context = new Mock<AppDbContext>(options);
+
+            var repo = new Mock<IAnnouncementRepo>();
+            repo.Setup(x => x.GetAllForCourse(It.IsAny<int>())).Returns
+                ([
+                new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello", CourseId = 1 },
+                new AnnouncementModel() { Title = "hello2", CreatedBy = "self", Description = "this is hello2", CourseId = 1 } 
+                ]);
+            var service = new AnnouncementService(repo.Object, context.Object);
+            var announcements = service.GetAllForCourse(1);
+            Assert.AreEqual(announcements.Count(), 2);
+        }
+
+        [TestMethod]
+        public void GetAllForCourse_EmptyCourseId_EmptyListReturned()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                            .UseInMemoryDatabase("GetAllForCourse_EmptyCourseId_EmptyListReturned")
+                            .Options;
+
+            using (var context = new AppDbContext(options))
+            {
+                var repo = new Mock<IAnnouncementRepo>();
+                var service = new AnnouncementService(repo.Object, context);
+                var Course = new CourseModel() { Name = "Course", CreatedBy = "self" };
+                context.Courses.Add(Course);
+                context.SaveChanges();
+                var announcements = service.GetAllForCourse(1);
+                Assert.AreEqual(announcements.Count(), 0);
+                context.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public async Task FindById_ValidId_AnnouncementReturned()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                            .UseInMemoryDatabase("FindById_ValidId_AnnouncementReturned")
+                            .Options;
+
+            var context = new AppDbContext(options);
+            var repo = new AnnouncementRepo(context);
+            context.Announcements.Add(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello", CourseId = 1 });
+            context.SaveChanges();
+            var service = new AnnouncementService(repo, context);
+            var result = await service.FindById(1);
+            Assert.AreEqual(result.Title, "hello");
+        }
+    }
+}
+
