@@ -1,4 +1,6 @@
 ﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.DTOs.InstructorDTOs;
+using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.Models;
@@ -31,18 +33,18 @@ namespace LearnLink_Backend.Modules.User.Services
             DbContext.SaveChanges();
             return schedule;
         }
-        public Student AddBalance(string id, decimal balance, string updaterId)
+        public StudentGet AddBalance(string id, decimal balance, string updaterId)
         {
             var student = DbContext.Students.FirstOrDefault(x => x.Id.ToString() == id) ?? throw new NotFoundException("could not find user");
             student.UpdatedBy = updaterId;
             student.UpdateTime = DateTime.UtcNow;
             student.Balance += balance;
             DbContext.SaveChanges();
-            return student;
+            return StudentGet.ToDTO(student);
         }
         public string ApplyForInstructor(InstructorAppSet applicationSet)
         {
-            if (DbContext.InstructorApplications.Any())
+            if (DbContext.InstructorApplications.Where(x => x.Email == applicationSet.Email).Any())
                 throw new BadRequestException("application already exists");
             
             InstructorApplicationModel application = new()
@@ -57,17 +59,17 @@ namespace LearnLink_Backend.Modules.User.Services
             };
             DbContext.InstructorApplications.Add(application);
             DbContext.SaveChanges();
-            return"succefully applied";
+            return "succefully applied";
         }
 
-        internal IActionResult GetStudents(List<string> ids)
+        public IEnumerable<StudentGet> GetStudents(List<string> ids)
         {
-            throw new NotImplementedException();
+            return StudentGet.ToDTO(DbContext.Students.Where(x => ids.Contains(x.Id.ToString())));
         }
 
-        internal IActionResult GetInstructors(List<string> ids)
+        internal IEnumerable<InstructorGet> GetInstructors(List<string> ids)
         {
-            throw new NotImplementedException();
+            return InstructorGet.ToDTO(DbContext.Instructors.Where(x => ids.Contains(x.Id.ToString())));
         }
     }
 }

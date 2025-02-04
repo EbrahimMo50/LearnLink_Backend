@@ -37,7 +37,7 @@ namespace LearnLink_Backend.Modules.User.Controllers
 
         //two methods to get students and instructors for performance
         [HttpGet("students")]
-        [Authorize(Policy = "AdminOrInstructor")]
+        [Authorize(Policy = "Admin")]
         public IActionResult GetStudents([FromBody] List<string> ids)  
         {
             return Ok(service.GetStudents(ids));
