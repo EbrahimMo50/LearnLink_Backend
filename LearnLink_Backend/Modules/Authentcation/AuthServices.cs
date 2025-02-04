@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.DTOs.StudentDTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.DTOs;
 using LearnLink_Backend.Modules.Authentcation.DTOs;
@@ -77,7 +78,7 @@ namespace LearnLink_Backend.Modules.Authentcation
                 if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
                     return _authService.GenerateToken(UniversalUser.ToUser(AdminUser));
 
-            return "invalid";
+            throw new NotFoundException("User not found");
         }
 
         public string ChangePassword(string initiatorId, string email , string oldPass, string newPass)
@@ -112,7 +113,7 @@ namespace LearnLink_Backend.Modules.Authentcation
                     return "updated pass for admin";
                 }
 
-            return "could not find cerdintals";
+            throw new NotFoundException("User not found");
         }
 
         private static string Hash(string salt, string pass)
