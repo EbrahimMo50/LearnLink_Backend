@@ -31,3 +31,5 @@ tests are being implemented to prepare for publishing
 file structure is not in the best shape. seprating the layers to infrastructure, core and presentation is recommended
 
 user tables follow table per concerete denying scalabillity since there are 3 tables for users; consider following table per type design
+
+data access layer is responsible for throwing errors if any are risen, the middleware layer then handles it and returns an HTTP response to the client
