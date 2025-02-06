@@ -8,16 +8,20 @@ using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session
 {
-    [Route("api/[controller]")]
+    [Route("api/course/{courseId}/[controller]")]
     [ApiController]
     public class SessionController(SessionService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost()]
         [Authorize(Policy = "InstructorPolicy")]
-        public async Task<IActionResult> Create(SessionSet sessionSet)
+        public async Task<IActionResult> Create(SessionSet sessionSet, int courseId)
         {
-            var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var result = await service.Create(sessionSet,issuerId);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            sessionSet.SetCourseId(courseId);
+            if (issuerId == null)
+                return BadRequest("could not extract issuer id from http context");
+
+            var result = await service.CreateSessionAsync(sessionSet,issuerId);
             return Ok(result);
         }
 
@@ -45,10 +49,11 @@ namespace LearnLink_Backend.Modules.Session
 
         [HttpPut("{id}")]
         [Authorize(Policy = "InstructorPolicy")]
-        public async Task<IActionResult> Update(int id, SessionSet sessionSet)
+        public async Task<IActionResult> Update(int id, SessionSet sessionSet, int courseId)
         {
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var result = await service.Update(id,sessionSet,issuerId);
+            sessionSet.SetCourseId(courseId);
+            var result = await service.UpdateAsync(id,sessionSet,issuerId);
             return Ok(result);
         }
 
@@ -57,7 +62,7 @@ namespace LearnLink_Backend.Modules.Session
         public async Task<IActionResult> AttendSession(int sessionId)
         {
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var result = await service.AttendSession(sessionId,issuerId);
+            var result = await service.AttendSessionAsync(sessionId,issuerId);
             return Ok(result);
         }
 

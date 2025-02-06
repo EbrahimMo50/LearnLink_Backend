@@ -1,21 +1,16 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Modules.Courses.DTOs;
-using LearnLink_Backend.Modules.Courses.Models;
+﻿using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Services;
-using System.Security.Claims;
-using LearnLink_Backend.Models;
 using Microsoft.EntityFrameworkCore;
-using LearnLink_Backend.Exceptions;
 
 namespace LearnLink_Backend.Modules.Courses.Repos
 {
     public class CourseRepo(AppDbContext DbContext) : ICourseRepo
     {
-        public async Task<CourseModel> CreateCourse(CourseModel course)
+        public async Task<CourseModel> CreateCourseAsync(CourseModel course)
         {
-            await DbContext.Courses.AddAsync(course);
+            var result = await DbContext.Courses.AddAsync(course);
             await DbContext.SaveChangesAsync();
-            return course;
+            return result.Entity;
         }
 
         public IEnumerable<CourseModel> GetAllCourses()
@@ -23,9 +18,14 @@ namespace LearnLink_Backend.Modules.Courses.Repos
             return [.. DbContext.Courses.Include(x => x.Instructor)];
         }
 
-        public async Task<CourseModel> FindById(int id)
+        public async Task<CourseModel?> GetByIdAsync(int id)
         {
-            var course = await DbContext.Courses.Include(x => x.Instructor).FirstOrDefaultAsync(x => x.Id == id) ?? throw new NotFoundException("could not find course");
+            var course = await DbContext.Courses.Include(x => x.Instructor)
+                .Include(x => x.Students)
+                .Include(x => x.Instructor)
+                .Include(x => x.Announcements)
+                .Include(x => x.Sessions)
+                .FirstOrDefaultAsync(x => x.Id == id);
             return course;
         }
 
@@ -38,18 +38,11 @@ namespace LearnLink_Backend.Modules.Courses.Repos
             DbContext.SaveChanges();
         }
 
-        public async Task<CourseModel> UpdateCourse(int id, CourseSet course, string updaterId)
+        public async Task<CourseModel> UpdateCourseAsync(CourseModel course)
         {
-            var updatedElement = await DbContext.Courses.FirstOrDefaultAsync(x => x.Id == id);
-            var instructor = await DbContext.Instructors.FirstOrDefaultAsync(x => x.Id.ToString() == course.InstructorId);
-            updatedElement!.UpdatedBy = updaterId;
-            updatedElement.UpdateTime = DateTime.Now;
-            updatedElement.Name = course.Name;
-            updatedElement.Instructor = instructor;
-
+            var result = DbContext.Courses.Update(course);
             await DbContext.SaveChangesAsync();
-            return updatedElement;
-
+            return result.Entity;
         }
     }
 }

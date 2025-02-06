@@ -1,6 +1,6 @@
 ﻿using LearnLink_Backend.Models;
 
-namespace LearnLink_Backend.Modules.Post.DTOs
+namespace LearnLink_Backend.Modules.Posts.DTOs
 {
     public class PostSet
     {

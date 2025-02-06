@@ -1,29 +1,16 @@
-﻿using Azure.Core;
-using LearnLink_Backend.Modules.Post.DTOs;
+﻿using LearnLink_Backend.Modules.Posts.DTOs;
 using LearnLink_Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 
-namespace LearnLink_Backend.Modules.Post
+namespace LearnLink_Backend.Modules.Posts
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostController(PostService postService, IHttpContextAccessor httpContextAccess, MediaService mediaService) : ControllerBase
     {
-        private string IssuerId;
-        private readonly PostService _service;
-        private readonly IHttpContextAccessor _httpContextAccess;
-        private readonly MediaService _mediaService;
-        public PostController(PostService service, IHttpContextAccessor httpContextAccess, MediaService mediaService)
-        {
-            this._httpContextAccess = httpContextAccess;
-            this._service = service;
-            this.IssuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            this._mediaService = mediaService;
-        }
         [HttpPost()]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreatePost(PostSet post)
@@ -40,24 +27,29 @@ namespace LearnLink_Backend.Modules.Post
             string? imageName = null;
 
             if (fileExists)
-                imageName = await _mediaService.SaveImage(file);
+                imageName = await mediaService.SaveImage(file);
 
             post.ImageName = imageName;
-            var result = _service.CreatePost(post, IssuerId);
+
+            string? IssuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (IssuerId == null)
+                return BadRequest("could not extract issuer id from http context");
+
+            var result = postService.CreatePostAsync(post, IssuerId);
             return Ok(result);
         }
         [HttpGet("{id}")]
         [Authorize(Policy = "User")]
         public IActionResult GetPost(int id)
         {
-            var result = _service.GetPost(id);
+            var result = postService.GetPost(id);
             return Ok(result);
         }
         [HttpGet("recent")]
         [Authorize(Policy = "User")]
         public IActionResult GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
         {
-            var result = _service.GetRecentPosts(10,page);  // limit is hard coded to 10 for now
+            var result = postService.GetRecentPostsAsync(10,page);  // limit is hard coded to 10 for now
             return Ok(result);
         }
 

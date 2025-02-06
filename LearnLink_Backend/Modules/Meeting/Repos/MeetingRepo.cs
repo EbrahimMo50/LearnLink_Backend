@@ -1,42 +1,34 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Exceptions;
-using LearnLink_Backend.Modules.Meeting.DTOs;
-using LearnLink_Backend.Services;
+﻿using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Meeting.Repos
 {
-    public class MeetingRepo(AppDbContext DbContext) : IMeetingRepo
+    public class MeetingRepo(AppDbContext dbContext) : IMeetingRepo
     {
 
-        public async Task<MeetingModel> Create(MeetingModel meeting)
+        public async Task<MeetingModel> CreateMeetingAsync(MeetingModel meeting)
         {
-            await DbContext.Meetings.AddAsync(meeting);
-            await DbContext.SaveChangesAsync();
-            return meeting;
+            var result = await dbContext.Meetings.AddAsync(meeting);
+            await dbContext.SaveChangesAsync();
+            return result.Entity;
         }
 
-        public MeetingModel FindById(int id)
+        public MeetingModel? GetById(int id)
         {
-            var result = DbContext.Meetings.FirstOrDefault(x => x.Id == id);
-            if (result == null)
-                throw new NotFoundException("Could not find the searched result");
-
-            return result;
+            return dbContext.Meetings.Include(x => x.Instructor).Include(x => x.Student).FirstOrDefault(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<MeetingModel>> FindMeetingsForInstructor(string issuerId)
+        public async Task<IEnumerable<MeetingModel>> GetMeetingsForInstructorAsync(string issuerId)
         {   
-            var result = await DbContext.Meetings
+            var result = await dbContext.Meetings
                 .Where(x => x.StudentId == issuerId)
                 .ToListAsync();
             return result;
         }
         
-        public async Task<IEnumerable<MeetingModel>> FindMeetingsForStudent(string issuerId)
+        public async Task<IEnumerable<MeetingModel>> GetMeetingsForStudentAsync(string issuerId)
         {
-            var result = await DbContext.Meetings
+            var result = await dbContext.Meetings
              .Where(x => x.InstructorId == issuerId)
              .ToListAsync();
             return result;
@@ -44,18 +36,26 @@ namespace LearnLink_Backend.Modules.Meeting.Repos
 
         public void Delete(int id, string issuerId)
         {
-            var meeting = DbContext.Meetings.Include(x => x.Student).Include(x => x.Instructor).FirstOrDefault(x => x.Id == id);
+            var meeting = dbContext.Meetings.Include(x => x.Student).Include(x => x.Instructor).FirstOrDefault(x => x.Id == id);
             if (meeting == null)
                 return;
 
-            if (issuerId == meeting.StudentId || issuerId == meeting.InstructorId || DbContext.Admins.Any(x => x.Id.ToString() == issuerId))
+            if (issuerId == meeting.StudentId || issuerId == meeting.InstructorId || dbContext.Admins.Any(x => x.Id.ToString() == issuerId))
             {    
                 var student = meeting.Student;
                 student.Balance += meeting.Instructor.FeesPerHour * (meeting.EndsAt - meeting.StartsAt);
-                DbContext.Meetings.Remove(meeting);
-                DbContext.SaveChanges();
+                dbContext.Meetings.Remove(meeting);
+                dbContext.SaveChanges();
                 return;
             }
+        }
+
+        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, int day)
+        {
+            return dbContext.Meetings
+            .Include(x => x.Instructor)
+            .Where(x => x.InstructorId.ToString() == instructorId)
+            .Where(x => x.Day == day);
         }
     }
 }

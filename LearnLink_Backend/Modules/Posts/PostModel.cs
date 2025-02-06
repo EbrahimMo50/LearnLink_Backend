@@ -1,6 +1,6 @@
 ﻿using LearnLink_Backend.Models;
 
-namespace LearnLink_Backend.Modules.Post
+namespace LearnLink_Backend.Modules.Posts
 {
     public class PostModel
     {

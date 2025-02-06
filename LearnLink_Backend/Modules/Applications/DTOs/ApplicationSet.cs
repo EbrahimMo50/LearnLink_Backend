@@ -1,6 +1,6 @@
-﻿namespace LearnLink_Backend.Modules.User.DTOs
+﻿namespace LearnLink_Backend.Modules.Applications.DTOs
 {
-    public class InstructorAppSet
+    public class ApplicationSet
     {
         public string Name { get; set; }
         public string Email { get; set; }

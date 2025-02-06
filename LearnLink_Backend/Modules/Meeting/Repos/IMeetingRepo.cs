@@ -1,14 +1,14 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Modules.Meeting.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Modules.Meeting.Repos
 {
     public interface IMeetingRepo
     {
-        public Task<MeetingModel> Create(MeetingModel meeting);
-        public MeetingModel FindById(int id);
-        public Task<IEnumerable<MeetingModel>> FindMeetingsForInstructor(string issuserId);
-        public Task<IEnumerable<MeetingModel>> FindMeetingsForStudent(string issuserId);
+        public Task<MeetingModel> CreateMeetingAsync(MeetingModel meeting);
+        public MeetingModel? GetById(int id);
+        public Task<IEnumerable<MeetingModel>> GetMeetingsForInstructorAsync(string issuserId);
+        public Task<IEnumerable<MeetingModel>> GetMeetingsForStudentAsync(string issuserId);
         public void Delete(int id, string issuserId);
+        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, int day);
     }
 }

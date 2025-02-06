@@ -1,19 +1,15 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Exceptions;
-using LearnLink_Backend.Modules.Session.DTOs;
-using LearnLink_Backend.Services;
+﻿using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session.Repos
 {
     public class SessionRepo(AppDbContext DbContext) : ISessionRepo
     {
-        public async Task<SessionModel> Create(SessionModel session)
+        public async Task<SessionModel> CreateSessionAsync(SessionModel session)
         {
-            await DbContext.Sessions.AddAsync(session);
+            var result = await DbContext.Sessions.AddAsync(session);
             await DbContext.SaveChangesAsync();
-            return session;
+            return result.Entity;
         }
 
         public void Delete(int id)
@@ -24,12 +20,12 @@ namespace LearnLink_Backend.Modules.Session.Repos
             DbContext.SaveChanges();
         }
 
-        public SessionModel FindById(int id)
+        public SessionModel? GetById(int id)
         {
-            var session = DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefault(x => x.Id == id);
-            if (session != null)
-                return session;
-            throw new NotFoundException("could not find session");
+            return DbContext.Sessions
+                .Include(x => x.AttendendStudent)
+                .Include(x => x.Course)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public IEnumerable<SessionModel> GetAll()
@@ -37,35 +33,11 @@ namespace LearnLink_Backend.Modules.Session.Repos
             return [.. DbContext.Sessions.Include(x => x.AttendendStudent)];
         }
 
-        public async Task<SessionModel> Update(int id, SessionSet sessionSet, string issuerId)
+        public async Task<SessionModel> UpdateAsync(SessionModel session)
         {
-            var session = await DbContext.Sessions.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (session == null)
-                throw new NotFoundException("course not found");
-
-            if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
-               throw new BadRequestException("invalid time line");
-
-            var course = await DbContext.Courses.Include(x => x.Instructor).FirstOrDefaultAsync(x => x.Id == sessionSet.CourseId);
-
-            if (course == null || course.Instructor == null)
-                throw new NotFoundException("course not found");
-
-            if (course.Instructor.Id.ToString() != issuerId)
-                throw new BadRequestException("only instructors of the course can create sessions");
-
-            session.UpdatedBy = issuerId;
-            session.UpdateTime = DateTime.Now;
-            session.CourseId = course.Id;
-            session.Course = course;
-            session.MeetingLink = sessionSet.MeetingLink;
-            session.StartsAt = sessionSet.StartsAt;
-            session.EndsAt = sessionSet.EndsAt;
-            session.Day = sessionSet.Day;
-    
+            var result = DbContext.Sessions.Update(session);
             await DbContext.SaveChangesAsync();
-            return session;
+            return result.Entity;
         }
     }
 }

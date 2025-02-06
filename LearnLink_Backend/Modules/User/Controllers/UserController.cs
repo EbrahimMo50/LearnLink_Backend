@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.Modules.User.DTOs;
+﻿using LearnLink_Backend.Modules.Applications.DTOs;
+using LearnLink_Backend.Modules.User.DTOs;
 using LearnLink_Backend.Modules.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,6 @@ namespace LearnLink_Backend.Modules.User.Controllers
     [ApiController]
     public class UserController(UserService service,IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost("instructors/applications")]
-        public IActionResult Apply(InstructorAppSet app)
-        {
-            var result = service.ApplyForInstructor(app);
-            return Ok(result);
-        }
-
         [HttpPut("instructor/{instructorId}/schedule")]
         [Authorize(Policy = "InstructorPolicy")]
         public IActionResult UpdateSchedule(string instructorId, ScheduleSet scheduleSet)

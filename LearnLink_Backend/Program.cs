@@ -1,5 +1,5 @@
 using LearnLink_Backend.MiddleWares;
-using LearnLink_Backend.Modules.Adminstration;
+using LearnLink_Backend.Modules.Adminsitration;
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Modules.Authentcation;
@@ -7,10 +7,11 @@ using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Meeting.Repos;
-using LearnLink_Backend.Modules.Post;
-using LearnLink_Backend.Modules.Post.Repos;
+using LearnLink_Backend.Modules.Posts.Repos;
+using LearnLink_Backend.Modules.Posts;
 using LearnLink_Backend.Modules.Session;
 using LearnLink_Backend.Modules.Session.Repos;
+using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Modules.User.Services;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
@@ -23,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using LearnLink_Backend.Modules.User.Repos.UserSchedule;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -39,7 +41,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -99,8 +101,10 @@ builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<ISessionRepo, SessionRepo>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<IPostRepo, PostRepo>();
-builder.Services.AddScoped<AdministrationService>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IInstructorScheduleRepo, InstructorScheduleRepo>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AdministrationService>();
 
 // independent services injections
 builder.Services.AddDbContext<AppDbContext>(
@@ -181,3 +185,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// CARE TO TEST THE APP THROUGHLY THE LAST REFACTOR WAS SO HEAVY BUGS MAY HAVE SLIPT THROUGH

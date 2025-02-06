@@ -2,53 +2,39 @@
 using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
-using LearnLink_Backend.Modules.Adminstration.DTOs;
 using LearnLink_Backend.Modules.Authentcation.DTOs;
-using LearnLink_Backend.Services;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace LearnLink_Backend.Modules.Authentcation
 {
-    public class AuthServices
+    public class AuthServices(TokenService tokenService, IUserRepo userRepo)
     {
-        private readonly AppDbContext _context;
-        private readonly TokenService _authService;
-        public AuthServices(AppDbContext context, TokenService authService)
-        {
-            _context = context;
-            _authService = authService;
-
-        }
-        public async Task<string> SignUp(StudentSet studentVM)
+        public void SignUp(StudentSet studentVM)
         {
             if (EmailExists(studentVM.Email))
-                return "Email already exists";
+                throw new BadRequestException("Email already exists");
 
             if (studentVM.Password.Length < 4)
-                return "password too short";
+                throw new BadRequestException("Password too short");
 
             var Salt = GenerateSalt();
             var HashedPassword = Hash(Salt, studentVM.Password);
 
             var student = studentVM.ToStudent(HashedPassword, Salt);
             student.CreatedBy = "self";
-            await _context.Students.AddAsync(student);
-            await _context.SaveChangesAsync();
-
-            return "Success";
+            
+            userRepo.AddStudent(student);
         }
-        //could go with abstraction for admin and instructor to solve redundancy buy alot of changes must take place bad design should be avoided in future projects
+        //could go with abstraction for admin and instructor to solve redundancy but alot of changes must take place
         public void SignInstructor(Instructor instructor, string password)
         {
             var Salt = GenerateSalt();
             var HashedPassword = Hash(Salt, password);
             instructor.HashedPassword = HashedPassword;
             instructor.Salt = Salt;
-            _context.Instructors.Add(instructor);
-            _context.SaveChanges();
+            userRepo.AddInstructor(instructor);
         }
         public void SignAdmin(Admin admin, string password)
         {
@@ -56,34 +42,33 @@ namespace LearnLink_Backend.Modules.Authentcation
             var HashedPassword = Hash(Salt, password);
             admin.HashedPassword = HashedPassword;
             admin.Salt = Salt;
-            _context.Admins.Add(admin);
-            _context.SaveChanges();
+            userRepo.AddAdmin(admin);
         }
         public string Login(LoginViewModel user)
         {
-            var StudentUser = _context.Students.FirstOrDefault(x => user.Email == x.Email);
+            var StudentUser = userRepo.GetStudentByEmail(user.Email);
             if (StudentUser != null)
                 if (StudentUser.HashedPassword == Hash(StudentUser.Salt, user.Password))
-                    return _authService.GenerateToken(UniversalUser.ToUser(StudentUser));
+                    return tokenService.GenerateToken(UniversalUser.ToUser(StudentUser));
 
 
-            var InstructorUser = _context.Instructors.FirstOrDefault(x => x.Email == user.Email);
+            var InstructorUser = userRepo.GetInstructorByEmail(user.Email);
             if (InstructorUser != null)
                 if (InstructorUser.HashedPassword == Hash(InstructorUser.Salt, user.Password))
-                    return _authService.GenerateToken(UniversalUser.ToUser(InstructorUser));
+                    return tokenService.GenerateToken(UniversalUser.ToUser(InstructorUser));
 
 
-            var AdminUser = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
+            var AdminUser = userRepo.GetAdminByEmail(user.Email);
             if (AdminUser != null)
                 if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
-                    return _authService.GenerateToken(UniversalUser.ToUser(AdminUser));
+                    return tokenService.GenerateToken(UniversalUser.ToUser(AdminUser));
 
             throw new NotFoundException("User not found");
         }
 
         public string ChangePassword(string initiatorId, string email , string oldPass, string newPass)
         {
-            var student = _context.Students.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            var student = userRepo.GetStudentById(initiatorId);
             if (student != null)
                 if (Hash(student.Salt, oldPass) == student.HashedPassword && student.Email == email)
                 {
@@ -93,7 +78,7 @@ namespace LearnLink_Backend.Modules.Authentcation
                     return "updated pass for student";
                 }
 
-            var instructor = _context.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            var instructor = userRepo.GetInstructorById(initiatorId);
             if (instructor != null)
                 if (Hash(instructor.Salt, oldPass) == instructor.HashedPassword && instructor.Email == email)
                 {
@@ -103,7 +88,7 @@ namespace LearnLink_Backend.Modules.Authentcation
                     return "updated pass for instructor";
                 }
 
-            var admin = _context.Instructors.FirstOrDefault(x => x.Id.ToString() == initiatorId);
+            var admin = userRepo.GetAdminById(initiatorId);
             if (admin != null)
                 if (Hash(admin.Salt, oldPass) == admin.HashedPassword && admin.Email == email)
                 {
@@ -132,9 +117,9 @@ namespace LearnLink_Backend.Modules.Authentcation
         }
         private bool EmailExists(string Email)
         {
-            var StudentUserEmail = _context.Students.FirstOrDefault(x => Email == x.Email);
-            var InstructorUserEmail = _context.Students.FirstOrDefault(x => Email == x.Email);
-            var AdminUserEmail = _context.Students.FirstOrDefault(x => Email == x.Email);
+            var StudentUserEmail = userRepo.GetStudentByEmail(Email);
+            var InstructorUserEmail = userRepo.GetInstructorByEmail(Email); 
+            var AdminUserEmail = userRepo.GetAdminByEmail(Email);
 
             if (StudentUserEmail != null || InstructorUserEmail != null || AdminUserEmail != null)
                 return true;

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LearnLink_Backend.Modules.Adminstration.Models
+namespace LearnLink_Backend.Modules.Applications
 {
-    public class InstructorApplicationModel
+    public class ApplicationModel
     {
         public int Id { get; }
         public string Name { get; set; }

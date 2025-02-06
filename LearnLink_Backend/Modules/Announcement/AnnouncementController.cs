@@ -15,8 +15,11 @@ namespace LearnLink_Backend.Modules.Announcement
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> CreateAnnouncement(AnnouncementSet announcement,int courseId)
         {
-            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var response = await service.CreateAnnouncement(announcement, courseId, issuerId);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("could not extract issuer id from http context");
+
+            var response = await service.CreateAnnouncementAsync(announcement, courseId, issuerId);
             return Ok(response);
         }
         [HttpGet()]
@@ -30,7 +33,7 @@ namespace LearnLink_Backend.Modules.Announcement
         [Authorize(Policy = "User")]
         public async Task<IActionResult> FindById(int id)
         {
-            var response = await service.FindById(id);
+            var response = await service.GetByIdAsync(id);
             return Ok(response);
         }
         [HttpDelete("{id}")]
@@ -44,8 +47,11 @@ namespace LearnLink_Backend.Modules.Announcement
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
         {
-            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var response = await service.UpdateAnnouncement(id, announcement, issuerId);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("could not extract issuer id from http context");
+
+            var response = await service.UpdateAnnouncementAsync(id, announcement, issuerId);
             return Ok(response);
         }
     }

@@ -1,11 +1,11 @@
 ﻿using LearnLink_Backend.Models;
-using LearnLink_Backend.Modules.Adminstration.Models;
 using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Session;
 using Microsoft.EntityFrameworkCore;
-using LearnLink_Backend.Modules.Post;
+using LearnLink_Backend.Modules.Posts;
+using LearnLink_Backend.Modules.Applications;
 
 namespace LearnLink_Backend.Services
 {
@@ -16,7 +16,7 @@ namespace LearnLink_Backend.Services
         public DbSet<Student> Students {  get; set; }
         public DbSet<Admin> Admins {  get; set; }
         public DbSet<Instructor> Instructors {  get; set; }
-        public DbSet<InstructorApplicationModel> InstructorApplications { get; set; }
+        public DbSet<ApplicationModel> InstructorApplications { get; set; }
         public DbSet<MeetingModel> Meetings {  get; set; }
         public DbSet<SessionModel> Sessions {  get; set; }
         public DbSet<CourseModel> Courses { get; set; }
@@ -48,7 +48,7 @@ namespace LearnLink_Backend.Services
                 .ToTable("Sessions")
                 .HasKey(u => u.Id);
 
-            modelBuilder.Entity<InstructorApplicationModel>()
+            modelBuilder.Entity<ApplicationModel>()
                 .ToTable("Applications")
                 .HasKey(u => u.Id);
 

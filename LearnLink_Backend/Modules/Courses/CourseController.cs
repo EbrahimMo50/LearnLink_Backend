@@ -1,6 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Courses.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -10,15 +9,15 @@ namespace LearnLink_Backend.Modules.Courses
     [ApiController]
     public class CourseController(CourseService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> CreateCourse(CourseSet course)
         {
             string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var response = await service.CreateCourse(course, issuerId);
+            var response = await service.CreateCourseAsync(course, issuerId);
             return Ok(response);
         }
-        [HttpGet()]
+        [HttpGet]
         [Authorize(Policy = "User")]
         public IActionResult GetAllForCourse()
         {
@@ -29,7 +28,7 @@ namespace LearnLink_Backend.Modules.Courses
         [Authorize(Policy = "User")]
         public async Task<IActionResult> FindById(int id)
         {
-            var response = await service.FindById(id);
+            var response = await service.GetByIdAsync(id);
             return Ok(response);
         }
         [HttpDelete("{id}")]
@@ -43,24 +42,30 @@ namespace LearnLink_Backend.Modules.Courses
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> UpdateCourse(int id, CourseSet course)
         {
-            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var response = await service.UpdateCourse(id, course, issuerId);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("error in payload could not find creater");
+
+            var response = await service.UpdateCourseAsync(id, course, issuerId);
             return Ok(response);
         }
         [HttpPost("{courseId}/students")] 
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> JoinCourse(int courseId)
         {
-            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            var result = await service.JoinCourse(courseId, issuerId);
-            return Ok(result);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("error in payload could not find creater");
+
+            await service.JoinCourseAsync(courseId, issuerId);
+            return Ok();
         }
         [HttpDelete("{courseId}/students/{studentId}")]
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> LeaveCourse(String studentId, int courseId)
         {
-            var result = await service.LeaveCourse(studentId, courseId);
-            return Ok(result);
+            await service.LeaveCourseAsync(studentId, courseId);
+            return Ok();
         }
     }
 }

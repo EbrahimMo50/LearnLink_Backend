@@ -1,21 +1,21 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Exceptions;
+﻿using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Session.DTOs;
 using LearnLink_Backend.Modules.Session.Repos;
+using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Session
 {
-    public class SessionService(AppDbContext DbContext, ISessionRepo repo)
+    public class SessionService(ISessionRepo sessionRepo, ICourseRepo courseRepo, IUserRepo userRepo)
     {
-       public async Task<SessionModel> Create(SessionSet sessionSet, string issuerId)
+       public async Task<SessionModel> CreateSessionAsync(SessionSet sessionSet, string issuerId)
         {
             if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
                 throw new BadRequestException("invalid time line");
 
-            var course = await DbContext.Courses.Include(x => x.Instructor).FirstOrDefaultAsync(x => x.Id == sessionSet.CourseId);
+            var course = await courseRepo.GetByIdAsync(sessionSet.GetCourseId());
 
             if (course == null || course.Instructor == null)
                 throw new NotFoundException("course not found");
@@ -23,32 +23,55 @@ namespace LearnLink_Backend.Modules.Session
             if (course.Instructor.Id.ToString() != issuerId)
                 throw new BadRequestException("only instructors of the course can create sessions");
 
-            SessionModel session = new() { Day = sessionSet.Day, CreatedBy = issuerId, CourseId = sessionSet.CourseId, EndsAt = sessionSet.EndsAt, Course = course, MeetingLink = sessionSet.MeetingLink };
-            return await repo.Create(session);
+            SessionModel session = new() { Day = sessionSet.Day, CreatedBy = issuerId, CourseId = sessionSet.GetCourseId(), EndsAt = sessionSet.EndsAt, Course = course, MeetingLink = sessionSet.MeetingLink };
+            return await sessionRepo.CreateSessionAsync(session);
         }
         public SessionGet FindById(int id)
         {
-            return SessionGet.ToDTO(repo.FindById(id));
+            return SessionGet.ToDTO(sessionRepo.GetById(id) ?? throw new NotFoundException("could not find session"));
         }
         public IEnumerable<SessionGet> GetAll()
         {
-            return SessionGet.ToDTO(repo.GetAll());
+            return SessionGet.ToDTO(sessionRepo.GetAll());
         }
-        public async Task<SessionModel> Update(int id, SessionSet sessionSet, string issuerId)
+        public async Task<SessionModel> UpdateAsync(int id, SessionSet sessionSet, string issuerId)
         {
-            return await repo.Update(id, sessionSet, issuerId);
+            var session = sessionRepo.GetById(id);
+
+            if (session == null)
+                throw new NotFoundException("course not found");
+
+            if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
+                throw new BadRequestException("invalid time line");
+
+            var course = await courseRepo.GetByIdAsync(sessionSet.GetCourseId());
+
+            if (course == null || course.Instructor == null)
+                throw new NotFoundException("course not found");
+
+            if (course.Instructor.Id.ToString() != issuerId)
+                throw new BadRequestException("only instructors of the course can create sessions");
+
+            session.UpdatedBy = issuerId;
+            session.UpdateTime = DateTime.Now;
+            session.CourseId = course.Id;
+            session.Course = course;
+            session.MeetingLink = sessionSet.MeetingLink;
+            session.StartsAt = sessionSet.StartsAt;
+            session.EndsAt = sessionSet.EndsAt;
+            session.Day = sessionSet.Day;
+
+            return await sessionRepo.UpdateAsync(session);
         }
         public void Delete(int id)
         {
-            repo.Delete(id);
+            sessionRepo.Delete(id);
         }
-        public async Task<string> AttendSession(int sessionId, string studentId)
+        public async Task<string> AttendSessionAsync(int sessionId, string studentId)
         {
-            var student = await DbContext.Students.FirstOrDefaultAsync(x => x.Id.ToString() == studentId);
-            if (student == null)
-                throw new BadRequestException("invalid user");
+            var student = userRepo.GetStudentById(studentId) ?? throw new NotFoundException("student not found");
             
-            var session = await DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefaultAsync(x => x.Id == sessionId);
+            var session = sessionRepo.GetById(sessionId);
             if (session == null)
                 throw new NotFoundException("could not find session");
 
@@ -58,7 +81,7 @@ namespace LearnLink_Backend.Modules.Session
                    throw new BadRequestException("session is inavtice currently");
 
                 session.AttendendStudent.Add(student);
-                await DbContext.SaveChangesAsync();
+                await sessionRepo.UpdateAsync(session);
 
                 return session.MeetingLink;
             }
@@ -68,11 +91,7 @@ namespace LearnLink_Backend.Modules.Session
 
         public IEnumerable<string> GetAttendance(int sessionId)
         {
-            var session = DbContext.Sessions.Include(x => x.AttendendStudent).FirstOrDefault(x => x.Id == sessionId);
-
-            if(session == null)
-               throw new NotFoundException("could not find session");
-
+            var session = sessionRepo.GetById(sessionId) ?? throw new NotFoundException("could not find session");
             return session.AttendendStudent.ToList().Select(x => x.Id).Select(x => x.ToString());
         }
     }

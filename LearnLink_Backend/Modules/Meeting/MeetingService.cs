@@ -1,18 +1,19 @@
 ﻿using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Modules.Meeting.DTOs;
 using LearnLink_Backend.Modules.Meeting.Repos;
+using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace LearnLink_Backend.Modules.Meeting
 {
-    public class MeetingService(IMeetingRepo repo, AppDbContext DbContext)
+    public class MeetingService(IMeetingRepo meetingRepo, IUserRepo userRepo)
     {
-        public async Task<MeetingModel> Create(MeetingSet meeting, string createrId)
+        public async Task<MeetingModel> CreateMeetingAsync(MeetingSet meeting, string createrId)
         {
-            var student = await DbContext.Students.FirstOrDefaultAsync(x => x.Id.ToString() == meeting.StudentId);
-            var instructor = await DbContext.Instructors.Include(x => x.Schedule).FirstOrDefaultAsync(x => x.Id.ToString() == meeting.InstructorId);
+            var student = userRepo.GetStudentById(meeting.StudentId);
+            var instructor = userRepo.GetInstructorById(meeting.InstructorId);
 
             if (student == null || instructor == null)
                 throw new NotFoundException("could not find user");
@@ -30,10 +31,7 @@ namespace LearnLink_Backend.Modules.Meeting
             {
                 if (instructor.Schedule.StartHour <= meeting.StartsAt && instructor.Schedule.EndHour >= meeting.EndsAt)
                 {
-                    var possibleConfictingMeetings = DbContext.Meetings
-                        .Include(x => x.Instructor)
-                        .Where(x => x.InstructorId.ToString() == meeting.InstructorId)
-                        .Where(x => x.Day == meeting.Day);
+                    var possibleConfictingMeetings = meetingRepo.GetConflictingMeetings(meeting.InstructorId, meeting.Day);
 
                     foreach (var m in possibleConfictingMeetings)
                         if (m.StartsAt <= meeting.StartsAt && m.EndsAt > meeting.StartsAt)
@@ -53,26 +51,26 @@ namespace LearnLink_Backend.Modules.Meeting
                         EndsAt = meeting.EndsAt
                     };
 
-                    return await repo.Create(meetingObject);
+                    return await meetingRepo.CreateMeetingAsync(meetingObject);
                 }
             }
             throw new NotFoundException("no such schedule was found");
         }
-        public MeetingGet FindById(int id)
+        public MeetingGet GetById(int id)
         {
-            return MeetingGet.ToDTO(repo.FindById(id));
+            return MeetingGet.ToDTO(meetingRepo.GetById(id) ?? throw new NotFoundException("could not find course"));
         }
-        public async Task<IEnumerable<MeetingGet>> FindMeetingsForInstructor(string issuerId)
+        public async Task<IEnumerable<MeetingGet>> GetMeetingsForInstructorAsync(string issuerId)
         {
-            return MeetingGet.ToDTO(await repo.FindMeetingsForInstructor(issuerId));
+            return MeetingGet.ToDTO(await meetingRepo.GetMeetingsForInstructorAsync(issuerId));
         }
-        public async Task<IEnumerable<MeetingGet>> FindMeetingsForStudent(string issuerId)
+        public async Task<IEnumerable<MeetingGet>> GetMeetingsForStudentAsync(string issuerId)
         {
-            return MeetingGet.ToDTO(await repo.FindMeetingsForStudent(issuerId));
+            return MeetingGet.ToDTO(await meetingRepo.GetMeetingsForStudentAsync(issuerId));
         }
         public void Delete(int id,string issuerId)
         {
-            repo.Delete(id, issuerId);
+            meetingRepo.Delete(id, issuerId);
         }
     }
 }

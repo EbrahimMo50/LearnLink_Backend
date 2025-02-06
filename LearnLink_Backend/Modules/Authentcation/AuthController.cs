@@ -8,32 +8,30 @@ namespace LearnLink_Backend.Modules.Authentcation
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AuthServices _auth, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class AuthController(AuthServices authService, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost("sign-up")]
-        public async Task<ActionResult> SignUp(StudentSet student)
+        public IActionResult SignUp(StudentSet student)
         {
-            var result = await _auth.SignUp(student);
-            if (result == "Success")
-                return Ok(result);
-
-            return BadRequest(result);
+            authService.SignUp(student);
+            return Ok();
         }
+
         [HttpPost("login")]
         public IActionResult Login(LoginViewModel user)
         {
-            var result = _auth.Login(user);
-            if (result == "invalid")
-                return NotFound("could not find user");
-
+            var result = authService.Login(user);   // the token is returned here
             return Ok(result);
         }
+
         [HttpPatch("change-password")]
         [Authorize(Policy = "User")]
         public IActionResult ChangePass(ChangePassDTO passModel)
         {
-            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            return Ok(_auth.ChangePassword(issuerId, passModel.Email, passModel.OldPassword, passModel.NewPassword));
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("could not extract issuer id");
+            return Ok(authService.ChangePassword(issuerId, passModel.Email, passModel.OldPassword, passModel.NewPassword));
         }
     }
 }

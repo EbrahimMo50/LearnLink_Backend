@@ -5,10 +5,10 @@ namespace LearnLink_Backend.Modules.Session.Repos
 {
     public interface ISessionRepo
     {
-        public Task<SessionModel> Create(SessionModel sessionSet);
-        public SessionModel FindById(int id);
+        public Task<SessionModel> CreateSessionAsync(SessionModel sessionSet);
+        public SessionModel? GetById(int id);
         public IEnumerable<SessionModel> GetAll();
-        public Task<SessionModel> Update(int id, SessionSet sessionSet, string issuerId);
+        public Task<SessionModel> UpdateAsync(SessionModel session);
         public void Delete(int id);
     }
 }

@@ -5,10 +5,10 @@ namespace LearnLink_Backend.Modules.Announcement.Repo
 {
     public interface IAnnouncementRepo
     {
-        public Task<AnnouncementModel> CreateAnnouncement(AnnouncementModel announcement);
+        public Task<AnnouncementModel> CreateAnnouncementAsync(AnnouncementModel announcement);
         public IEnumerable<AnnouncementModel> GetAllForCourse(int courseId);
-        public Task<AnnouncementModel> FindById(int id);
+        public Task<AnnouncementModel?> GetByIdAsync(int id);
         public void DeleteAnnouncement(int id);
-        public Task<AnnouncementModel> UpdateAnnouncement(int id, AnnouncementUpdate announcement, string createrId);
+        public Task<AnnouncementModel> UpdateAnnouncementAsync(AnnouncementModel announcement);
     }
 }
