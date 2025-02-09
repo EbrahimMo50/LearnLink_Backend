@@ -11,12 +11,11 @@ namespace LearnLink_Backend.Tests.Components.Announcements
     [TestClass]
     public class AnnouncementServiceTests
     {
-        [TestMethod]
         public async Task CreateAnnouncement_InvalidCourse_NotFoundExceptionThrown()
         {
-            var mockedAnnouncementRepo = new Mock<IAnnouncementRepo>();
-            var mockedCourseRepo = new Mock<ICourseRepo>();
-            var service = new AnnouncementService(mockedAnnouncementRepo.Object, mockedCourseRepo.Object);
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
             await Assert.ThrowsExceptionAsync<NotFoundException>(
                 async () => await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Test" }, 1, "Test"));
         }
@@ -24,73 +23,69 @@ namespace LearnLink_Backend.Tests.Components.Announcements
         [TestMethod]
         public async Task CreateAnnouncement_ValidInput_AnnouncementCreated()
         {
-            var mockedAnnouncmentRepo = new Mock<IAnnouncementRepo>();
-            var mockedCourseRepo = new Mock<ICourseRepo>();
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
 
-            var expectedCourse = new CourseModel { Id = 1 };
+            var expectedCourse = new CourseModel { };
             var announcemnt = new AnnouncementModel { Title = "Test", Description = "Test", CourseId = 1, CreatedBy = "Test" };
 
-            mockedCourseRepo.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(expectedCourse);
-            mockedAnnouncmentRepo.Setup(repo => repo.CreateAnnouncementAsync(It.IsAny<AnnouncementModel>())).ReturnsAsync(announcemnt);
-            var service = new AnnouncementService(mockedAnnouncmentRepo.Object, mockedCourseRepo.Object);
-            var createdAnnouncement = await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Test", Description = "Test" }, 1, "Test");
-            Assert.AreEqual("fail", createdAnnouncement.Title);
+            courseRepoMock.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(expectedCourse);
+            announcementRepoMock.Setup(repo => repo.CreateAnnouncementAsync(It.IsAny<AnnouncementModel>())).ReturnsAsync(announcemnt);
+
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
+            var createdAnnouncement = await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Title Test", Description = "Description Test" }, 1, "Test");
+
+            Assert.AreEqual("Test", createdAnnouncement.Title);
         }
 
-        //[TestMethod]
-        //public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()
-        //{
-        //    var options = new DbContextOptionsBuilder<AppDbContext>()
-        //                    .UseInMemoryDatabase("GetAllForCourse_ValidCourseId_AnnouncementsReturned")
-        //                    .Options;
-        //    var context = new Mock<AppDbContext>(options);
+        [TestMethod]
+        public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()
+        {
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
+            announcementRepoMock.Setup(x => x.GetAllForCourse(1)).Returns
+                ([
+                new AnnouncementModel() { Title = "Title Test", CreatedBy = "CreatedBy Test", Description = "Description Test", CourseId = 1 },
+                new AnnouncementModel() { Title = "Title Test", CreatedBy = "CreatedBy Test", Description = "Description Test", CourseId = 1 }
+                ]);
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
+            var announcements = service.GetAllForCourse(1);
+            Assert.AreEqual(2, announcements.Count());
+        }
 
-        //    var repo = new Mock<IAnnouncementRepo>();
-        //    repo.Setup(x => x.GetAllForCourse(It.IsAny<int>())).Returns
-        //        ([
-        //        new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello", CourseId = 1 },
-        //        new AnnouncementModel() { Title = "hello2", CreatedBy = "self", Description = "this is hello2", CourseId = 1 }
-        //        ]);
-        //    var service = new AnnouncementService(repo.Object, context.Object);
-        //    var announcements = service.GetAllForCourse(1);
-        //    Assert.AreEqual(announcements.Count(), 2);
-        //}
+        [TestMethod]
+        public void GetAllForCourse_EmptyAnnouncementCourseId_EmptyListReturned()
+        {
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
+            var announcements = service.GetAllForCourse(1);
+            Assert.AreEqual(0, announcements.Count());        
+        }
 
-        //[TestMethod]
-        //public void GetAllForCourse_EmptyCourseId_EmptyListReturned()
-        //{
-        //    var options = new DbContextOptionsBuilder<AppDbContext>()
-        //                    .UseInMemoryDatabase("GetAllForCourse_EmptyCourseId_EmptyListReturned")
-        //                    .Options;
+        [TestMethod]
+        public async Task GetById_ValidId_AnnouncementReturned()
+        {
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
+            announcementRepoMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new AnnouncementModel() { Title = "Test" });
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
+            var result = await service.GetByIdAsync(1);
+            Assert.AreEqual("Test", result.Title);
+        }
 
-        //    using (var context = new AppDbContext(options))
-        //    {
-        //        var repo = new Mock<IAnnouncementRepo>();
-        //        var service = new AnnouncementService(repo.Object, context);
-        //        var Course = new CourseModel() { Name = "Course", CreatedBy = "self" };
-        //        context.Courses.Add(Course);
-        //        context.SaveChanges();
-        //        var announcements = service.GetAllForCourse(1);
-        //        Assert.AreEqual(announcements.Count(), 0);
-        //        context.Dispose();
-        //    }
-        //}
-
-        //[TestMethod]
-        //public async Task FindById_ValidId_AnnouncementReturned()
-        //{
-        //    var options = new DbContextOptionsBuilder<AppDbContext>()
-        //                    .UseInMemoryDatabase("FindById_ValidId_AnnouncementReturned")
-        //                    .Options;
-
-        //    var context = new AppDbContext(options);
-        //    var repo = new AnnouncementRepo(context);
-        //    context.Announcements.Add(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello", CourseId = 1 });
-        //    context.SaveChanges();
-        //    var service = new AnnouncementService(repo, context);
-        //    var result = await service.FindById(1);
-        //    Assert.AreEqual(result.Title, "hello");
-        //}
+        [TestMethod]
+        public async Task UpdateAnnouncement_ValidUpdate_AttributesUpdated()
+        {
+            var announcementRepoMock = new Mock<IAnnouncementRepo>();
+            var courseRepoMock = new Mock<ICourseRepo>();
+            announcementRepoMock.Setup(x => x.UpdateAnnouncementAsync(It.IsAny<AnnouncementModel>()))
+                .ReturnsAsync(new AnnouncementModel() { Title = "Test Update" });
+            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
+            var elementToBeUpdated = await service.UpdateAnnouncementAsync(1,new AnnouncementUpdate() { Title = "Test Update" }, "Creater Test");
+            Assert.AreEqual("Test Update", elementToBeUpdated.Title);
+            Assert.IsNotNull(elementToBeUpdated.UpdateTime);
+        }
     }
 }
 
