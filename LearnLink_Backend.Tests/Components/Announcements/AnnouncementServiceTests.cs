@@ -1,8 +1,6 @@
 ﻿using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Modules.Announcement;
-using LearnLink_Backend.Services;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using LearnLink_Backend.Modules.Announcement.DTOs;
 using LearnLink_Backend.Modules.Courses.Models;
@@ -23,21 +21,21 @@ namespace LearnLink_Backend.Tests.Components.Announcements
                 async () => await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Test" }, 1, "Test"));
         }
 
-        //[TestMethod]
-        //public async Task CreateAnnouncement_ValidInput_AnnouncementCreated()
-        //{
-        //    var mockedAnnouncmentRepo = new Mock<IAnnouncementRepo>();
-        //    var mockedCourseRepo = new Mock<ICourseRepo>();
+        [TestMethod]
+        public async Task CreateAnnouncement_ValidInput_AnnouncementCreated()
+        {
+            var mockedAnnouncmentRepo = new Mock<IAnnouncementRepo>();
+            var mockedCourseRepo = new Mock<ICourseRepo>();
 
-        //    var expectedCourse = new CourseModel { Id = 1 };
-        //    var announcemnt = new AnnouncementModel { Title = "Test", Description = "Test", CourseId = 1, CreatedBy = "Test" };
+            var expectedCourse = new CourseModel { Id = 1 };
+            var announcemnt = new AnnouncementModel { Title = "Test", Description = "Test", CourseId = 1, CreatedBy = "Test" };
 
-        //    mockedCourseRepo.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(expectedCourse);
-        //    mockedAnnouncmentRepo.Setup(repo => repo.CreateAnnouncementAsync(announcemnt)).ReturnsAsync(announcemnt);
-        //    var service = new AnnouncementService(mockedAnnouncmentRepo.Object, mockedCourseRepo.Object);
-        //    var createdAnnouncement = await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Test", Description = "Test" }, 1, "Test");
-        //    Assert.AreEqual("Test", createdAnnouncement.Title);
-        //}
+            mockedCourseRepo.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(expectedCourse);
+            mockedAnnouncmentRepo.Setup(repo => repo.CreateAnnouncementAsync(It.IsAny<AnnouncementModel>())).ReturnsAsync(announcemnt);
+            var service = new AnnouncementService(mockedAnnouncmentRepo.Object, mockedCourseRepo.Object);
+            var createdAnnouncement = await service.CreateAnnouncementAsync(new AnnouncementSet() { Title = "Test", Description = "Test" }, 1, "Test");
+            Assert.AreEqual("fail", createdAnnouncement.Title);
+        }
 
         //[TestMethod]
         //public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()

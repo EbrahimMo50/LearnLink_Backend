@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.Modules.Announcement;
+﻿using LearnLink_Backend.Models;
+using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
 using LearnLink_Backend.Services;
 using Microsoft.EntityFrameworkCore;
