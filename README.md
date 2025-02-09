@@ -31,3 +31,5 @@ tests are being implemented to prepare for publishing
 file structure is not in the best shape. seprating the layers to infrastructure, core and presentation is recommended
 
 user tables follow table per concerete denying scalabillity since there are 3 tables for users; consider following table per type design
+
+testing the repo layer in the application is done in near-unit(in-memory database) testing manner to avoid complex mocking of IAsyncQueryProvider and extensive needless mocking and logic
