@@ -6,7 +6,7 @@ namespace LearnLink_Backend.Modules.Courses.Models
 {
     public class CourseModel
     {
-        public int Id { get; set; }
+        public int Id { get; }
         public string Name { get; set; }
         public Instructor? Instructor { get; set; }
         public List<SessionModel> Sessions { get; set; } = new List<SessionModel>();

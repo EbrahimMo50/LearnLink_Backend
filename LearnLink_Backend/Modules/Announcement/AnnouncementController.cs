@@ -1,5 +1,4 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.Modules.Announcement.DTOs;
+﻿using LearnLink_Backend.Modules.Announcement.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,24 +10,23 @@ namespace LearnLink_Backend.Modules.Announcement
     public class AnnouncementController(AnnouncementService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> CreateAnnouncement(AnnouncementSet announcement,int courseId)
         {
-            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
-            if (issuerId == null)
-                return BadRequest("could not extract issuer id from http context");
-
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var response = await service.CreateAnnouncementAsync(announcement, courseId, issuerId);
             return Ok(response);
         }
-        [HttpGet()]
+
+        [HttpGet]
         [Authorize(Policy = "User")]
         public IActionResult GetAllForCourse(int courseId)
         {
             var response = service.GetAllForCourse(courseId);
             return Ok(response);
         }
+
         [HttpGet("{id}")]
         [Authorize(Policy = "User")]
         public async Task<IActionResult> FindById(int id)
@@ -36,6 +34,7 @@ namespace LearnLink_Backend.Modules.Announcement
             var response = await service.GetByIdAsync(id);
             return Ok(response);
         }
+
         [HttpDelete("{id}")]
         [Authorize(Policy = "InstructorPolicy")]
         public IActionResult DeleteAnnouncement(int id)
@@ -43,14 +42,12 @@ namespace LearnLink_Backend.Modules.Announcement
             service.DeleteAnnouncement(id);
             return Ok();
         }
+
         [HttpPut("{id}")]
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> UpdateAnnouncement(int id, AnnouncementUpdate announcement)
         {
-            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
-            if (issuerId == null)
-                return BadRequest("could not extract issuer id from http context");
-
+            string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var response = await service.UpdateAnnouncementAsync(id, announcement, issuerId);
             return Ok(response);
         }
