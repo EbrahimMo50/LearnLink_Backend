@@ -1,107 +1,99 @@
-﻿//using LearnLink_Backend.Modules.Announcement.Repo;
-//using LearnLink_Backend.Modules.Announcement;
-//using LearnLink_Backend.Services;
-//using Microsoft.EntityFrameworkCore;
+﻿using LearnLink_Backend.Modules.Announcement;
+using LearnLink_Backend.Modules.Announcement.Repo;
+using LearnLink_Backend.Services;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
-//namespace LearnLink_Backend.Tests.Components.Announcements
-//{
-//    [TestClass]
-//    public class AnnounementRepoTests
-//    {
-//        [TestMethod]
-//        public void CreateAnnouncement_ValidInput_AnnouncementCreated()     // following the [UnitOfWork_StateUnderTest_ExpectedBehavior] convention
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("CreateAnnouncement_ValidInput_AnnouncementCreated")
-//            .Options;
+namespace LearnLink_Backend.Tests.Components.Announcements
+{
+    [TestClass]
+    public class AnnounementRepoTests
+    {
+        private static AppDbContext GetTestDbContext(string name)
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(name)
+            .Options;
+            return new AppDbContext(options);
+        }
+        [TestMethod]
+        public async Task GetByIdAsync_ValidId_AnnouncementReturned()
+        {
+            using (var context = GetTestDbContext("GetByIdAsync_ValidId_AnnouncementReturned"))
+            {
+                var repo = new AnnouncementRepo(context);
+                context.Announcements.Add(new AnnouncementModel() { Title = "Test" , CreatedBy = "Test", Description = "Test"});
+                context.SaveChanges();
+                var announcement = await repo.GetByIdAsync(1);
+                Assert.AreEqual(announcement!.Title, "Test");
+            }
+        }
 
-//            using (var context = new AppDbContext(options)) 
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                repo.CreateAnnouncement(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello" }).Wait();
-//                Assert.AreNotEqual(context.Announcements.FirstOrDefault(), null);
-//            }
-//        }
+        [TestMethod]
+        public async Task GetByIdAsync_InValidId_NullReturned()
+        {
+            using (var context = GetTestDbContext("GetByIdAsync_InValidId_NullReturned"))
+            {
+                var repo = new AnnouncementRepo(context);
+                var announcement = await repo.GetByIdAsync(1);
+                Assert.IsNull(announcement);
+            }
+        }
 
-//        [TestMethod]
-//        public void ReadAnnouncement_ValidId_AnnouncementReturned()
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("ReadAnnouncement_ValidId_AnnouncementReturned")
-//            .Options;
+        [TestMethod]
+        public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()
+        {
+            using (var context = GetTestDbContext("GetAllForCourse_ValidCourseId_AnnouncementsReturned"))
+            {
+                var repo = new AnnouncementRepo(context);
+                context.Announcements.Add(new AnnouncementModel() { Title = "Test", CreatedBy = "Test", Description = "Test", CourseId = 1 });
+                context.SaveChanges();
+                var announcements = repo.GetAllForCourse(1);
+                Assert.AreEqual(1, announcements.Count());
+            }
+        }
 
-//            using (var context = new AppDbContext(options))
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                var result = repo.CreateAnnouncement(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello" }).Result;
-//                var announcement = repo.FindById(result.Id).Result;
-//                Assert.AreEqual(announcement.Id, result.Id);
-//            }
-//        }
+        [TestMethod]
+        public async Task UpdateAnnouncement_ValidInput_AnnouncementUpdated()
+        {
+            using (var context = GetTestDbContext("UpdateAnnouncement_ValidInput_AnnouncementUpdated"))
+            {
+                var repo = new AnnouncementRepo(context);
+                var announcement = new AnnouncementModel() { Title = "Test", CreatedBy = "Test", Description = "Test" };
+                announcement.Title = "Test Update";
+                var updatedAnnouncement = await repo.UpdateAnnouncementAsync(announcement);
+                Assert.AreEqual("Test Update", updatedAnnouncement.Title);
+            }
+        }
 
-//        [TestMethod]
-//        public void GetAllForCourse_ValidCourseId_AnnouncementsReturned()
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("GetAllForCourse_ValidCourseId_AnnouncementsReturned")
-//            .Options;
+        [TestMethod]
+        public void DeleteAnnouncement_ValidInput_AnnouncementDeleted()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase("DeleteAnnouncement_ValidInput_AnnouncementDeleted")
+            .Options;
 
-//            using (var context = new AppDbContext(options))
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                var result = repo.CreateAnnouncement(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello", CourseId = 1 }).Result;
-//                var announcements = repo.GetAllForCourse(1);
-//                Assert.AreEqual(announcements.Count(), 1);
-//            }
-//        }
+            using (var context = new AppDbContext(options))
+            {
+                var repo = new AnnouncementRepo(context);
+                context.Announcements.Add(new AnnouncementModel() {Title = "Test", CreatedBy = "Test", Description = "Test" });
+                context.SaveChanges();
+                repo.DeleteAnnouncement(1);
+                Assert.IsFalse(context.Announcements.Any());
+            }
+        }
 
-//        [TestMethod]
-//        public void UpdateAnnouncement_ValidInput_AnnouncementUpdated()
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("UpdateAnnouncement_ValidInput_AnnouncementUpdated")
-//            .Options;
-
-//            using (var context = new AppDbContext(options))
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                var result = repo.CreateAnnouncement(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello" }).Result;
-//                result.Title = "hello updated";
-//                var updated = repo.UpdateAnnouncement(1,new Modules.Announcement.DTOs.AnnouncementUpdate() { Description = "hello updated"},"self").Result;
-//                Assert.AreEqual(updated.Description, "hello updated");
-//            }
-//        }
-
-//        [TestMethod]
-//        public void DeleteAnnouncement_ValidInput_AnnouncementDeleted()
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("DeleteAnnouncement_ValidInput_AnnouncementDeleted")
-//            .Options;
-
-//            using (var context = new AppDbContext(options))
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                context.Announcements.Add(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello" });
-//                repo.DeleteAnnouncement(1);
-//                Assert.AreEqual(context.Announcements.Count(),0);
-//            }
-//        }
-
-//        [TestMethod]
-//        public void DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted()
-//        {
-//            var options = new DbContextOptionsBuilder<AppDbContext>()
-//            .UseInMemoryDatabase("DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted")
-//            .Options;
-
-//            using (var context = new AppDbContext(options))
-//            {
-//                var repo = new AnnouncementRepo(context);
-//                var result = repo.CreateAnnouncement(new AnnouncementModel() { Title = "hello", CreatedBy = "self", Description = "this is hello" }).Result;
-//                repo.DeleteAnnouncement(2);
-//                Assert.IsTrue(context.Announcements.Any());
-//            }
-//        }
-//    }
-//}
+        [TestMethod]
+        public void DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted()
+        {
+            using (var context = GetTestDbContext("DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted"))
+            {
+                var repo = new AnnouncementRepo(context);
+                context.Announcements.Add(new AnnouncementModel() {Title = "Test", CreatedBy = "Test", Description = "Test" });
+                context.SaveChanges();
+                repo.DeleteAnnouncement(2);
+                Assert.IsTrue(context.Announcements.Any());
+            }
+        }
+    }
+}

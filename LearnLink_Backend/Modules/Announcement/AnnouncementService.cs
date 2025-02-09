@@ -15,7 +15,7 @@ namespace LearnLink_Backend.Modules.Announcement
     {
         public async Task<AnnouncementModel> CreateAnnouncementAsync(AnnouncementSet announcement, int courseId, string createrId)
         {
-            var course = await courseRepo.GetByIdAsync(courseId);
+            CourseModel? course = await courseRepo.GetByIdAsync(courseId) ?? throw new NotFoundException("Course not found");
             AnnouncementModel obj = new() { Title = announcement.Title, Description = announcement.Description, CourseId = courseId, AtDate = DateTime.UtcNow, CreatedBy = createrId, Course = course };
             return await announcementRepo.CreateAnnouncementAsync(obj);
         }
