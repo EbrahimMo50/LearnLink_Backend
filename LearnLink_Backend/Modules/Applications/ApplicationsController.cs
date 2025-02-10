@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Applications.DTOs;
+using LearnLink_Backend.Modules.Applications.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace LearnLink_Backend.Modules.Applications
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ApplicationsController(IHttpContextAccessor httpContextAccess, ApplicationService applicationService) : ControllerBase
+    public class ApplicationsController(IHttpContextAccessor httpContextAccess, IApplicationService applicationService) : ControllerBase
     {
         [HttpPost("instructors/applications")]
         public IActionResult Apply(ApplicationSet app)

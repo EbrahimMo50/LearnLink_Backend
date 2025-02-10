@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Posts.DTOs;
+using LearnLink_Backend.Modules.Posts.Services;
 using LearnLink_Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace LearnLink_Backend.Modules.Posts
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController(PostService postService, IHttpContextAccessor httpContextAccess, MediaService mediaService) : ControllerBase
+    public class PostController(IPostService postService, IHttpContextAccessor httpContextAccess, MediaService mediaService) : ControllerBase
     {
         [HttpPost()]
         [Authorize(Policy = "Admin")]

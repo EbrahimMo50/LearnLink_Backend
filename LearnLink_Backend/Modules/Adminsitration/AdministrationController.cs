@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.Modules.Adminstration.DTOs;
+﻿using LearnLink_Backend.Modules.Adminsitration.Services;
+using LearnLink_Backend.Modules.Adminstration.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -7,7 +8,7 @@ namespace LearnLink_Backend.Modules.Adminsitration
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdministrationController(AdministrationService administrationService, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class AdministrationController(IAdminstrationService administrationService, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost("admins")]
         [Authorize(Policy = "AdminPolicy")]

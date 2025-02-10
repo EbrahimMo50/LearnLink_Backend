@@ -2,13 +2,10 @@
 using LearnLink_Backend.Modules.Meeting.DTOs;
 using LearnLink_Backend.Modules.Meeting.Repos;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
-using LearnLink_Backend.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
-namespace LearnLink_Backend.Modules.Meeting
+namespace LearnLink_Backend.Modules.Meeting.Services
 {
-    public class MeetingService(IMeetingRepo meetingRepo, IUserRepo userRepo)
+    public class MeetingService(IMeetingRepo meetingRepo, IUserRepo userRepo) : IMeetingService
     {
         public async Task<MeetingModel> CreateMeetingAsync(MeetingSet meeting, string createrId)
         {
@@ -68,7 +65,7 @@ namespace LearnLink_Backend.Modules.Meeting
         {
             return MeetingGet.ToDTO(await meetingRepo.GetMeetingsForStudentAsync(issuerId));
         }
-        public void Delete(int id,string issuerId)
+        public void Delete(int id, string issuerId)
         {
             meetingRepo.Delete(id, issuerId);
         }

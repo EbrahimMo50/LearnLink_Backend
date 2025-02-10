@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Announcement.DTOs;
+using LearnLink_Backend.Modules.Announcement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -7,7 +8,7 @@ namespace LearnLink_Backend.Modules.Announcement
 {
     [Route("api/course/{courseId}/[controller]/")]
     [ApiController]
-    public class AnnouncementController(AnnouncementService service, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class AnnouncementController(IAnnouncementService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
 
         [HttpPost]

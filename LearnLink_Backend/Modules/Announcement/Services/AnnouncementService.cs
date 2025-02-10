@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace LearnLink_Backend.Modules.Announcement
+namespace LearnLink_Backend.Modules.Announcement.Services
 {
-    public class AnnouncementService(IAnnouncementRepo announcementRepo, ICourseRepo courseRepo)
+    public class AnnouncementService(IAnnouncementRepo announcementRepo, ICourseRepo courseRepo) : IAnnouncementService
     {
         public async Task<AnnouncementModel> CreateAnnouncementAsync(AnnouncementSet announcement, int courseId, string createrId)
         {
@@ -26,7 +26,7 @@ namespace LearnLink_Backend.Modules.Announcement
         }
         public async Task<AnnouncementGet> GetByIdAsync(int id)
         {
-            return  AnnouncementGet.ToDTO(await announcementRepo.GetByIdAsync(id) ?? throw new NotFoundException("could not find announcement"));
+            return AnnouncementGet.ToDTO(await announcementRepo.GetByIdAsync(id) ?? throw new NotFoundException("could not find announcement"));
         }
         public void DeleteAnnouncement(int id)
         {

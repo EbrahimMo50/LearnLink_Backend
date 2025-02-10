@@ -5,9 +5,9 @@ using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 
-namespace LearnLink_Backend.Modules.Courses
+namespace LearnLink_Backend.Modules.Courses.Services
 {
-    public class CourseService(ICourseRepo courseRepo, IUserRepo userRepo)
+    public class CourseService(ICourseRepo courseRepo, IUserRepo userRepo) : ICourseService
     {
         public async Task<CourseModel> CreateCourseAsync(CourseSet course, string createrId)
         {
@@ -74,7 +74,7 @@ namespace LearnLink_Backend.Modules.Courses
                 throw new NotFoundException("could not find quered data");
 
             if (student.Courses.FirstOrDefault(x => x.Id == courseId) == null)
-               throw new ConfilctException("student is not registered to this course"); 
+                throw new ConfilctException("student is not registered to this course");
 
             student.Courses.Remove(course);
             course.Students.Remove(student);

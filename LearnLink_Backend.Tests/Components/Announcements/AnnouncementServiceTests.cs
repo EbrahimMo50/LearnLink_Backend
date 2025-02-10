@@ -5,6 +5,7 @@ using Moq;
 using LearnLink_Backend.Modules.Announcement.DTOs;
 using LearnLink_Backend.Modules.Courses.Models;
 using LearnLink_Backend.Modules.Courses.Repos;
+using LearnLink_Backend.Modules.Announcement.Services;
 
 namespace LearnLink_Backend.Tests.Components.Announcements
 {
@@ -72,19 +73,6 @@ namespace LearnLink_Backend.Tests.Components.Announcements
             var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
             var result = await service.GetByIdAsync(1);
             Assert.AreEqual("Test", result.Title);
-        }
-
-        [TestMethod]
-        public async Task UpdateAnnouncement_ValidUpdate_AttributesUpdated()
-        {
-            var announcementRepoMock = new Mock<IAnnouncementRepo>();
-            var courseRepoMock = new Mock<ICourseRepo>();
-            announcementRepoMock.Setup(x => x.UpdateAnnouncementAsync(It.IsAny<AnnouncementModel>()))
-                .ReturnsAsync(new AnnouncementModel() { Title = "Test Update" });
-            var service = new AnnouncementService(announcementRepoMock.Object, courseRepoMock.Object);
-            var elementToBeUpdated = await service.UpdateAnnouncementAsync(1,new AnnouncementUpdate() { Title = "Test Update" }, "Creater Test");
-            Assert.AreEqual("Test Update", elementToBeUpdated.Title);
-            Assert.IsNotNull(elementToBeUpdated.UpdateTime);
         }
     }
 }

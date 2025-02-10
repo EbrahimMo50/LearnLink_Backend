@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Modules.Authentcation.DTOs;
+using LearnLink_Backend.Modules.Authentcation.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ namespace LearnLink_Backend.Modules.Authentcation
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AuthServices authService, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class AuthController(IAuthService authService, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost("sign-up")]
         public IActionResult SignUp(StudentSet student)

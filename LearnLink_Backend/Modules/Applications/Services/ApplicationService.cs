@@ -2,11 +2,11 @@
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Applications.DTOs;
 using LearnLink_Backend.Modules.Applications.Repos;
-using LearnLink_Backend.Modules.Authentcation;
+using LearnLink_Backend.Modules.Authentcation.Services.Auth;
 
-namespace LearnLink_Backend.Modules.Applications
+namespace LearnLink_Backend.Modules.Applications.Services
 {
-    public class ApplicationService(IApplicationRepo applicationRepo, AuthServices authServices)
+    public class ApplicationService(IApplicationRepo applicationRepo, AuthService authServices) : IApplicationService
     {
         public ApplicationModel ApplyForInstructor(ApplicationSet applicationSet)
         {

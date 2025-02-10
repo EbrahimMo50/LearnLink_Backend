@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Meeting.DTOs;
+using LearnLink_Backend.Modules.Meeting.Services;
 using LearnLink_Backend.Modules.User.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,7 @@ namespace LearnLink_Backend.Modules.Meeting
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MeetingController(MeetingService service, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class MeetingController(IMeetingService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost]
         [Authorize(Policy = "StudentPolicy")]

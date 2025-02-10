@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace LearnLink_Backend.Modules.Authentcation
+namespace LearnLink_Backend.Modules.Authentcation.Services.Token
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         public string GenerateToken(UniversalUser user)
         {
@@ -43,7 +43,7 @@ namespace LearnLink_Backend.Modules.Authentcation
             claims.AddClaim(new Claim(ClaimTypes.Email, user.Email));
             claims.AddClaim(new Claim("id", user.Id.ToString()));
             claims.AddClaim(new Claim(ClaimTypes.Role, user.Role));
-            
+
             return claims;
         }
     }

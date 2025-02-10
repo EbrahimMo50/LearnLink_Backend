@@ -1,6 +1,4 @@
-﻿
-
-using Moq;
+﻿using Moq;
 
 namespace LearnLink_Backend.Tests.Components.Announcements
 {

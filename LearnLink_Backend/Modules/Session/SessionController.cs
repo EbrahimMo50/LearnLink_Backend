@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Modules.Session.DTOs;
+using LearnLink_Backend.Modules.Session.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace LearnLink_Backend.Modules.Session
 {
     [Route("api/course/{courseId}/[controller]")]
     [ApiController]
-    public class SessionController(SessionService service, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class SessionController(ISessionService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost()]
         [Authorize(Policy = "InstructorPolicy")]

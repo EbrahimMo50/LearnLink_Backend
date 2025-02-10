@@ -1,14 +1,13 @@
 ﻿using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
-using LearnLink_Backend.Modules.Posts;
 using LearnLink_Backend.Modules.Posts.DTOs;
 using LearnLink_Backend.Modules.Posts.Repos;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Services;
 
-namespace LearnLink_Backend.Modules.Posts
+namespace LearnLink_Backend.Modules.Posts.Services
 {
-    public class PostService(IPostRepo postRepo, IUserRepo userRepo)
+    public class PostService(IPostRepo postRepo, IUserRepo userRepo) : IPostService
     {
         public async Task<PostModel> CreatePostAsync(PostSet postSet, string IssuerId)
         {

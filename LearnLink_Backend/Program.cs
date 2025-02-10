@@ -1,15 +1,8 @@
 using LearnLink_Backend.MiddleWares;
-using LearnLink_Backend.Modules.Adminsitration;
-using LearnLink_Backend.Modules.Announcement;
 using LearnLink_Backend.Modules.Announcement.Repo;
-using LearnLink_Backend.Modules.Authentcation;
-using LearnLink_Backend.Modules.Courses;
 using LearnLink_Backend.Modules.Courses.Repos;
-using LearnLink_Backend.Modules.Meeting;
 using LearnLink_Backend.Modules.Meeting.Repos;
 using LearnLink_Backend.Modules.Posts.Repos;
-using LearnLink_Backend.Modules.Posts;
-using LearnLink_Backend.Modules.Session;
 using LearnLink_Backend.Modules.Session.Repos;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Modules.User.Services;
@@ -25,6 +18,14 @@ using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
 using LearnLink_Backend.Modules.User.Repos.UserSchedule;
+using LearnLink_Backend.Modules.Announcement.Services;
+using LearnLink_Backend.Modules.Authentcation.Services.Auth;
+using LearnLink_Backend.Modules.Authentcation.Services.Token;
+using LearnLink_Backend.Modules.Courses.Services;
+using LearnLink_Backend.Modules.Meeting.Services;
+using LearnLink_Backend.Modules.Posts.Services;
+using LearnLink_Backend.Modules.Session.Services;
+using LearnLink_Backend.Modules.Adminsitration.Services;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -87,24 +88,25 @@ builder.Services.AddScoped<IAuthorizationHandler, AdminRequirmentHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, InstructorRequirmentHandler>();
 
 // auth releated injections
-builder.Services.AddScoped<AuthServices>();
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // modules structure injections
-builder.Services.AddScoped<AnnouncementService>();
-builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
-builder.Services.AddScoped<CourseService>();
-builder.Services.AddScoped<ICourseRepo, CourseRepo>();
-builder.Services.AddScoped<MeetingService>();
-builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
-builder.Services.AddScoped<SessionService>();
-builder.Services.AddScoped<ISessionRepo, SessionRepo>();
-builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IMeetingService, MeetingService>();
+builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IUserService ,UserService>();
+builder.Services.AddScoped<IAdminstrationService, AdministrationService>();
+
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IInstructorScheduleRepo, InstructorScheduleRepo>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<AdministrationService>();
+builder.Services.AddScoped<ISessionRepo, SessionRepo>();
+builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
+builder.Services.AddScoped<ICourseRepo, CourseRepo>();
+builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 
 // independent services injections
 builder.Services.AddDbContext<AppDbContext>(
@@ -187,3 +189,4 @@ app.MapControllers();
 app.Run();
 
 // CARE TO TEST THE APP THROUGHLY THE LAST REFACTOR WAS SO HEAVY BUGS MAY HAVE SLIPT THROUGH
+// create notification system with signalR

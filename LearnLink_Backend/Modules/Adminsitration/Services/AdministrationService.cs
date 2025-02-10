@@ -2,12 +2,12 @@
 using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Adminstration.DTOs;
-using LearnLink_Backend.Modules.Authentcation;
+using LearnLink_Backend.Modules.Authentcation.Services.Auth;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 
-namespace LearnLink_Backend.Modules.Adminsitration
+namespace LearnLink_Backend.Modules.Adminsitration.Services
 {
-    public class AdministrationService(AuthServices authService, IUserRepo userRepo)
+    public class AdministrationService(IAuthService authService, IUserRepo userRepo) : IAdminstrationService
     {
         public void AddAdmin(AdminSignVM adminAccount, string createrId)
         {

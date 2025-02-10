@@ -3,14 +3,12 @@ using LearnLink_Backend.Modules.Courses.Repos;
 using LearnLink_Backend.Modules.Session.DTOs;
 using LearnLink_Backend.Modules.Session.Repos;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
-using LearnLink_Backend.Services;
-using Microsoft.EntityFrameworkCore;
 
-namespace LearnLink_Backend.Modules.Session
+namespace LearnLink_Backend.Modules.Session.Services
 {
-    public class SessionService(ISessionRepo sessionRepo, ICourseRepo courseRepo, IUserRepo userRepo)
+    public class SessionService(ISessionRepo sessionRepo, ICourseRepo courseRepo, IUserRepo userRepo) : ISessionService
     {
-       public async Task<SessionModel> CreateSessionAsync(SessionSet sessionSet, string issuerId)
+        public async Task<SessionModel> CreateSessionAsync(SessionSet sessionSet, string issuerId)
         {
             if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
                 throw new BadRequestException("invalid time line");
@@ -70,15 +68,16 @@ namespace LearnLink_Backend.Modules.Session
         public async Task<string> AttendSessionAsync(int sessionId, string studentId)
         {
             var student = userRepo.GetStudentById(studentId) ?? throw new NotFoundException("student not found");
-            
+
             var session = sessionRepo.GetById(sessionId);
             if (session == null)
                 throw new NotFoundException("could not find session");
 
-            if(session.Day == DateOnly.FromDateTime(DateTime.Now)){
+            if (session.Day == DateOnly.FromDateTime(DateTime.Now))
+            {
 
                 if (session.EndsAt < TimeOnly.FromDateTime(DateTime.Now) || session.StartsAt > TimeOnly.FromDateTime(DateTime.Now))
-                   throw new BadRequestException("session is inavtice currently");
+                    throw new BadRequestException("session is inavtice currently");
 
                 session.AttendendStudent.Add(student);
                 await sessionRepo.UpdateAsync(session);

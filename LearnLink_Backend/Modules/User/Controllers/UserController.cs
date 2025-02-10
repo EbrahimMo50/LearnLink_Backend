@@ -9,7 +9,7 @@ namespace LearnLink_Backend.Modules.User.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(UserService service,IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class UserController(IUserService service,IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPut("instructor/{instructorId}/schedule")]
         [Authorize(Policy = "InstructorPolicy")]

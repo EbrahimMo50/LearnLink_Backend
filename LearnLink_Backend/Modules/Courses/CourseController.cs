@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Modules.Courses.DTOs;
+using LearnLink_Backend.Modules.Courses.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -7,7 +8,7 @@ namespace LearnLink_Backend.Modules.Courses
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController(CourseService service, IHttpContextAccessor httpContextAccess) : ControllerBase
+    public class CourseController(ICourseService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost]
         [Authorize(Policy = "AdminPolicy")]

@@ -1,16 +1,13 @@
-﻿using LearnLink_Backend.DTOs;
-using LearnLink_Backend.DTOs.InstructorDTOs;
+﻿using LearnLink_Backend.DTOs.InstructorDTOs;
 using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Exceptions;
-using LearnLink_Backend.Models;
-using LearnLink_Backend.Modules.Applications;
 using LearnLink_Backend.Modules.User.DTOs;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using LearnLink_Backend.Modules.User.Repos.UserSchedule;
 
 namespace LearnLink_Backend.Modules.User.Services
 {
-    public class UserService(IUserRepo userRepo, IInstructorScheduleRepo scheduleRepo)
+    public class UserService(IUserRepo userRepo, IInstructorScheduleRepo scheduleRepo) : IUserService
     {
         public InstructorScheduleGet UpdateSchedule(ScheduleSet scheduleSet, string initiatorId)
         {
@@ -39,7 +36,7 @@ namespace LearnLink_Backend.Modules.User.Services
             return StudentGet.ToDTO(userRepo.GetStudents(ids));
         }
 
-        internal IEnumerable<InstructorGet> GetInstructors(List<string> ids)
+        public IEnumerable<InstructorGet> GetInstructors(List<string> ids)
         {
             return InstructorGet.ToDTO(userRepo.GetInstructors(ids));
         }

@@ -3,13 +3,14 @@ using LearnLink_Backend.DTOs.StudentDTOs;
 using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Authentcation.DTOs;
+using LearnLink_Backend.Modules.Authentcation.Services.Token;
 using LearnLink_Backend.Modules.User.Repos.UserMangement;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace LearnLink_Backend.Modules.Authentcation
+namespace LearnLink_Backend.Modules.Authentcation.Services.Auth
 {
-    public class AuthServices(TokenService tokenService, IUserRepo userRepo)
+    public class AuthService(ITokenService tokenService, IUserRepo userRepo) : IAuthService
     {
         public void SignUp(StudentSet studentVM)
         {
@@ -24,7 +25,7 @@ namespace LearnLink_Backend.Modules.Authentcation
 
             var student = studentVM.ToStudent(HashedPassword, Salt);
             student.CreatedBy = "self";
-            
+
             userRepo.AddStudent(student);
         }
         //could go with abstraction for admin and instructor to solve redundancy but alot of changes must take place
@@ -66,7 +67,7 @@ namespace LearnLink_Backend.Modules.Authentcation
             throw new NotFoundException("User not found");
         }
 
-        public string ChangePassword(string initiatorId, string email , string oldPass, string newPass)
+        public string ChangePassword(string initiatorId, string email, string oldPass, string newPass)
         {
             var student = userRepo.GetStudentById(initiatorId);
             if (student != null)
@@ -118,7 +119,7 @@ namespace LearnLink_Backend.Modules.Authentcation
         private bool EmailExists(string Email)
         {
             var StudentUserEmail = userRepo.GetStudentByEmail(Email);
-            var InstructorUserEmail = userRepo.GetInstructorByEmail(Email); 
+            var InstructorUserEmail = userRepo.GetInstructorByEmail(Email);
             var AdminUserEmail = userRepo.GetAdminByEmail(Email);
 
             if (StudentUserEmail != null || InstructorUserEmail != null || AdminUserEmail != null)
