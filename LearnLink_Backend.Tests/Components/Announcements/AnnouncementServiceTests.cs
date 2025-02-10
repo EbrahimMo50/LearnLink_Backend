@@ -1,11 +1,10 @@
 ﻿using LearnLink_Backend.Exceptions;
-using LearnLink_Backend.Modules.Announcement.Repo;
-using LearnLink_Backend.Modules.Announcement;
 using Moq;
-using LearnLink_Backend.Modules.Announcement.DTOs;
-using LearnLink_Backend.Modules.Courses.Models;
-using LearnLink_Backend.Modules.Courses.Repos;
-using LearnLink_Backend.Modules.Announcement.Services;
+using LearnLink_Backend.Entities;
+using LearnLink_Backend.Repositories.AnnouncementsRepo;
+using LearnLink_Backend.Repositories.CoursesRepo;
+using LearnLink_Backend.Services.AnnouncementsService;
+using LearnLink_Backend.DTOs;
 
 namespace LearnLink_Backend.Tests.Components.Announcements
 {

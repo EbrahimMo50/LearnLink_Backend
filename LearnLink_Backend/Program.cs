@@ -1,11 +1,4 @@
 using LearnLink_Backend.MiddleWares;
-using LearnLink_Backend.Modules.Announcement.Repo;
-using LearnLink_Backend.Modules.Courses.Repos;
-using LearnLink_Backend.Modules.Meeting.Repos;
-using LearnLink_Backend.Modules.Posts.Repos;
-using LearnLink_Backend.Modules.Session.Repos;
-using LearnLink_Backend.Modules.User.Repos.UserMangement;
-using LearnLink_Backend.Modules.User.Services;
 using LearnLink_Backend.Policies.AdminPolicy;
 using LearnLink_Backend.Policies.InstructorPolicy;
 using LearnLink_Backend.Policies.StudentPolicy;
@@ -17,15 +10,23 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
-using LearnLink_Backend.Modules.User.Repos.UserSchedule;
-using LearnLink_Backend.Modules.Announcement.Services;
-using LearnLink_Backend.Modules.Authentcation.Services.Auth;
-using LearnLink_Backend.Modules.Authentcation.Services.Token;
-using LearnLink_Backend.Modules.Courses.Services;
-using LearnLink_Backend.Modules.Meeting.Services;
-using LearnLink_Backend.Modules.Posts.Services;
-using LearnLink_Backend.Modules.Session.Services;
-using LearnLink_Backend.Modules.Adminsitration.Services;
+using LearnLink_Backend.Entities;
+using LearnLink_Backend.Repositories.AnnouncementsRepo;
+using LearnLink_Backend.Repositories.CoursesRepo;
+using LearnLink_Backend.Repositories.MeetingsRepo;
+using LearnLink_Backend.Repositories.PostsRepo;
+using LearnLink_Backend.Repositories.SchedulesRepo;
+using LearnLink_Backend.Repositories.SessionsRepo;
+using LearnLink_Backend.Repositories.UserMangementRepo;
+using LearnLink_Backend.Services.AdminstrationsService;
+using LearnLink_Backend.Services.AnnouncementsService;
+using LearnLink_Backend.Services.AuthService;
+using LearnLink_Backend.Services.CoursesService;
+using LearnLink_Backend.Services.JWTService;
+using LearnLink_Backend.Services.MeetingsService;
+using LearnLink_Backend.Services.PostsService;
+using LearnLink_Backend.Services.SessionsService;
+using LearnLink_Backend.Services.UsersService;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -81,6 +82,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 // .NET libs dependecny injection 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton and reduce redundancy
+builder.Services.AddSignalR();
 
 // policies injection
 builder.Services.AddScoped<IAuthorizationHandler, StudentRequirmentHandler>();

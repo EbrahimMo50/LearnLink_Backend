@@ -1,4 +1,4 @@
-﻿using LearnLink_Backend.Services;
+﻿using LearnLink_Backend.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 

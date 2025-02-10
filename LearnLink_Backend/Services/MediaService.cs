@@ -1,6 +1,4 @@
 ﻿using LearnLink_Backend.Exceptions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
 
 namespace LearnLink_Backend.Services

@@ -1,9 +1,6 @@
-﻿using LearnLink_Backend.Models;
-using LearnLink_Backend.Modules.Announcement;
-using LearnLink_Backend.Modules.Announcement.Repo;
-using LearnLink_Backend.Services;
+﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Repositories.AnnouncementsRepo;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace LearnLink_Backend.Tests.Components.Announcements
 {
