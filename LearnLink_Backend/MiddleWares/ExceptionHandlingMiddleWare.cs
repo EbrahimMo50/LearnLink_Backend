@@ -27,7 +27,7 @@ namespace LearnLink_Backend.MiddleWares
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { Error = ex.Message });
             }
-            catch(ConfilctException ex)
+            catch (ConfilctException ex)
             {
                 _logger.LogError(ex, "A bad request exception occurred.");
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
