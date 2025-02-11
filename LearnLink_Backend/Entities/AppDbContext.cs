@@ -17,6 +17,7 @@ namespace LearnLink_Backend.Entities
         public DbSet<AnnouncementModel> Announcements { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<PostModel> Posts { get; set; }
+        public DbSet<NotificationModel> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +61,10 @@ namespace LearnLink_Backend.Entities
 
             modelBuilder.Entity<PostModel>()
                 .ToTable("Posts")
+                .HasKey(u => u.Id);
+            
+            modelBuilder.Entity<NotificationModel>()
+                .ToTable("Notifications")
                 .HasKey(u => u.Id);
         }
     }

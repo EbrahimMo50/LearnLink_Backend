@@ -27,6 +27,10 @@ using LearnLink_Backend.Services.MeetingsService;
 using LearnLink_Backend.Services.PostsService;
 using LearnLink_Backend.Services.SessionsService;
 using LearnLink_Backend.Services.UsersService;
+using System.Collections.Concurrent;
+using LearnLink_Backend.Hubs;
+using LearnLink_Backend.Services.NotificationsService;
+using LearnLink_Backend.Repositories.NotificationsRepo;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -79,6 +83,14 @@ builder.Services.AddEndpointsApiExplorer();
         c.AddSecurityRequirement(securityRequirement);
     });
 
+builder.Services.AddCors(options =>
+        options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:4200")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials())
+    );
+
 
 // .NET libs dependecny injection 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();     //all other repos are depndent on it handy to make it singleton and reduce redundancy
@@ -101,6 +113,7 @@ builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IUserService ,UserService>();
 builder.Services.AddScoped<IAdminstrationService, AdministrationService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
@@ -109,8 +122,10 @@ builder.Services.AddScoped<ISessionRepo, SessionRepo>();
 builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
+builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
 
 // independent services injections
+builder.Services.AddSingleton<ConcurrentDictionary<string, List<string>>>(); // for currently active sessions and their users
 builder.Services.AddDbContext<AppDbContext>(
      options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
      );
@@ -177,6 +192,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowSpecificOrigin");
 
 app.UseMiddleware<ExceptionHandlingMiddleWare>();
 
@@ -187,6 +203,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MainHub>("/main-hub");
 
 app.Run();
 
