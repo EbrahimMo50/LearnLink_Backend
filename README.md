@@ -26,7 +26,7 @@ the application is configured to run with swagger displaying the endpoints on ru
 
 tests are being implemented to prepare for publishing
 
-## MarkDowns
+## Considerations
 
 file structure is not in the best shape. seprating the layers to infrastructure, core and presentation is recommended
 
