@@ -31,6 +31,7 @@ using System.Collections.Concurrent;
 using LearnLink_Backend.Hubs;
 using LearnLink_Backend.Services.NotificationsService;
 using LearnLink_Backend.Repositories.NotificationsRepo;
+using Microsoft.Extensions.Options;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -125,7 +126,6 @@ builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
 
 // independent services injections
-builder.Services.AddSingleton<ConcurrentDictionary<string, List<string>>>(); // for currently active sessions and their users
 builder.Services.AddDbContext<AppDbContext>(
      options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
      );
@@ -138,8 +138,25 @@ builder.Services
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(x =>
-    {
+.AddJwtBearer(x =>
+{
+        x.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                // If the request is for our hub...
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/main-hub")))
+                {
+                    // Read the token out of the query string
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
         var config = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json")
         .Build();
@@ -192,11 +209,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("AllowSpecificOrigin");
 
-app.UseMiddleware<ExceptionHandlingMiddleWare>();
-
 app.UseHttpsRedirection();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<ExceptionHandlingMiddleWare>();   // note there is a pre built middleware for catchinf logging exceptions but we will use our own
+}
 
 app.UseAuthentication();
 

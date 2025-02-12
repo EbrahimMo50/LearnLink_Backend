@@ -1,57 +1,64 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
 namespace LearnLink_Backend.Hubs
 {
     // hub for users to manage connections and disconnections
-    public class MainHub(ConcurrentDictionary<string, List<string>> connectedUsers) : Hub<IMainHub>
+    [Authorize("User")]
+    public class MainHub : Hub<IMainHub>
     {
-        public override Task OnConnectedAsync()
+        public async override Task OnConnectedAsync()
         {
-            try
-            {
-                connectedUsers[Context.GetHttpContext()!.User.FindFirstValue("id")!].Add(Context.ConnectionId);
-                Console.WriteLine($"user connected with connection id = {Context.ConnectionId}");
-                Console.WriteLine($"Id = {Context.GetHttpContext()!.User.FindFirstValue("id")!}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.User.FindFirstValue("id")!);
 
 
-            return base.OnConnectedAsync();
+            //try
+            //{
+            //    if(!connectedUsers.TryAdd(Context.GetHttpContext()!.User.FindFirstValue("id")!, [Context.ConnectionId]))
+            //    {
+            //        connectedUsers[Context.GetHttpContext()!.User.FindFirstValue("id")!].Add(Context.ConnectionId);
+            //    }
+
+            //    //Console.WriteLine($"user connected with connection id = {Context.ConnectionId}");
+            //    //Console.WriteLine($"Id = {Context.GetHttpContext()!.User.FindFirstValue("id")!} \n\n");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+
+            await base.OnConnectedAsync();
         }
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public async override Task OnDisconnectedAsync(Exception? exception)
         {
-            try
-            {
-                string userId = Context.GetHttpContext()!.User.FindFirstValue("id")!;
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.User.FindFirstValue("id")!);
 
-                if (connectedUsers.TryGetValue(userId, out List<string> connectionIds))
-                {
-                    connectionIds.Remove(Context.ConnectionId);
+            //try
+            //{
+            //    string userId = Context.GetHttpContext()!.User.FindFirstValue("id")!;
 
-                    if (connectionIds.Count != 0)
-                        connectionIds.Remove(userId);
-                    else
-                        Console.WriteLine($"User {userId} not found in connected users.");
-                }
-                Console.WriteLine($"user disconnected with connection id = {Context.ConnectionId}");
-                Console.WriteLine($"Id = {Context.GetHttpContext()!.User.FindFirstValue("id")!}");
+            //    if (connectedUsers.TryGetValue(userId, out List<string> connectionIds))
+            //    {
+            //        if (connectionIds.Count == 1)
+            //            connectedUsers.TryRemove(userId, out _);
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            //        else 
+            //            connectionIds.Remove(Context.ConnectionId);
 
+            //    }
+            //    //Console.WriteLine($"user disconnected with connection id = {Context.ConnectionId}");
+            //    //Console.WriteLine($"Id = {Context.GetHttpContext()!.User.FindFirstValue("id")!}\n\n");
 
-            foreach (var item in connectedUsers)
-                item.Value.ForEach(x => Console.WriteLine(x));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
 
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

@@ -5,6 +5,13 @@ namespace LearnLink_Backend.Repositories.NotificationsRepo
 {
     public class NotificationRepo(AppDbContext dbContext) : INotificationRepo
     {
+        public async Task<NotificationModel> CreateNotificationAsync(NotificationModel notification)
+        {
+            var element = await  dbContext.Notifications.AddAsync(notification);
+            await dbContext.SaveChangesAsync();
+            return element.Entity;
+        }
+
         public void DeleteNotification(int id)
         {
             dbContext.Notifications.Where(x => x.Id == id).ExecuteDelete();
@@ -12,7 +19,9 @@ namespace LearnLink_Backend.Repositories.NotificationsRepo
 
         public NotificationModel? GetNotificationById(int id)
         {
-            return dbContext.Notifications.FirstOrDefault(x => x.Id == id);
+            return dbContext.Notifications
+                .Include(x => x.Reciever)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public async Task<IEnumerable<NotificationModel>> GetNotificationsByInstructorIdAsync(string id)

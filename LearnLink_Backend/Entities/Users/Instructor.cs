@@ -8,7 +8,7 @@ namespace LearnLink_Backend.Models
     //shall i add the instructor scehdule here?
     public class Instructor
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; }
         public string Name { get; set; }
         public string Salt { get; set; }
         public string HashedPassword { get; set; }

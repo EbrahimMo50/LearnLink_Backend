@@ -1,15 +1,17 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Hubs;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Modules.Authentcation.DTOs;
 using LearnLink_Backend.Repositories.UserMangementRepo;
 using LearnLink_Backend.Services.JWTService;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace LearnLink_Backend.Services.AuthService
 {
-    public class AuthService(ITokenService tokenService, IUserRepo userRepo) : IAuthService
+    public class AuthService(ITokenService tokenService, IUserRepo userRepo, IHubContext<MainHub, IMainHub> mainHub) : IAuthService
     {
         public void SignUp(StudentSet studentVM)
         {
@@ -75,6 +77,7 @@ namespace LearnLink_Backend.Services.AuthService
                     student.HashedPassword = Hash(student.Salt, newPass);
                     student.UpdatedBy = initiatorId;
                     student.UpdateTime = DateTime.UtcNow;
+                    mainHub.Clients.Group(initiatorId).LogOut();
                     return "updated pass for student";
                 }
 
@@ -85,6 +88,7 @@ namespace LearnLink_Backend.Services.AuthService
                     instructor.HashedPassword = Hash(instructor.Salt, newPass);
                     instructor.UpdatedBy = initiatorId;
                     instructor.UpdateTime = DateTime.UtcNow;
+                    mainHub.Clients.Group(initiatorId).LogOut();
                     return "updated pass for instructor";
                 }
 
@@ -95,6 +99,7 @@ namespace LearnLink_Backend.Services.AuthService
                     admin.HashedPassword = Hash(admin.Salt, newPass);
                     admin.UpdatedBy = initiatorId;
                     admin.UpdateTime = DateTime.UtcNow;
+                    mainHub.Clients.Group(initiatorId).LogOut();
                     return "updated pass for admin";
                 }
 
