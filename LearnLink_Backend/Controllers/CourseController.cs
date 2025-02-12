@@ -50,7 +50,7 @@ namespace LearnLink_Backend.Controllers
             var response = await service.UpdateCourseAsync(id, course, issuerId);
             return Ok(response);
         }
-        [HttpPost("{courseId}/students")]
+        [HttpPatch("{courseId}/join")]
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> JoinCourse(int courseId)
         {
@@ -61,11 +61,15 @@ namespace LearnLink_Backend.Controllers
             await service.JoinCourseAsync(courseId, issuerId);
             return Ok();
         }
-        [HttpDelete("{courseId}/students/{studentId}")]
+        [HttpPatch("{courseId}/leave")]
         [Authorize(Policy = "StudentPolicy")]
-        public async Task<IActionResult> LeaveCourse(string studentId, int courseId)
+        public async Task<IActionResult> LeaveCourse(int courseId)
         {
-            await service.LeaveCourseAsync(studentId, courseId);
+            string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+            if (issuerId == null)
+                return BadRequest("error in payload could not find creater");
+
+            await service.LeaveCourseAsync(courseId, issuerId);
             return Ok();
         }
     }

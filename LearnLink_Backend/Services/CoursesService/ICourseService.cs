@@ -11,6 +11,6 @@ namespace LearnLink_Backend.Services.CoursesService
         public void Delete(int id);
         public Task<CourseModel> UpdateCourseAsync(int id, CourseSet course, string updaterId);
         public Task JoinCourseAsync(int courseId, string studentId);
-        public Task LeaveCourseAsync(string studentId, int courseId);
+        public Task LeaveCourseAsync(int courseId, string studentId);
     }
 }

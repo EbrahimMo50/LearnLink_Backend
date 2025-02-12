@@ -4,10 +4,11 @@ using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Repositories.CoursesRepo;
 using LearnLink_Backend.Repositories.UserMangementRepo;
+using LearnLink_Backend.Services.NotificationsService;
 
 namespace LearnLink_Backend.Services.CoursesService
 {
-    public class CourseService(ICourseRepo courseRepo, IUserRepo userRepo) : ICourseService
+    public class CourseService(ICourseRepo courseRepo, IUserRepo userRepo, INotificationService notificationService) : ICourseService
     {
         public async Task<CourseModel> CreateCourseAsync(CourseSet course, string createrId)
         {
@@ -65,8 +66,11 @@ namespace LearnLink_Backend.Services.CoursesService
             student.UpdateTime = DateTime.UtcNow;
 
             userRepo.UpdateStudent(student);
+
+            var notification = new NotificationModel() { Reciever = course.Instructor!, Message = $"Student {student.Name} joined the {course.Name} course", Title = "a new student joined" };
+            await notificationService.SendNotification(notification);
         }
-        public async Task LeaveCourseAsync(string studentId, int courseId)
+        public async Task LeaveCourseAsync(int courseId, string studentId)
         {
             var student = userRepo.GetStudentById(studentId);
             var course = await courseRepo.GetByIdAsync(courseId);
@@ -84,6 +88,9 @@ namespace LearnLink_Backend.Services.CoursesService
 
             userRepo.UpdateStudent(student);
             await courseRepo.UpdateCourseAsync(course);
+
+            var notification = new NotificationModel() { Reciever = course.Instructor!, Message = $"Student {student.Name} left the {course.Name} course", Title = "a student left the course" };
+            await notificationService.SendNotification(notification);
         }
     }
 }
