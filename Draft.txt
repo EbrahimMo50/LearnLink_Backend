@@ -1,0 +1,62 @@
+presentation:
+	controllers
+	DTOs
+	Policies
+	Middlewares
+
+infrastructure:
+	Services
+	Repos
+	Hubs
+
+core:
+	Entities
+	ServicesInterfaces
+	ReposInterface
+	Migrations
+	Exceptions
+
+
+a notification event is invoked
+the service is injected and send notification is method is invoked
+it sends the notification to all clients connected with web socket session
+the service calls the repo to store the notification
+
+client recieves the notification if he is currently online
+client recieves all messages upon login and held pressistant through the session and keeps getting updated through signalR
+
+when a user logs in he is kept in a group of his id
+when change password is called an RPC to logout will be made to log all users in the group
+
+there is interface for notification hub to get a strongly-typed hubs
+there is a hub for connecting and disconnecting logging user in an active sessions dictionary
+
+
+
+
+
+the software applies:-
+
+security: 
+	sensetive data like password is hashed in the database
+	a session for logged users with same email is held and upon changing password logs out all users
+	JWT is used with policies to complete the auth system
+	exceptions are handled in generic manner when dealing with the client to hide system info
+
+performance:
+	the system uses async programming when dealing with calls that takes alot of processing
+	signalR is used to build the notification system for real-time communinication
+	pagination system is implemented in posts sections to reduce the load of the response
+
+flexability:
+	the system is built using N-layers (presentation, busniess, core) designing layers to focus on its concern
+	the system follows program to an interface, abstracting system's components during DI and introducing smoother testing
+	altough the the users table design follows TBC, abstractions for users are made to flexabiliy interact and flow through the system
+	
+
+
+in all simplicity how signalr works is the client requests to establish connection through HTTP post 
+the server responds with appropriate connection method(mostly web sockets)
+the client provids HTTP context once per initial connection
+when the session is open and connection is established it turns to pressistant web socket connection protocol
+we add an event checker that with each request the token is checked for validation through the auth JWT middleware
