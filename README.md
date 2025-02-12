@@ -33,3 +33,7 @@ file structure is not in the best shape. seprating the layers to infrastructure,
 user tables follow table per concerete denying scalabillity since there are 3 tables for users; consider following table per type design
 
 testing the repo layer in the application is done in near-unit(in-memory database) testing manner to avoid complex mocking of IAsyncQueryProvider and extensive needless mocking and logic
+
+custom policy authorization is defined and added to the services builder then are called losley-typed through Authorization("policy") annotation on endpoints consider making new policy providers and using them directly as annotations
+
+controllers have httpcontext from their base controller no need to inject the IHttpContext
