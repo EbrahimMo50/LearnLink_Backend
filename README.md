@@ -37,3 +37,5 @@ testing the repo layer in the application is done in near-unit(in-memory databas
 custom policy authorization is defined and added to the services builder then are called losley-typed through Authorization("policy") annotation on endpoints consider making new policy providers and using them directly as annotations
 
 controllers have httpcontext from their base controller no need to inject the IHttpContext
+
+The application follows REST Api guidlines except applying the (Allow filtering, sorting, and pagination) on all possibly applicable GET endpoints and caching
