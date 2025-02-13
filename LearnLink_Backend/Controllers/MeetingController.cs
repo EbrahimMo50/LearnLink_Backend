@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.DTOs;
+﻿using Azure;
+using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Services.MeetingsService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,8 @@ namespace LearnLink_Backend.Controllers
             if (issuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
-            var result = await service.CreateMeetingAsync(meeting, issuerId);
-            return Ok(result);
+            var response = await service.CreateMeetingAsync(meeting, issuerId);
+            return CreatedAtRoute(RouteData, response);
         }
 
         [HttpGet("{id}")]

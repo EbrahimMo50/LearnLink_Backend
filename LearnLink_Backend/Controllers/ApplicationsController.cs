@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.DTOs;
+﻿using Azure;
+using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Services.ApplicationsService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +16,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult Apply(ApplicationSet app)
         {
             var result = applicationService.ApplyForInstructor(app);
-            return Ok(result);
+            return CreatedAtRoute(RouteData, result); ;
         }
 
 

@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.DTOs;
+﻿using Azure;
+using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Services.SessionsService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace LearnLink_Backend.Controllers
     [ApiController]
     public class SessionController(ISessionService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> Create(SessionSet sessionSet, int courseId)
         {
@@ -19,8 +20,8 @@ namespace LearnLink_Backend.Controllers
             if (issuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
-            var result = await service.CreateSessionAsync(sessionSet, issuerId);
-            return Ok(result);
+            var response = await service.CreateSessionAsync(sessionSet, issuerId);
+            return CreatedAtRoute(RouteData, response);
         }
 
         [HttpGet("{id}")]

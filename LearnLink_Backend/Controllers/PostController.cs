@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.DTOs;
+﻿using Azure;
+using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Services;
 using LearnLink_Backend.Services.PostsService;
 using Microsoft.AspNetCore.Authorization;
@@ -36,8 +37,8 @@ namespace LearnLink_Backend.Controllers
             if (IssuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
-            var result = postService.CreatePostAsync(post, IssuerId);
-            return Ok(result);
+            var response = postService.CreatePostAsync(post, IssuerId);
+            return CreatedAtRoute(RouteData, response);
         }
         [HttpGet("{id}")]
         [Authorize(Policy = "User")]

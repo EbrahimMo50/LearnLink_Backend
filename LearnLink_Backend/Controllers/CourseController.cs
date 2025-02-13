@@ -16,7 +16,7 @@ namespace LearnLink_Backend.Controllers
         {
             string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             var response = await service.CreateCourseAsync(course, issuerId);
-            return Ok(response);
+            return CreatedAtRoute(RouteData, response);
         }
         [HttpGet]
         [Authorize(Policy = "User")]
