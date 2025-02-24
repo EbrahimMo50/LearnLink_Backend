@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Repositories.AnnouncementsRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -82,15 +83,14 @@ namespace LearnLink_Backend.Tests.Components.Announcements
         }
 
         [TestMethod]
-        public void DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted()
+        public void DeleteAnnouncement_NonExistantAnnouncement_NotFoundExceptionThrown()
         {
-            using (var context = GetTestDbContext("DeleteAnnouncement_InvalidInput_AnnouncementNotDeleted"))
+            using (var context = GetTestDbContext("DeleteAnnouncement_NonExistantAnnouncement_NotFoundExceptionThrown"))
             {
                 var repo = new AnnouncementRepo(context);
                 context.Announcements.Add(new AnnouncementModel() {Title = "Test", CreatedBy = "Test", Description = "Test" });
                 context.SaveChanges();
-                repo.DeleteAnnouncement(2);
-                Assert.IsTrue(context.Announcements.Any());
+                Assert.ThrowsException<NotFoundException>(() => repo.DeleteAnnouncement(2));
             }
         }
     }

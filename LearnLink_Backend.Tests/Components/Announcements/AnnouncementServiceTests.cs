@@ -11,6 +11,7 @@ namespace LearnLink_Backend.Tests.Components.Announcements
     [TestClass]
     public class AnnouncementServiceTests
     {
+        [TestMethod]
         public async Task CreateAnnouncement_InvalidCourse_NotFoundExceptionThrown()
         {
             var announcementRepoMock = new Mock<IAnnouncementRepo>();
