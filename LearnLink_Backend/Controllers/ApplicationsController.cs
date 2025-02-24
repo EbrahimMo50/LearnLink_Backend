@@ -12,7 +12,7 @@ namespace LearnLink_Backend.Controllers
     [ApiController]
     public class ApplicationsController(IHttpContextAccessor httpContextAccess, IApplicationService applicationService) : ControllerBase
     {
-        [HttpPost("instructors/applications")]
+        [HttpPost]
         public IActionResult Apply(ApplicationSet app)
         {
             var result = applicationService.ApplyForInstructor(app);
@@ -20,7 +20,7 @@ namespace LearnLink_Backend.Controllers
         }
 
 
-        [HttpPut("application/{id}/accept")]
+        [HttpPut("{id}/accept")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult AcceptApplication(int id)
         {
@@ -33,14 +33,14 @@ namespace LearnLink_Backend.Controllers
             return Ok("signed instructor");
         }
 
-        [HttpGet("applications")]
+        [HttpGet]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult GetApplications()
         {
             return Ok(applicationService.GetApplications());
         }
 
-        [HttpDelete("application/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult DeleteApplication(int id)
         {

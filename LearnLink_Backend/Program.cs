@@ -32,6 +32,8 @@ using LearnLink_Backend.Hubs;
 using LearnLink_Backend.Services.NotificationsService;
 using LearnLink_Backend.Repositories.NotificationsRepo;
 using Microsoft.Extensions.Options;
+using LearnLink_Backend.Services.ApplicationsService;
+using LearnLink_Backend.Repositories.ApplicationsRepo;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -115,6 +117,7 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IUserService ,UserService>();
 builder.Services.AddScoped<IAdminstrationService, AdministrationService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
@@ -124,6 +127,7 @@ builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<IAnnouncementRepo, AnnouncementRepo>();
 builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
+builder.Services.AddScoped<IApplicationRepo, ApplicationRepo>();
 
 // independent services injections
 builder.Services.AddDbContext<AppDbContext>(

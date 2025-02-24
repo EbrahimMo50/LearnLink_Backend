@@ -1,11 +1,14 @@
 ﻿using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
     public class ApplicationSet
     {
         public string Name { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
+        [MinLength(6)]
         public string Password { get; set; }
         public string Messsage { get; set; }
         public string Nationality { get; set; }
