@@ -1,11 +1,14 @@
 ﻿using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
     public class AnnouncementGet
     {
         public int Id { get; set; }
+        [MinLength(4)]
         public string Title { get; set; }
+        [MinLength(4)]
         public string Description { get; set; }
         public int CourseId { get; set; }
 

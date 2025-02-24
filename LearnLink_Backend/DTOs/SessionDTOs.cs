@@ -1,9 +1,11 @@
 ﻿using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
     public class SessionSet
     {
+        [MinLength(4)]
         public string MeetingLink { get; set; }
         private int CourseId;
         public TimeOnly StartsAt { get; set; }

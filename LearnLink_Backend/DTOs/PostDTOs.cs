@@ -1,10 +1,13 @@
 ﻿using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
     public class PostSet
     {
+        [MinLength(4)]
         public string Title { get; set; }
+        [MinLength(10)]
         public string Description { get; set; }
         public string AuthorId { get; set; }    //will be added in presentation layer from http context
         public string? ImageName { get; set; }

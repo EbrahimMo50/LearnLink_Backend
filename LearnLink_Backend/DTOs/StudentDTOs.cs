@@ -4,12 +4,17 @@ namespace LearnLink_Backend.DTOs
 {
     public class StudentSet
     {
+        [MinLength(4)]
         public string Name { get; set; }
+        [MinLength(6)]
         public string Password { get; set; }
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
+        [MinLength(4)]
         public string Nationality { get; set; }
+        [MinLength(4)]
         public string SpokenLanguage { get; set; }
+        [MinLength(8)]
         public string Address { get; set; }
 
         public Models.Student ToStudent(string hashedPassword, string salt)

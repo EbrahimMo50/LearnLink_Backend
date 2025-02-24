@@ -1,9 +1,11 @@
 ﻿using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
     public class CourseSet
     {
+        [MinLength(4)]
         public string Name { get; set; }
         public string InstructorId { get; set; }
     }

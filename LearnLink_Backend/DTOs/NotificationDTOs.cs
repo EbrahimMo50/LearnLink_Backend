@@ -1,14 +1,17 @@
 ﻿
 using LearnLink_Backend.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {   
     public class NotificationGet
     {
         public int Id { get; set; }
-        public string Title { get; set; } = "";
-        public string Message { get; set; } = "";
-        public string RecieverId { get; set; } = null!;
+        [MinLength(4)]
+        public string Title { get; set; }
+        [MinLength(4)]
+        public string Message { get; set; }
+        public string RecieverId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsRead { get; set; } = false;
 

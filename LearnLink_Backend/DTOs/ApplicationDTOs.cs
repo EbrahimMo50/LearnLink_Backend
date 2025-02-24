@@ -10,8 +10,11 @@ namespace LearnLink_Backend.DTOs
         public string Email { get; set; }
         [MinLength(6)]
         public string Password { get; set; }
+        [MinLength(10)]
         public string Messsage { get; set; }
+        [MinLength(4)]
         public string Nationality { get; set; }
+        [MinLength(4)]
         public string SpokenLanguage { get; set; }
     }
     public class ApplicationGet
