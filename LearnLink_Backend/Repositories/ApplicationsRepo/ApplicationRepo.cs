@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 
 namespace LearnLink_Backend.Repositories.ApplicationsRepo
 {
@@ -13,9 +14,7 @@ namespace LearnLink_Backend.Repositories.ApplicationsRepo
 
         public void DeleteApplication(int id)
         {
-            var application = dbContext.InstructorApplications.FirstOrDefault(x => x.Id == id);
-            if (application == null)
-                return;
+            var application = dbContext.InstructorApplications.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find application");
             dbContext.Remove(application);
             dbContext.SaveChanges();
         }

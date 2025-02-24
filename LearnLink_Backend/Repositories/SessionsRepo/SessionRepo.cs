@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Repositories.SessionsRepo
@@ -14,9 +15,8 @@ namespace LearnLink_Backend.Repositories.SessionsRepo
 
         public void Delete(int id)
         {
-            var session = DbContext.Sessions.FirstOrDefault(x => x.Id == id);
-            if (session != null)
-                DbContext.Sessions.Remove(session);
+            var session = DbContext.Sessions.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find session");
+            DbContext.Sessions.Remove(session);
             DbContext.SaveChanges();
         }
 

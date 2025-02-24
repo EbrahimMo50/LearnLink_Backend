@@ -3,6 +3,7 @@ using LearnLink_Backend.Entities;
 using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Repositories.MeetingsRepo;
 using LearnLink_Backend.Repositories.UserMangementRepo;
+using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Services.MeetingsService
 {
@@ -68,7 +69,14 @@ namespace LearnLink_Backend.Services.MeetingsService
         }
         public void Delete(int id, string issuerId)
         {
-            meetingRepo.Delete(id, issuerId);
+            var meeting = meetingRepo.GetById(id) ?? throw new NotFoundException("meeting not found");
+            var student = meeting.Student;
+            if(meeting.StudentId == issuerId || meeting.InstructorId == issuerId || userRepo.GetAdminById(issuerId) != null)
+            {
+                student.Balance += meeting.Instructor.FeesPerHour * (meeting.EndsAt - meeting.StartsAt);
+                userRepo.UpdateStudent(student);
+                meetingRepo.Delete(id);
+            }
         }
     }
 }

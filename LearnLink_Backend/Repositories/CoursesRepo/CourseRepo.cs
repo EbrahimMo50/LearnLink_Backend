@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Repositories.CoursesRepo
@@ -30,9 +31,7 @@ namespace LearnLink_Backend.Repositories.CoursesRepo
 
         public void Delete(int id)
         {
-            var element = DbContext.Courses.FirstOrDefault(x => x.Id == id);
-            if (element == null)
-                return;
+            var element = DbContext.Courses.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find course");
             DbContext.Courses.Remove(element);
             DbContext.SaveChanges();
         }

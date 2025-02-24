@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 
 namespace LearnLink_Backend.Repositories.SchedulesRepo
@@ -14,9 +15,7 @@ namespace LearnLink_Backend.Repositories.SchedulesRepo
 
         public void DeleteSchedule(int id)
         {
-            var schedule = dbContext.Schedules.FirstOrDefault(x => x.Id == id);
-            if (schedule == null)
-                return;
+            var schedule = dbContext.Schedules.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find schedule");
             dbContext.Schedules.Remove(schedule);
             dbContext.SaveChanges();
         }

@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,18 +46,14 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
 
         public void DeleteInstructor(string id)
         {
-            var instructor = dbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == id);
-            if (instructor == null)
-                return;
+            var instructor = dbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == id) ?? throw new NotFoundException("could not find instructor");
             dbContext.Instructors.Remove(instructor);
             dbContext.SaveChanges();
         }
 
         public void DeleteStudent(string id)
         {
-            var student = dbContext.Students.FirstOrDefault(x => x.Id.ToString() == id);
-            if (student == null)
-                return;
+            var student = dbContext.Students.FirstOrDefault(x => x.Id.ToString() == id) ?? throw new NotFoundException("could not find student");
             dbContext.Students.Remove(student);
             dbContext.SaveChanges();
         }

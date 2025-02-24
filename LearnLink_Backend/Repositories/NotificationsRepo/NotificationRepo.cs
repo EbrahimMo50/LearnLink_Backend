@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Repositories.NotificationsRepo
@@ -14,7 +15,8 @@ namespace LearnLink_Backend.Repositories.NotificationsRepo
 
         public void DeleteNotification(int id)
         {
-            dbContext.Notifications.Where(x => x.Id == id).ExecuteDelete();
+            if (dbContext.Notifications.Where(x => x.Id == id).ExecuteDelete() == 0)
+                throw new NotFoundException("could not find notification");
         }
 
         public NotificationModel? GetNotificationById(int id)

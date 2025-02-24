@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Repositories.MeetingsRepo
@@ -34,20 +35,11 @@ namespace LearnLink_Backend.Repositories.MeetingsRepo
             return result;
         }
 
-        public void Delete(int id, string issuerId)
+        public void Delete(int id)
         {
-            var meeting = dbContext.Meetings.Include(x => x.Student).Include(x => x.Instructor).FirstOrDefault(x => x.Id == id);
-            if (meeting == null)
-                return;
-
-            if (issuerId == meeting.StudentId || issuerId == meeting.InstructorId || dbContext.Admins.Any(x => x.Id.ToString() == issuerId))
-            {
-                var student = meeting.Student;
-                student.Balance += meeting.Instructor.FeesPerHour * (meeting.EndsAt - meeting.StartsAt);
-                dbContext.Meetings.Remove(meeting);
-                dbContext.SaveChanges();
-                return;
-            }
+            var meeting = dbContext.Meetings.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find meeting");
+            dbContext.Meetings.Remove(meeting);
+            dbContext.SaveChanges();
         }
 
         public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, int day)

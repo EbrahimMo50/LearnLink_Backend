@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LearnLink_Backend.Entities;
+using LearnLink_Backend.Exceptions;
 
 namespace LearnLink_Backend.Repositories.AnnouncementsRepo
 {
@@ -20,8 +21,7 @@ namespace LearnLink_Backend.Repositories.AnnouncementsRepo
 
         public void DeleteAnnouncement(int id)
         {
-            var element = dbContext.Announcements.FirstOrDefault(x => x.Id == id);
-            if (element == null) return;
+            var element = dbContext.Announcements.FirstOrDefault(x => x.Id == id) ?? throw new NotFoundException("could not find announcement");
             dbContext.Announcements.Remove(element);
             dbContext.SaveChanges();
         }
