@@ -37,7 +37,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult DeleteCourse(int id)
         {
             service.Delete(id);
-            return Ok();
+            return NoContent();
         }
         [HttpPut("{id}")]
         [Authorize(Policy = "AdminPolicy")]

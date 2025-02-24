@@ -56,7 +56,7 @@ namespace LearnLink_Backend.Controllers
         {
             string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
             service.Delete(id, issuerId);
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult DeleteAnnouncement(int id)
         {
             service.DeleteAnnouncement(id);
-            return Ok();
+            return NoContent();
         }
 
         [HttpPut("{id}")]

@@ -36,7 +36,7 @@ namespace LearnLink_Backend.Controllers
         {
             var issuerId = HttpContext.User.FindFirst("id")!.Value;
             notificaitonService.DeleteNotification(issuerId, id);
-            return Ok();
+            return NoContent();
         }
     }
 }

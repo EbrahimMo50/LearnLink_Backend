@@ -40,7 +40,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult DeleteUser(string id)
         {
             administrationService.RemoveUser(id);
-            return Ok();
+            return NoContent();
         }
 
     }

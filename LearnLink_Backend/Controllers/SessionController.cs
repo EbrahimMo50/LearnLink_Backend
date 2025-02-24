@@ -70,7 +70,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult Delete(int id)
         {
             service.Delete(id);
-            return Ok();
+            return NoContent();
         }
     }
 }

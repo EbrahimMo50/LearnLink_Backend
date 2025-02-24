@@ -45,7 +45,7 @@ namespace LearnLink_Backend.Controllers
         public IActionResult DeleteApplication(int id)
         {
             applicationService.DeleteApplication(id);
-            return Ok();
+            return NoContent();
         }
     }
 }
