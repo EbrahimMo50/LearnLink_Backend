@@ -16,6 +16,16 @@ namespace LearnLink_Backend.Tests.Components.Announcements
             return new AppDbContext(options);
         }
         [TestMethod]
+        public async Task CreateAnnouncementAsync_ValidInput_AnnouncementCreated()
+        {
+            using (var context = GetTestDbContext("CreateAnnouncementAsync_ValidInput_AnnouncementCreated"))
+            {
+                var repo = new AnnouncementRepo(context);
+                await repo.CreateAnnouncementAsync(new AnnouncementModel() { Title = "Test", CreatedBy = "Test", Description = "Test" });
+                Assert.IsTrue(context.Announcements.Any());
+            }
+        }
+        [TestMethod]
         public async Task GetByIdAsync_ValidId_AnnouncementReturned()
         {
             using (var context = GetTestDbContext("GetByIdAsync_ValidId_AnnouncementReturned"))
