@@ -12,11 +12,12 @@ namespace LearnLink_Backend.Controllers
     {
         [HttpPut("instructor/{instructorId}/schedule")]
         [Authorize(Policy = "InstructorPolicy")]
-        public IActionResult UpdateSchedule(string instructorId, ScheduleSet scheduleSet)
+        public IActionResult UpdateSchedule(string instructorId, ScheduleUpdate scheduleUpdate)
         {
-            scheduleSet.SetInstructorId(instructorId);
+            scheduleUpdate.InstructorId = instructorId;
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            return Ok(service.UpdateSchedule(scheduleSet, issuerId));
+            service.UpdateSchedule(scheduleUpdate, issuerId);
+            return NoContent();
         }
 
         [HttpPatch("student/{studentId}/balance")]

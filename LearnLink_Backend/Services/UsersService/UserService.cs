@@ -1,23 +1,18 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Models;
 using LearnLink_Backend.Repositories.UserMangementRepo;
 
 namespace LearnLink_Backend.Services.UsersService
 {
     public class UserService(IUserRepo userRepo) : IUserService
     {
-        public InstructorScheduleGet UpdateSchedule(ScheduleSet scheduleSet, string initiatorId)
+        public IEnumerable<DayAvailability> UpdateSchedule(ScheduleUpdate scheduleUpdate, string initiatorId)
         {
             var instructor = userRepo.GetInstructorById(initiatorId) ?? throw new NotFoundException("could not find instructor");
-            var schedule = scheduleRepo.GetScheduleByInstructorId(instructor.Id.ToString()) ?? throw new NotFoundException("could not find schedule");
+            instructor.Schedule = scheduleUpdate.NewSchedule;
 
-            schedule.AvilableDays = scheduleSet.AvilableDays;
-            schedule.EndHour = scheduleSet.EndHour;
-            schedule.InstructorId = instructor.Id;
-            schedule.StartHour = scheduleSet.StartHour;
-            schedule.CreatedBy = initiatorId;
-
-            return InstructorScheduleGet.ToDTO(scheduleRepo.UpdateSchedule(schedule));
+            return userRepo.UpdateInstructor(instructor).Schedule;
         }
         public StudentGet AddBalance(string id, decimal balance, string updaterId)
         {

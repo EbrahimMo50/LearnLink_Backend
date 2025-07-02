@@ -13,7 +13,6 @@ namespace LearnLink_Backend.Entities
         public DbSet<SessionModel> Sessions { get; set; }
         public DbSet<CourseModel> Courses { get; set; }
         public DbSet<AnnouncementModel> Announcements { get; set; }
-        public DbSet<Schedule> Schedules { get; set; }
         public DbSet<PostModel> Posts { get; set; }
         public DbSet<NotificationModel> Notifications { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -52,10 +51,6 @@ namespace LearnLink_Backend.Entities
 
             modelBuilder.Entity<AnnouncementModel>()
                 .ToTable("Announcements")
-                .HasKey(u => u.Id);
-
-            modelBuilder.Entity<Schedule>()
-                .ToTable("Schedules")
                 .HasKey(u => u.Id);
 
             modelBuilder.Entity<PostModel>()
