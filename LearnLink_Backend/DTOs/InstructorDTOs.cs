@@ -1,5 +1,7 @@
 ﻿using LearnLink_Backend.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LearnLink_Backend.DTOs
 {
@@ -31,5 +33,16 @@ namespace LearnLink_Backend.DTOs
             return result;
         }
         
+    }
+
+    public class InstructorUpdate
+    {
+        [JsonIgnore]
+        [BindNever]
+        public string Id { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; } = null;
+        [Range(1,1000)]
+        public decimal? FeesPerHour { get; set; } = null;
+        public ICollection<string> AddedSpokenLanguages { get; set; } = [];
     }
 }

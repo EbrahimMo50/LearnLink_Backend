@@ -34,5 +34,11 @@ namespace LearnLink_Backend.Controllers
                 return BadRequest("could not extract issuer id");
             return Ok(authService.ChangePassword(issuerId, passModel.Email, passModel.OldPassword, passModel.NewPassword));
         }
+        [HttpPut("reset-password")]
+        public IActionResult ResetPassword([FromBody] string email)
+        {
+            authService.ResetPasswordAsync(email);
+            return NoContent();
+        }
     }
 }

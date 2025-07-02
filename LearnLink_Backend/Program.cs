@@ -26,14 +26,11 @@ using LearnLink_Backend.Services.MeetingsService;
 using LearnLink_Backend.Services.PostsService;
 using LearnLink_Backend.Services.SessionsService;
 using LearnLink_Backend.Services.UsersService;
-using System.Collections.Concurrent;
 using LearnLink_Backend.Hubs;
 using LearnLink_Backend.Services.NotificationsService;
 using LearnLink_Backend.Repositories.NotificationsRepo;
-using Microsoft.Extensions.Options;
 using LearnLink_Backend.Services.ApplicationsService;
 using LearnLink_Backend.Repositories.ApplicationsRepo;
-using Microsoft.Extensions.Caching.Memory;
 using DotNetEnv;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using LearnLink_Backend.Configurations;
@@ -94,6 +91,7 @@ builder.Services.AddEndpointsApiExplorer();
         c.AddSecurityRequirement(securityRequirement);
     });
 
+// registering cors service to allow requests from the front
 builder.Services.AddCors(options =>
         options.AddPolicy("AllowSpecificOrigin",
         builder => builder.WithOrigins("http://localhost:4200")
@@ -142,7 +140,7 @@ builder.Services.AddDbContext<AppDbContext>(
      //options => options.UseInMemoryDatabase("LearnLink")
      );
 
-builder.Services.AddScoped<MediaService>();
+builder.Services.AddSingleton<MediaService>();
 builder.Services.AddScoped<CacheService>();
 
 builder.Services.AddMemoryCache();
@@ -247,3 +245,6 @@ app.Run();
 
 // CARE TO TEST THE APP THROUGHLY THE LAST REFACTOR WAS SO HEAVY BUGS MAY HAVE SLIPT THROUGH
 // create notification system with signalR
+
+// update
+// just hit it with another rework the system is not working lel

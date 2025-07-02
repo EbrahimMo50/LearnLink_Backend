@@ -6,12 +6,13 @@ using LearnLink_Backend.Modules.Authentcation.DTOs;
 using LearnLink_Backend.Repositories.UserMangementRepo;
 using LearnLink_Backend.Services.JWTService;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Caching.Memory;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace LearnLink_Backend.Services.AuthService
 {
-    public class AuthService(ITokenService tokenService, IUserRepo userRepo, IHubContext<MainHub, IMainHub> mainHub) : IAuthService
+    public class AuthService(ITokenService tokenService, IUserRepo userRepo, IHubContext<MainHub, IMainHub> mainHub, CacheService cacheService) : IAuthService
     {
         public void SignUp(StudentSet studentVM)
         {
@@ -130,6 +131,18 @@ namespace LearnLink_Backend.Services.AuthService
                 return true;
 
             return false;
+        }
+
+        public async Task ResetPasswordAsync(string email)
+        {
+            var otp = Guid.NewGuid().ToString();
+            cacheService.SetValue("email", email, new { email, otp }, 15);
+            await EmailsService.SendEmail(new EmailModel()
+            {
+                ReicieverEmail = email,
+                Body = EmailModel.GetForgottenPasswordEmailBody(email),
+                Header = "reset the pass"
+            });
         }
     }
 }

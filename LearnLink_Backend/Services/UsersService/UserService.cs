@@ -1,11 +1,10 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Exceptions;
-using LearnLink_Backend.Repositories.SchedulesRepo;
 using LearnLink_Backend.Repositories.UserMangementRepo;
 
 namespace LearnLink_Backend.Services.UsersService
 {
-    public class UserService(IUserRepo userRepo, IInstructorScheduleRepo scheduleRepo) : IUserService
+    public class UserService(IUserRepo userRepo) : IUserService
     {
         public InstructorScheduleGet UpdateSchedule(ScheduleSet scheduleSet, string initiatorId)
         {
