@@ -39,3 +39,5 @@ custom policy authorization is defined and added to the services builder then ar
 controllers have httpcontext from their base controller no need to inject the IHttpContext
 
 The application follows REST Api guidlines except applying the (Allow filtering, sorting, and pagination) on all possibly applicable GET endpoints and caching
+
+AutoMapper please
