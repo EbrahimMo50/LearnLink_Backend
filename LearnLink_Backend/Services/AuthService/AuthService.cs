@@ -46,24 +46,24 @@ namespace LearnLink_Backend.Services.AuthService
             admin.Salt = Salt;
             userRepo.AddAdmin(admin);
         }
-        public string Login(LoginDTO user)
+        public LoginSuccessDto Login(LoginDTO user)
         {
             var StudentUser = userRepo.GetStudentByEmail(user.Email);
             if (StudentUser != null)
                 if (StudentUser.HashedPassword == Hash(StudentUser.Salt, user.Password))
-                    return tokenService.GenerateToken(UniversalUser.ToUser(StudentUser));
+                    return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(StudentUser)), User = UniversalUser.ToUser(StudentUser) };
 
 
             var InstructorUser = userRepo.GetInstructorByEmail(user.Email);
             if (InstructorUser != null)
                 if (InstructorUser.HashedPassword == Hash(InstructorUser.Salt, user.Password))
-                    return tokenService.GenerateToken(UniversalUser.ToUser(InstructorUser));
+                    return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(InstructorUser)), User = UniversalUser.ToUser(InstructorUser) };
 
 
             var AdminUser = userRepo.GetAdminByEmail(user.Email);
             if (AdminUser != null)
                 if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
-                    return tokenService.GenerateToken(UniversalUser.ToUser(AdminUser));
+                    return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(AdminUser)), User = UniversalUser.ToUser(AdminUser) };
 
             throw new NotFoundException("User not found");
         }

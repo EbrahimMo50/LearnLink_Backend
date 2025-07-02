@@ -4,6 +4,7 @@ using LearnLink_Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnLink_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250629121809_ManyToManyRelationFixInStudent")]
+    partial class ManyToManyRelationFixInStudent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,33 +127,6 @@ namespace LearnLink_Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Applications", (string)null);
-                });
-
-            modelBuilder.Entity("LearnLink_Backend.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("CommenterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommenterId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("LearnLink_Backend.Entities.CourseModel", b =>
@@ -612,25 +588,6 @@ namespace LearnLink_Backend.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("LearnLink_Backend.Entities.Comment", b =>
-                {
-                    b.HasOne("LearnLink_Backend.Models.Student", "Commenter")
-                        .WithMany("Comments")
-                        .HasForeignKey("CommenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LearnLink_Backend.Entities.PostModel", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Commenter");
-
-                    b.Navigation("Post");
-                });
-
             modelBuilder.Entity("LearnLink_Backend.Entities.CourseModel", b =>
                 {
                     b.HasOne("LearnLink_Backend.Models.Instructor", "Instructor")
@@ -738,21 +695,11 @@ namespace LearnLink_Backend.Migrations
                     b.Navigation("Sessions");
                 });
 
-            modelBuilder.Entity("LearnLink_Backend.Entities.PostModel", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
             modelBuilder.Entity("LearnLink_Backend.Models.Instructor", b =>
                 {
                     b.Navigation("Courses");
 
                     b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("LearnLink_Backend.Models.Student", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,5 +10,8 @@ namespace LearnLink_Backend.Services.PostsService
         public Task<IEnumerable<PostGet>> GetRecentPostsAsync(int limit, int page);
         public void DeletePost(int id);
         public PostModel UpdatePost(int id, PostSet newPost, string IssuerId);
+        public Comment GetComment(int id);
+        public IEnumerable<Comment> GetAllComments(int postId);
+        public Comment AddComment(CommentDto commentDto);
     }
 }

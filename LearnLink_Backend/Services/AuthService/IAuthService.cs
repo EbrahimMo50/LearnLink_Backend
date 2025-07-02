@@ -9,7 +9,8 @@ namespace LearnLink_Backend.Services.AuthService
         public void SignUp(StudentSet studentVM);
         public void SignInstructor(Instructor instructor, string password);
         public void SignAdmin(Admin admin, string password);
-        public string Login(LoginDTO user);
+        public LoginSuccessDto Login(LoginDTO user);
         public string ChangePassword(string initiatorId, string email, string oldPass, string newPass);
+        public Task ResetPasswordAsync(string email);
     }
 }

@@ -48,7 +48,8 @@ namespace LearnLink_Backend.Services.ApplicationsService
         {
             var application = applicationRepo.GetApplicationById(id) ?? throw new NotFoundException("application was not found");
 
-            Instructor instructor = new() { Name = application.Name, Email = application.Email, CreatedBy = createrId, Nationality = application.Nationality, SpokenLanguage = application.SpokenLanguage };
+            // TODO fix spoken languages
+            Instructor instructor = new() { Name = application.Name, Email = application.Email, CreatedBy = createrId, Nationality = application.Nationality, SpokenLanguages = [] };
             authServices.SignInstructor(instructor, application.Password);
             applicationRepo.DeleteApplication(id);
         }

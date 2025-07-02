@@ -9,34 +9,42 @@ namespace LearnLink_Backend.Models
     public class Instructor
     {
         public Guid Id { get; }
-        public string Name { get; set; }
-        public string Salt { get; set; }
-        public string HashedPassword { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Salt { get; set; } = string.Empty;
+        public string HashedPassword { get; set; } = string.Empty;
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         public decimal FeesPerHour { get; set; } = 0;   //this is meeting releated
-        public string Nationality { get; set; }
-        public string SpokenLanguage { get; set; }
-        public List<CourseModel> Courses { get; set; } = [];
-        public virtual Schedule? Schedule { get; set; }
+        public string Nationality { get; set; } = string.Empty;
+        public ICollection<string> SpokenLanguages { get; set; } = [];
+        public ICollection<CourseModel> Courses { get; set; } = [];
+        public ICollection<DayAvailability> Schedule { get; set; } = [];
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
     }
-    public class Schedule
-    {        
-        public int Id { get; }
-        public Guid InstructorId { get; set; }
-        [Range(0,6)]
-        public List<int> AvilableDays { get; set; } = []; // this will have values from 0 to 6
-        [Range(0,24)]
-        public int StartHour { get; set; }
-        [Range(0,24)]
-        public int EndHour { get; set; }                  // from 0 to 24
-        public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public string CreatedBy { get; set; }
-        public DateTime? UpdateTime { get; set; }
-        public string? UpdatedBy { get; set; }
+    public class DayAvailability : IValidatableObject
+    {
+        public DayOfWeek Day { get; set; }
+        public ICollection<TimeInterval> Intervals { get; set; } = [];
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            foreach (var interval in Intervals)
+            {
+                if (interval.Start > interval.End)
+                {
+                    yield return new ValidationResult(
+                        $"Start time {interval.Start} cannot be after end time {interval.End}.",
+                        [nameof(Intervals)]);
+                }
+            }
+        }
+    }
+    public class TimeInterval
+    {
+        public TimeOnly Start { get; set; }
+        public TimeOnly End { get; set; }
     }
 }

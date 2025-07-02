@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  sql1:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+
+  app:
+    build: .
+    depends_on:
+      - sql1

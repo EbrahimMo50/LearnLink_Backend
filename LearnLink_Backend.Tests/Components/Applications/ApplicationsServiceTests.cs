@@ -25,7 +25,7 @@ namespace LearnLink_Backend.Tests.Components.Applications
             Assert.IsNotNull(result);
         }
         [TestMethod]
-        public void ApplyForInstructor_EmailUsedInAnotherApplication_400Returned()
+        public void ApplyForInstructor_EmailUsedInAnotherApplication_BadRequestThrown()
         {
             var mockedAppRepo = new Mock<IApplicationRepo>();
             var mockedAuthService = new Mock<IAuthService>();

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Services;
 using LearnLink_Backend.Services.PostsService;
 using Microsoft.AspNetCore.Authorization;
@@ -14,30 +15,23 @@ namespace LearnLink_Backend.Controllers
     public class PostController(IPostService postService, IHttpContextAccessor httpContextAccess, MediaService mediaService) : ControllerBase
     {
         [HttpPost()]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> CreatePost(PostSet post)
         {
-            bool fileExists = true;
-            if (Request.Form.Files.Count == 0)
-                fileExists = false;
-
-            var file = Request.Form.Files[0];
-
-            if (file.Length == 0)
-                fileExists = false;
-
-            string? imageName = null;
-
-            if (fileExists)
-                imageName = await mediaService.SaveImage(file);
-
-            post.ImageName = imageName;
+            
+            if (post.Image != null)
+            {
+                var imageName = await mediaService.SaveImage(post.Image);
+                post.ImageName = imageName;
+            }
 
             string? IssuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
+
             if (IssuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
-            var response = postService.CreatePostAsync(post, IssuerId);
+            post.AuthorId = IssuerId;
+            var response = await postService.CreatePostAsync(post, IssuerId);
             return CreatedAtRoute(RouteData, response);
         }
         [HttpGet("{id}")]
@@ -49,9 +43,9 @@ namespace LearnLink_Backend.Controllers
         }
         [HttpGet("recent")]
         [Authorize(Policy = "User")]
-        public IActionResult GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
+        public async Task<IActionResult> GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
         {
-            var result = postService.GetRecentPostsAsync(10, page);  // limit is hard coded to 10 for now
+            var result = await postService.GetRecentPostsAsync(10, page);  // limit is hard coded to 10 for now
             return Ok(result);
         }
 
@@ -68,6 +62,31 @@ namespace LearnLink_Backend.Controllers
 
             var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             return File(fileStream, GetContentType(fileName), fileName);
+        }
+
+        [HttpPost("/post/{postId}/comment")]
+        [Authorize(Policy = "StudentPolicy")]
+        public IActionResult AddComment(CommentDto commentDto, int postId)
+        {
+            commentDto.PostId = postId;
+            var Issuer = HttpContext.User.FindFirst("id") ?? throw new BadRequestException("cant extract user");
+            commentDto.UserGuid = Issuer.Value;
+            var comment = postService.AddComment(commentDto);
+            return CreatedAtAction(nameof(GetCommentById), new { commentId = comment.Id}, comment);
+        }
+
+        [HttpGet("/post/{postId}/comment")]
+        [Authorize("User")]
+        public IActionResult GetAllComments(int postId)
+        {
+            return Ok(postService.GetAllComments(postId));
+        }
+
+        [HttpGet("/post/comment/{commentId}")]
+        [Authorize("User")]
+        public IActionResult GetCommentById(int commentId)
+        {
+            return Ok(postService.GetComment(commentId));
         }
 
         private static string GetContentType(string fileName)

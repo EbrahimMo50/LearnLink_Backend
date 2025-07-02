@@ -9,18 +9,21 @@ namespace LearnLink_Backend.Models
     public class Student
     {
         public Guid Id { get; }
-        public string Name { get; set; }
-        public string Salt { get; set; }
-        public string HashedPassword { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Salt { get; set; } = string.Empty;
+        public string HashedPassword { get; set; } = string.Empty;
         public decimal Balance { get; set; }
-        public string Email { get; set; }
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string Nationality { get; set; }
-        public string SpokenLanguage { get; set; }
-        public string Address { get; set; }
-        public List<CourseModel> Courses { get; set; } = new List<CourseModel>();
+        public string Email { get; set; } = string.Empty;
+        public string Nationality { get; set; } = string.Empty;
+        public ICollection<string> SpokenLanguages { get; set; } = [];
+        public string Address { get; set; } = string.Empty;
+        public ICollection<CourseModel> Courses { get; set; } = [];
+        public ICollection<PostModel> LikedPosts { get; set; } = [];
+        public ICollection<SessionModel> Sessions { get; set; } = [];
+        public ICollection<Comment> Comments { get; set; } = [];
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
     }

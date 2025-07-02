@@ -11,7 +11,7 @@ namespace LearnLink_Backend.Controllers
     public class CourseController(ICourseService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> CreateCourse(CourseSet course)
         {
             string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;

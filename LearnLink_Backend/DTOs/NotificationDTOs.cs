@@ -8,10 +8,10 @@ namespace LearnLink_Backend.DTOs
     {
         public int Id { get; set; }
         [MinLength(4)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         [MinLength(4)]
-        public string Message { get; set; }
-        public string RecieverId { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string RecieverId { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public bool IsRead { get; set; } = false;
 

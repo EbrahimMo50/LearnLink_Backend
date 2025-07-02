@@ -7,18 +7,14 @@ namespace LearnLink_Backend.Entities
     public class MeetingModel
     {
         public int Id { get; }
-        public string StudentId { get; set; }
-        public Student Student { get; set; }
-        public string InstructorId { get; set; }
-        public Instructor Instructor { get; set; }
-        [Range(0, 6)]
-        public int Day { get; set; }
-        [Range(0, 24)]
-        public int StartsAt { get; set; }
-        [Range(0, 24)]
-        public int EndsAt { get; set; }
+        public string StudentId { get; set; } = string.Empty;
+        public Student Student { get; set; } = null!;
+        public string InstructorId { get; set; } = string.Empty;
+        public Instructor Instructor { get; set; } = null!;
+        public DateTime StratDate { get; set; }
+        public DateTime EndDate { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
     }

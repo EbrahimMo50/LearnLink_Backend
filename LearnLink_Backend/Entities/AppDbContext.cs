@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Entities
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions options) : base(options) { }
-
         public DbSet<Student> Students { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
@@ -18,6 +16,7 @@ namespace LearnLink_Backend.Entities
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<PostModel> Posts { get; set; }
         public DbSet<NotificationModel> Notifications { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +65,20 @@ namespace LearnLink_Backend.Entities
             modelBuilder.Entity<NotificationModel>()
                 .ToTable("Notifications")
                 .HasKey(u => u.Id);
+
+            modelBuilder.Entity<Comment>()
+                .ToTable("Comments")
+                .HasKey(u => u.Id);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Commenter)
+                .WithMany(s => s.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

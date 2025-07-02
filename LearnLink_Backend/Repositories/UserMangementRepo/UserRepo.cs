@@ -93,6 +93,7 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
 
         public Instructor? GetInstructorByEmail(string email)
         {
+            return null;
             return dbContext.Instructors.FirstOrDefault(x => x.Email == email);
         }
 

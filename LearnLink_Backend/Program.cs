@@ -15,7 +15,6 @@ using LearnLink_Backend.Repositories.AnnouncementsRepo;
 using LearnLink_Backend.Repositories.CoursesRepo;
 using LearnLink_Backend.Repositories.MeetingsRepo;
 using LearnLink_Backend.Repositories.PostsRepo;
-using LearnLink_Backend.Repositories.SchedulesRepo;
 using LearnLink_Backend.Repositories.SessionsRepo;
 using LearnLink_Backend.Repositories.UserMangementRepo;
 using LearnLink_Backend.Services.AdminstrationsService;
@@ -34,6 +33,10 @@ using LearnLink_Backend.Repositories.NotificationsRepo;
 using Microsoft.Extensions.Options;
 using LearnLink_Backend.Services.ApplicationsService;
 using LearnLink_Backend.Repositories.ApplicationsRepo;
+using Microsoft.Extensions.Caching.Memory;
+using DotNetEnv;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using LearnLink_Backend.Configurations;
 
 //will not use an initializer for the database this time if needed will use the way of intializing in the AppDbContext class on model creation will add records
 
@@ -46,12 +49,17 @@ using LearnLink_Backend.Repositories.ApplicationsRepo;
 //to fix this we need to know how to use One-to-one without navigation to dependent to prevent cascading cycles
 
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 
-builder.Services.AddControllers()
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        });
+builder.Services.AddControllers(options =>
+    {
+        options.Conventions.Add(new RouteTokenTransformerConvention(new ControllerRouteFlatter()));
+    })
+.AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
@@ -121,7 +129,6 @@ builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
-builder.Services.AddScoped<IInstructorScheduleRepo, InstructorScheduleRepo>();
 builder.Services.AddScoped<ISessionRepo, SessionRepo>();
 builder.Services.AddScoped<IMeetingRepo, MeetingRepo>();
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
@@ -131,10 +138,14 @@ builder.Services.AddScoped<IApplicationRepo, ApplicationRepo>();
 
 // independent services injections
 builder.Services.AddDbContext<AppDbContext>(
-     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"))
+     options => options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnectio"))
+     //options => options.UseInMemoryDatabase("LearnLink")
      );
-builder.Services.AddScoped<MediaService>();
 
+builder.Services.AddScoped<MediaService>();
+builder.Services.AddScoped<CacheService>();
+
+builder.Services.AddMemoryCache();
 
 builder.Services
     .AddAuthentication(x =>
@@ -164,7 +175,8 @@ builder.Services
         var config = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json")
         .Build();
-        var PrivateKey = config.GetSection("PrivateKey").Value;
+
+        var PrivateKey = Environment.GetEnvironmentVariable("PrivateKey") ?? throw new Exception("private ket not intiallized");
 
         x.RequireHttpsMetadata = false;
         x.SaveToken = true;
