@@ -16,7 +16,7 @@ namespace LearnLink_Backend.Controllers
         public async Task<IActionResult> Create(SessionSet sessionSet, int courseId)
         {
             string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
-            sessionSet.SetCourseId(courseId);
+            sessionSet.CourseId = courseId;
             if (issuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
@@ -51,7 +51,7 @@ namespace LearnLink_Backend.Controllers
         public async Task<IActionResult> Update(int id, SessionSet sessionSet, int courseId)
         {
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
-            sessionSet.SetCourseId(courseId);
+            sessionSet.CourseId = courseId;
             var result = await service.UpdateAsync(id, sessionSet, issuerId);
             return Ok(result);
         }

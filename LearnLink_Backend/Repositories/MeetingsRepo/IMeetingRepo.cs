@@ -10,6 +10,6 @@ namespace LearnLink_Backend.Repositories.MeetingsRepo
         public Task<IEnumerable<MeetingModel>> GetMeetingsForInstructorAsync(string issuserId);
         public Task<IEnumerable<MeetingModel>> GetMeetingsForStudentAsync(string issuserId);
         public void Delete(int id);
-        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, int day);
+        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, DateOnly day);
     }
 }

@@ -65,6 +65,14 @@ namespace LearnLink_Backend.Entities
                 .ToTable("Comments")
                 .HasKey(u => u.Id);
 
+            modelBuilder.Entity<DayAvailability>()
+                .ToTable("DaysAvilable")
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<TimeInterval>()
+                .ToTable("Intervals")
+                .HasKey(x => x.Id);
+
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)

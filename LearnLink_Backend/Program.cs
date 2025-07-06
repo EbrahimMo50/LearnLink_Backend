@@ -136,8 +136,8 @@ builder.Services.AddScoped<IApplicationRepo, ApplicationRepo>();
 
 // independent services injections
 builder.Services.AddDbContext<AppDbContext>(
-     options => options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnectio"))
-     //options => options.UseInMemoryDatabase("LearnLink")
+     options => options.UseSqlServer(
+         Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? throw new Exception("conn string was not set"))
      );
 
 builder.Services.AddSingleton<MediaService>();

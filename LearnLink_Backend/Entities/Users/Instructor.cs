@@ -17,33 +17,23 @@ namespace LearnLink_Backend.Models
         public string PhoneNumber { get; set; } = string.Empty;
         public decimal FeesPerHour { get; set; } = 0;   //this is meeting releated
         public string Nationality { get; set; } = string.Empty;
-        public ICollection<string> SpokenLanguages { get; set; } = [];
-        public ICollection<CourseModel> Courses { get; set; } = [];
-        public ICollection<DayAvailability> Schedule { get; set; } = [];
+        public virtual IList<string> SpokenLanguages { get; set; } = [];
+        public virtual ICollection<CourseModel> Courses { get; set; } = [];
+        public virtual ICollection<DayAvailability> Schedule { get; set; } = [];
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
     }
-    public class DayAvailability : IValidatableObject
+    public class DayAvailability
     {
+        public int Id { get; }
         public DayOfWeek Day { get; set; }
         public ICollection<TimeInterval> Intervals { get; set; } = [];
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            foreach (var interval in Intervals)
-            {
-                if (interval.Start > interval.End)
-                {
-                    yield return new ValidationResult(
-                        $"Start time {interval.Start} cannot be after end time {interval.End}.",
-                        [nameof(Intervals)]);
-                }
-            }
-        }
     }
     public class TimeInterval
     {
+        public int Id { get; set; }
         public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }
     }

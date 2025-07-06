@@ -10,8 +10,7 @@ namespace LearnLink_Backend.Services.UsersService
         public IEnumerable<DayAvailability> UpdateSchedule(ScheduleUpdate scheduleUpdate, string initiatorId)
         {
             var instructor = userRepo.GetInstructorById(initiatorId) ?? throw new NotFoundException("could not find instructor");
-            instructor.Schedule = scheduleUpdate.NewSchedule;
-
+            instructor.Schedule = [.. scheduleUpdate.NewSchedule];
             return userRepo.UpdateInstructor(instructor).Schedule;
         }
         public StudentGet AddBalance(string id, decimal balance, string updaterId)

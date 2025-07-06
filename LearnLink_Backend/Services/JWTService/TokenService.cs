@@ -15,7 +15,7 @@ namespace LearnLink_Backend.Services.JWTService
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
-            var PrivateKey = config.GetSection("PrivateKey").Value;
+            var PrivateKey = Environment.GetEnvironmentVariable("PrivateKey") ?? throw new Exception("value of private key not set");
 
             //uses private key to start the token
             var key = Encoding.ASCII.GetBytes(PrivateKey!);

@@ -11,10 +11,10 @@ namespace LearnLink_Backend.Services.SessionsService
     {
         public async Task<SessionModel> CreateSessionAsync(SessionSet sessionSet, string issuerId)
         {
-            if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
-                throw new BadRequestException("invalid time line");
+            if (sessionSet.StartTime > sessionSet.EndTime)
+                throw new BadRequestException("invalid time entry");
 
-            var course = await courseRepo.GetByIdAsync(sessionSet.GetCourseId());
+            var course = await courseRepo.GetByIdAsync(sessionSet.CourseId);
 
             if (course == null || course.Instructor == null)
                 throw new NotFoundException("course not found");
@@ -22,7 +22,15 @@ namespace LearnLink_Backend.Services.SessionsService
             if (course.Instructor.Id.ToString() != issuerId)
                 throw new BadRequestException("only instructors of the course can create sessions");
 
-            SessionModel session = new() { Day = sessionSet.Day, CreatedBy = issuerId, CourseId = sessionSet.GetCourseId(), EndsAt = sessionSet.EndsAt, Course = course, MeetingLink = sessionSet.MeetingLink };
+            SessionModel session = new() 
+            { 
+                CreatedBy = issuerId, 
+                CourseId = sessionSet.CourseId,
+                StartTime = sessionSet.StartTime,
+                EndTime = sessionSet.EndTime,
+                Course = course, 
+                MeetingLink = sessionSet.MeetingLink 
+            };
             return await sessionRepo.CreateSessionAsync(session);
         }
         public SessionGet FindById(int id)
@@ -40,10 +48,10 @@ namespace LearnLink_Backend.Services.SessionsService
             if (session == null)
                 throw new NotFoundException("course not found");
 
-            if (sessionSet.StartsAt >= sessionSet.EndsAt || sessionSet.Day > DateOnly.FromDateTime(DateTime.Now))
+            if (sessionSet.StartTime >= sessionSet.EndTime)
                 throw new BadRequestException("invalid time line");
 
-            var course = await courseRepo.GetByIdAsync(sessionSet.GetCourseId());
+            var course = await courseRepo.GetByIdAsync(sessionSet.CourseId);
 
             if (course == null || course.Instructor == null)
                 throw new NotFoundException("course not found");
@@ -56,9 +64,8 @@ namespace LearnLink_Backend.Services.SessionsService
             session.CourseId = course.Id;
             session.Course = course;
             session.MeetingLink = sessionSet.MeetingLink;
-            session.StartsAt = sessionSet.StartsAt;
-            session.EndsAt = sessionSet.EndsAt;
-            session.Day = sessionSet.Day;
+            session.StartTime = sessionSet.StartTime;
+            session.EndTime = sessionSet.EndTime;
 
             return await sessionRepo.UpdateAsync(session);
         }
@@ -70,21 +77,19 @@ namespace LearnLink_Backend.Services.SessionsService
         {
             var student = userRepo.GetStudentById(studentId) ?? throw new NotFoundException("student not found");
 
-            var session = sessionRepo.GetById(sessionId);
-            if (session == null)
-                throw new NotFoundException("could not find session");
+            var session = sessionRepo.GetById(sessionId) ?? throw new NotFoundException("could not find session");
 
-            if (session.Day == DateOnly.FromDateTime(DateTime.Now))
-            {
+            if (session.StartTime < DateTime.Now || session.EndTime > DateTime.Now)
+                throw new BadRequestException("session is inavtice currently");
 
-                if (session.EndsAt < TimeOnly.FromDateTime(DateTime.Now) || session.StartsAt > TimeOnly.FromDateTime(DateTime.Now))
-                    throw new BadRequestException("session is inavtice currently");
+            if (session.MeetingLink == null)
+                return "Meeting link is to be set later";
 
-                session.AttendendStudent.Add(student);
-                await sessionRepo.UpdateAsync(session);
+            session.AttendendStudent.Add(student);
+            await sessionRepo.UpdateAsync(session);
 
-                return session.MeetingLink;
-            }
+            return session.MeetingLink;
+            
 
             throw new BadRequestException("session is not due today");
         }

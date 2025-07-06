@@ -11,7 +11,7 @@ namespace LearnLink_Backend.Entities
         public Student Student { get; set; } = null!;
         public string InstructorId { get; set; } = string.Empty;
         public Instructor Instructor { get; set; } = null!;
-        public DateTime StratDate { get; set; }
+        public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; } = string.Empty;

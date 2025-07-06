@@ -42,12 +42,12 @@ namespace LearnLink_Backend.Repositories.MeetingsRepo
             dbContext.SaveChanges();
         }
 
-        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, int day)
+        public IEnumerable<MeetingModel> GetConflictingMeetings(string instructorId, DateOnly day)
         {
             return dbContext.Meetings
             .Include(x => x.Instructor)
             .Where(x => x.InstructorId.ToString() == instructorId)
-            .Where(x => x.Day == day);
+            .Where(x => DateOnly.FromDateTime(x.StartDate) == day);
         }
     }
 }

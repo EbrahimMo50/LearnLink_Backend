@@ -21,7 +21,7 @@ namespace LearnLink_Backend.Services.ApplicationsService
                 Password = applicationSet.Password,
                 Messsage = applicationSet.Messsage,
                 Nationality = applicationSet.Nationality,
-                SpokenLanguage = applicationSet.SpokenLanguage,
+                SpokenLanguages = applicationSet.SpokenLanguages.ToArray(),
                 CreatedBy = "self"
             };
 
