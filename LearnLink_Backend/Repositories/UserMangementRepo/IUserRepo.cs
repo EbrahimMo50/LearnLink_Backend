@@ -16,7 +16,9 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
         public void DeleteStudent(string id);
         public void DeleteInstructor(string id);
         public IEnumerable<Student> GetStudents(List<string>? Ids);
+        public Student? GetStudent(string id);
         public IEnumerable<Instructor> GetInstructors(List<string>? Ids);
+        public Instructor? GetInstructor(string id);
         public Student UpdateStudent(Student student);
         public Instructor UpdateInstructor(Instructor instructor);
     }

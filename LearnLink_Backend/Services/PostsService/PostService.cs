@@ -26,9 +26,15 @@ namespace LearnLink_Backend.Services.PostsService
             return PostGet.ToDTO(postRepo.GetPostById(id) ?? throw new NotFoundException("could not find post"));
         }
 
-        public async Task<IEnumerable<PostGet>> GetRecentPostsAsync(int limit, int page)
+        public async Task<PaggedModel<PostGet>> GetRecentPostsAsync(int limit, int page)
         {
-            return PostGet.ToDTO(await postRepo.GetRecentPostsAsync(limit, page));
+            var posts = await postRepo.GetRecentPostsAsync(limit, page);
+
+            foreach(var post in posts)
+                post.MediaLink = $"https://localhost:7209/api/post/media/{post.MediaLink}";
+            
+            var postCount = postRepo.GetPostCount();
+            return new PaggedModel<PostGet>(posts, postCount, page, posts.Count());
         }
 
         public void DeletePost(int id)
@@ -66,6 +72,22 @@ namespace LearnLink_Backend.Services.PostsService
             PostModel post = postRepo.GetPostById(commentDto.PostId) ?? throw new NotFoundException("post not found");
             Student user = userRepo.GetStudentById(commentDto.UserGuid) ?? throw new NotFoundException("usre not defined");
             return postRepo.AddComment(new Comment() { Content = commentDto.Content, Post = post, Commenter = user });
+        }
+
+        public int ReactToPost(int id, string userId)
+        {
+            var post = postRepo.GetPostById(id) ?? throw new NotFoundException("post not found");
+            var user = post.Likes.FirstOrDefault(p => p.Id.ToString() == userId);
+            if (user == null)
+            {
+                postRepo.ReactToPost(post, userRepo.GetStudent(userId)!);
+                return post.Likes.Count;
+            }
+            else
+            {
+                postRepo.RemoveReact(post, user);
+                return post.Likes.Count;
+            }
         }
     }
 }

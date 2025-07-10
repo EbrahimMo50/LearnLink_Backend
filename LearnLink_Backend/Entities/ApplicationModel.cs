@@ -12,7 +12,7 @@ namespace LearnLink_Backend.Entities
         public string Password { get; set; } = string.Empty;
         public string Messsage { get; set; } = string.Empty;
         public string Nationality { get; set; } = string.Empty;
-        public ICollection<string> SpokenLanguages { get; set; } = [];
+        public IList<string> SpokenLanguages { get; set; } = [];
         public DateTime AtDate { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LearnLink_Backend.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearnLink_Backend.DTOs
 {
@@ -12,14 +13,13 @@ namespace LearnLink_Backend.DTOs
         public string Email { get; set; } = string.Empty;
         [MinLength(4)]
         public string Nationality { get; set; } = string.Empty;
-        [MinLength(4)]
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
         [MinLength(8)]
         public string Address { get; set; } = string.Empty;
 
-        public Models.Student ToStudent(string hashedPassword, string salt)
+        public Student ToStudent(string hashedPassword, string salt)
         {
-            return new Models.Student()
+            return new Student()
             {
                 Name = this.Name,
                 Email = this.Email,
@@ -44,7 +44,7 @@ namespace LearnLink_Backend.DTOs
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
         public string Address { get; set; } = string.Empty;
 
-        public static StudentGet ToDTO(Models.Student student)
+        public static StudentGet ToDTO(Student student)
         {
             return new StudentGet() 
             {
@@ -57,7 +57,7 @@ namespace LearnLink_Backend.DTOs
                 Address = student.Address 
             };
         }
-        public static IEnumerable<StudentGet> ToDTO(IEnumerable<Models.Student> student)
+        public static IEnumerable<StudentGet> ToDTO(IEnumerable<Student> student)
         {
             List<StudentGet> result = [];
 

@@ -5,6 +5,17 @@ namespace LearnLink_Backend.Services
 {
     public class MediaService
     {
+        public Stream? GetMedia(string mediaId)
+        {
+            var filePath = Path.Combine("Uploads", mediaId);
+
+            if (!File.Exists(filePath))
+                return null;
+
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return fileStream;
+        }
+
         public async Task<string> SaveImage(IFormFile file)
         {
             if (file.Length == 0)

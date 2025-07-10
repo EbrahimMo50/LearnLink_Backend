@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.Entities;
+﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Entities;
 using LearnLink_Backend.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace LearnLink_Backend.Repositories.CoursesRepo
 
         public IEnumerable<CourseModel> GetAllCourses()
         {
-            return [.. DbContext.Courses.Include(x => x.Instructor)];
+            return DbContext.Courses.Include(x => x.Instructor);
         }
 
         public async Task<CourseModel?> GetByIdAsync(int id)
@@ -41,6 +42,11 @@ namespace LearnLink_Backend.Repositories.CoursesRepo
             var result = DbContext.Courses.Update(course);
             await DbContext.SaveChangesAsync();
             return result.Entity;
+        }
+
+        public IEnumerable<CourseModel> GetCoursesForInstructor(string instructorId)
+        {
+            return DbContext.Courses.Include(c => c.Instructor).Where(c => c.Instructor!.Id.ToString() == instructorId);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace LearnLink_Backend.Entities
     {
         public int Id { get; }
         public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public Instructor? Instructor { get; set; }
         public List<SessionModel> Sessions { get; set; } = [];
         public List<AnnouncementModel> Announcements { get; set; } = [];

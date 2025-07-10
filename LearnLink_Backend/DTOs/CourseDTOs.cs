@@ -12,6 +12,7 @@ namespace LearnLink_Backend.DTOs
         [JsonIgnore]
         [BindNever]
         public string InstructorId { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 
     public class CourseGet
@@ -19,16 +20,18 @@ namespace LearnLink_Backend.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string InstructorId { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string InstructorName { get; set; } = string.Empty;
 
         public static CourseGet ToDTO(CourseModel course)
         {
-            return new CourseGet() 
+            return new CourseGet()
             {
                 Id = course.Id,
                 InstructorId = course.Instructor!.Id.ToString(),
-                Name = course.Name, 
-                InstructorName = course.Instructor.Name 
+                Name = course.Name,
+                InstructorName = course.Instructor.Name,
+                Description = course.Description
             };
         }
         public static IEnumerable<CourseGet> ToDTO(IEnumerable<CourseModel> courses)

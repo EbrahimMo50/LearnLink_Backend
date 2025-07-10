@@ -102,5 +102,15 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
         {
             return dbContext.Admins.FirstOrDefault(x => x.Email == email);
         }
+
+        public Student? GetStudent(string id)
+        {
+            return dbContext.Students.FirstOrDefault(s => s.Id.ToString() == id);
+        }
+
+        public Instructor? GetInstructor(string id)
+        {
+            return dbContext.Instructors.FirstOrDefault(i => i.Id.ToString() == id);
+        }
     }
 }

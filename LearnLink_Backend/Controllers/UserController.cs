@@ -10,12 +10,12 @@ namespace LearnLink_Backend.Controllers
     [ApiController]
     public class UserController(IUserService service, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
-        [HttpPut("instructor/{instructorId}/schedule")]
+        [HttpPut("instructor/schedule")]
         [Authorize(Policy = "InstructorPolicy")]
-        public IActionResult UpdateSchedule(string instructorId, ScheduleUpdate scheduleUpdate)
+        public IActionResult UpdateSchedule(ScheduleUpdate scheduleUpdate)
         {
-            scheduleUpdate.InstructorId = instructorId;
             var issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;
+            scheduleUpdate.InstructorId = issuerId;
             service.UpdateSchedule(scheduleUpdate, issuerId);
             return NoContent();
         }
@@ -29,12 +29,27 @@ namespace LearnLink_Backend.Controllers
             return Ok(result);
         }
 
-        //two methods to get students and instructors for performance
+        // two methods to get students and instructors for performance
+        // what performance lil bro?!
         [HttpGet("students")]
         [Authorize(Policy = "Admin")]
         public IActionResult GetStudents([FromBody] List<string> ids)
         {
             return Ok(service.GetStudents(ids));
+        }
+
+        [HttpGet("student/{id}")]
+        [Authorize(Policy = "User")]
+        public IActionResult GetStudent(string id)
+        {
+            return Ok(service.GetStudent(id));
+        }
+
+        [HttpGet("instructor/{id}")]
+        [Authorize(Policy = "User")]
+        public IActionResult GetInstructor(string id)
+        {
+            return Ok(service.GetInstructor(id));
         }
 
         [HttpGet("instructors")]

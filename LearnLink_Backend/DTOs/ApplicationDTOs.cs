@@ -15,7 +15,6 @@ namespace LearnLink_Backend.DTOs
         public string Messsage { get; set; } = string.Empty;
         [MinLength(4)]
         public string Nationality { get; set; } = string.Empty;
-        [MinLength(4)]
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
     }
     public class ApplicationGet

@@ -5,7 +5,8 @@ using System.ComponentModel.DataAnnotations;
 namespace LearnLink_Backend.Models
 {
     [Index(nameof(Email), IsUnique = true)]
-    //shall i add the instructor scehdule here?
+    // shall i add the instructor scehdule here?
+    // yes
     public class Instructor
     {
         public Guid Id { get; }

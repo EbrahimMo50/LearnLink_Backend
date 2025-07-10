@@ -1,5 +1,7 @@
-﻿using LearnLink_Backend.Entities;
+﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Entities;
 using LearnLink_Backend.Exceptions;
+using LearnLink_Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnLink_Backend.Repositories.PostsRepo
@@ -37,15 +39,42 @@ namespace LearnLink_Backend.Repositories.PostsRepo
 
         public PostModel? GetPostById(int id)
         {
-            var result = dbContext.Posts.Where(x => x.Id == id).FirstOrDefault() ?? throw new NotFoundException("Post not found");
+            var result = dbContext.Posts.Include(p => p.Likes).Where(x => x.Id == id).FirstOrDefault() ?? throw new NotFoundException("Post not found");
             return result;
         }
 
-        public async Task<IEnumerable<PostModel>> GetRecentPostsAsync(int limit, int page)
+        public int GetPostCount()
         {
-            var posts = await dbContext.Posts.Include(x => x.Likes).Include(x => x.Author).ToListAsync();
+            return dbContext.Posts.Count();
+        }
+
+        public async Task<IEnumerable<PostGet>> GetRecentPostsAsync(int limit, int page)
+        {
+            var posts = await dbContext.Posts.Select(x=> new PostGet 
+            { 
+                Id = x.Id,
+                Description = x.Description,
+                Title = x.Title, 
+                ReactCount = x.Likes.Count(),
+                AuthorId = x.Author.Id.ToString(),
+                AuthorName = x.Author.Name,
+                MediaLink = x.ImagePath
+            }).ToListAsync();
+
             var result = posts.AsEnumerable().Reverse().Skip((page - 1) * limit).Take(limit);
             return result;
+        }
+
+        public void ReactToPost(PostModel post, Student user)
+        {
+            dbContext.Posts.FirstOrDefault(x => x.Id == post.Id)!.Likes.Add(user);
+            dbContext.SaveChanges();
+        }
+
+        public void RemoveReact(PostModel post, Student user)
+        {
+            dbContext.Posts.FirstOrDefault(x => x.Id == post.Id)!.Likes.Remove(user);
+            dbContext.SaveChanges();
         }
 
         public PostModel UpdatePost(PostModel post)

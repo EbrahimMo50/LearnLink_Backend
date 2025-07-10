@@ -12,9 +12,9 @@ namespace LearnLink_Backend.Services.CoursesService
     {
         public async Task<CourseModel> CreateCourseAsync(CourseSet course, string createrId)
         {
-            Instructor instructor = userRepo.GetInstructorById(course.InstructorId) ?? throw new NotFoundException("could not find specified instructor");
+            Instructor instructor = userRepo.GetInstructorById(createrId) ?? throw new NotFoundException("could not find specified instructor");
 
-            CourseModel obj = new() { Name = course.Name, Instructor = instructor, CreatedBy = createrId, AtDate = DateTime.UtcNow };
+            CourseModel obj = new() { Name = course.Name, Instructor = instructor, CreatedBy = createrId, AtDate = DateTime.UtcNow, Description = course.Description };
 
             return await courseRepo.CreateCourseAsync(obj);
         }
@@ -26,9 +26,11 @@ namespace LearnLink_Backend.Services.CoursesService
         {
             return CourseGet.ToDTO(await courseRepo.GetByIdAsync(id) ?? throw new NotFoundException("course could not be found"));
         }
-        public void Delete(int id)
+        public async Task DeleteAsync(int id, string issuerId)
         {
-            courseRepo.Delete(id);
+            var course = await courseRepo.GetByIdAsync(id) ?? throw new NotFoundException("course not found");
+            if(issuerId == course.Instructor!.Id.ToString())
+                courseRepo.Delete(id);
         }
         public async Task<CourseModel> UpdateCourseAsync(int id, CourseSet course, string updaterId)
         {
@@ -91,6 +93,11 @@ namespace LearnLink_Backend.Services.CoursesService
 
             var notification = new NotificationModel() { Reciever = course.Instructor!, Message = $"Student {student.Name} left the {course.Name} course", Title = "a student left the course" };
             await notificationService.SendNotification(notification);
+        }
+
+        public IEnumerable<CourseGet> GetCoursesForInstructor(string instructorId)
+        {
+            return CourseGet.ToDTO(courseRepo.GetCoursesForInstructor(instructorId));
         }
     }
 }

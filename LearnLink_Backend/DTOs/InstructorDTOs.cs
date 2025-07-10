@@ -1,5 +1,6 @@
 ﻿using LearnLink_Backend.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -12,11 +13,13 @@ namespace LearnLink_Backend.DTOs
         public string Email { get; set; } = string.Empty;
         public decimal FeesPerHour { get; set; }
         public string Nationality { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
 
         public static InstructorGet ToDTO(Instructor instructor)
         {
             return new() { 
+                PhoneNumber = instructor.PhoneNumber,
                 Email = instructor.Email, 
                 FeesPerHour = instructor.FeesPerHour, 
                 Name = instructor.Name, Id = instructor.Id.ToString(),
@@ -40,9 +43,10 @@ namespace LearnLink_Backend.DTOs
         [JsonIgnore]
         [BindNever]
         public string Id { get; set; } = string.Empty;
+        [EmailAddress]
+        public string Email { get; set; } = null!;
         public string? PhoneNumber { get; set; } = null;
         [Range(1,1000)]
         public decimal? FeesPerHour { get; set; } = null;
-        public ICollection<string> AddedSpokenLanguages { get; set; } = [];
     }
 }

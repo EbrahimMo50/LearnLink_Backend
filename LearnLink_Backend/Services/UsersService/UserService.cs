@@ -31,5 +31,15 @@ namespace LearnLink_Backend.Services.UsersService
         {
             return InstructorGet.ToDTO(userRepo.GetInstructors(ids));
         }
+
+        public StudentGet GetStudent(string id)
+        {
+            return StudentGet.ToDTO(userRepo.GetStudent(id) ?? throw new NotFoundException("Student not found"));
+        }
+
+        public InstructorGet GetInstructor(string id)
+        {
+            return InstructorGet.ToDTO(userRepo.GetInstructor(id) ?? throw new NotFoundException("Instructor not found"));
+        }
     }
 }

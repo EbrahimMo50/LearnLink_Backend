@@ -9,5 +9,7 @@ namespace LearnLink_Backend.Services.UsersService
         public StudentGet AddBalance(string id, decimal balance, string updaterId);
         public IEnumerable<StudentGet> GetStudents(List<string> ids);
         public IEnumerable<InstructorGet> GetInstructors(List<string> ids);
+        public StudentGet GetStudent(string id);
+        public InstructorGet GetInstructor(string id);
     }
 }

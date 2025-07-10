@@ -20,7 +20,7 @@ namespace LearnLink_Backend.Controllers
         }
         [HttpGet]
         [Authorize(Policy = "User")]
-        public IActionResult GetAllForCourse()
+        public IActionResult GetAllCourses()
         {
             var response = service.GetAllCourses();
             return Ok(response);
@@ -33,14 +33,15 @@ namespace LearnLink_Backend.Controllers
             return Ok(response);
         }
         [HttpDelete("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
-        public IActionResult DeleteCourse(int id)
+        [Authorize(Policy = "InstructorPolicy")]
+        public async Task<IActionResult> DeleteCourse(int id)
         {
-            service.Delete(id);
+            var issuerId = HttpContext.User.FindFirstValue("id")!;
+            await service.DeleteAsync(id, issuerId);
             return NoContent();
         }
         [HttpPut("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "InstructorPolicy")]
         public async Task<IActionResult> UpdateCourse(int id, CourseSet course)
         {
             string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
@@ -50,6 +51,13 @@ namespace LearnLink_Backend.Controllers
             var response = await service.UpdateCourseAsync(id, course, issuerId);
             return Ok(response);
         }
+        [HttpGet("instructor/{id}")]
+        [Authorize(Policy = "User")]
+        public IActionResult GetCoursesForInstructor(string id)
+        {
+            return Ok(service.GetCoursesForInstructor(id));
+        }
+
         [HttpPatch("{courseId}/join")]
         [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> JoinCourse(int courseId)

@@ -25,8 +25,9 @@ namespace LearnLink_Backend.DTOs
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string AuthorId { get; set; } = string.Empty;
-        public string? ImagePath { get; set; } = null;  //nullable because not all posts have images
-        public IEnumerable<string> Likes { get; set; } = [];
+        public string AuthorName { get; set; } = string.Empty;
+        public string? MediaLink { get; set; } = null;  //nullable because not all posts have images
+        public int ReactCount { get; set; }
 
         public static PostGet ToDTO(PostModel post)
         {
@@ -36,8 +37,7 @@ namespace LearnLink_Backend.DTOs
                 Title = post.Title, 
                 Description = post.Description, 
                 AuthorId = post.Author.Id.ToString(),
-                ImagePath = post.ImagePath,
-                Likes = post.Likes.Select(x => x.Id.ToString()).ToList() 
+                ReactCount = post.Likes.Count(),         
             };
         }
 

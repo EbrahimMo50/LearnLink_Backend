@@ -1,4 +1,5 @@
-﻿using LearnLink_Backend.Entities;
+﻿using LearnLink_Backend.DTOs;
+using LearnLink_Backend.Entities;
 
 namespace LearnLink_Backend.Repositories.CoursesRepo
 {
@@ -9,5 +10,6 @@ namespace LearnLink_Backend.Repositories.CoursesRepo
         public Task<CourseModel?> GetByIdAsync(int id);
         public void Delete(int id);
         public Task<CourseModel> UpdateCourseAsync(CourseModel course);
+        public IEnumerable<CourseModel> GetCoursesForInstructor(string instructorId);
     }
 }

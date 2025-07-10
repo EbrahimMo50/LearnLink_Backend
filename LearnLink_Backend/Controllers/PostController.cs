@@ -35,22 +35,25 @@ namespace LearnLink_Backend.Controllers
             return CreatedAtRoute(RouteData, response);
         }
         [HttpGet("{id}")]
-        [Authorize(Policy = "User")]
         public IActionResult GetPost(int id)
         {
             var result = postService.GetPost(id);
             return Ok(result);
         }
         [HttpGet("recent")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetRecentPosts(int page = 1)   // query parameter utillizing pagination for performance
+        public async Task<IActionResult> GetRecentPosts(int limit = 10, int page = 1)   // query parameter utillizing pagination for performance
         {
-            var result = await postService.GetRecentPostsAsync(10, page);  // limit is hard coded to 10 for now
+            var result = await postService.GetRecentPostsAsync(limit, page);  // limit is hard coded to 10 for now
             return Ok(result);
+        }
+        [HttpPatch("{id}/react")]
+        public IActionResult ReactToPost(int id)
+        {
+            var user = HttpContext.User.FindFirstValue("id")!;
+            return Ok(postService.ReactToPost(id, user));
         }
 
         [HttpGet("media/{fileName}")]
-        [Authorize(Policy = "User")]
         public IActionResult GetMedia(string fileName)
         {
             var filePath = Path.Combine("Uploads", fileName);
