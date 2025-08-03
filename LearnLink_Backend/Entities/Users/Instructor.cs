@@ -1,4 +1,5 @@
 ﻿using LearnLink_Backend.Entities;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,7 +34,7 @@ namespace LearnLink_Backend.Models
         public ICollection<TimeInterval> Intervals { get; set; } = [];
     }
     public class TimeInterval
-    {
+    {                                                                                                                                                                           
         public int Id { get; set; }
         public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }

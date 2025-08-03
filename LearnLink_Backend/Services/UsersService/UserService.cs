@@ -41,5 +41,21 @@ namespace LearnLink_Backend.Services.UsersService
         {
             return InstructorGet.ToDTO(userRepo.GetInstructor(id) ?? throw new NotFoundException("Instructor not found"));
         }
+
+        public InstructorGet UpdateInstructor(InstructorUpdate instructor)
+        {
+            var oldInstructor = userRepo.GetInstructor(instructor.Id) ?? throw new NotFoundException("Instructor not found");
+            oldInstructor.UpdatedBy = instructor.Id;
+            oldInstructor.UpdateTime = DateTime.Now;
+            oldInstructor.FeesPerHour = instructor.FeesPerHour;
+            oldInstructor.PhoneNumber = instructor.PhoneNumber;
+            oldInstructor.Email = instructor.Email;
+            return InstructorGet.ToDTO(userRepo.UpdateInstructor(oldInstructor));
+        }
+
+        public IEnumerable<DayAvailability> GetInstructorSchedule(string id)
+        {
+            return userRepo.GetInstructorSchedule(id);
+        }
     }
 }

@@ -112,5 +112,10 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
         {
             return dbContext.Instructors.FirstOrDefault(i => i.Id.ToString() == id);
         }
+
+        public IEnumerable<DayAvailability> GetInstructorSchedule(string id)
+        {
+            return dbContext.Instructors.Include(i => i.Schedule).ThenInclude(i => i.Intervals).FirstOrDefault(i => i.Id.ToString() == id)!.Schedule;
+        }
     }
 }

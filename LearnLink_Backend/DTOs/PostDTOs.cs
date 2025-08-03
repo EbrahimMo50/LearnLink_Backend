@@ -28,6 +28,8 @@ namespace LearnLink_Backend.DTOs
         public string AuthorName { get; set; } = string.Empty;
         public string? MediaLink { get; set; } = null;  //nullable because not all posts have images
         public int ReactCount { get; set; }
+        public int CommentCount { get; set; }
+        public bool LikedByActiveUser { get; set; } = false;
 
         public static PostGet ToDTO(PostModel post)
         {

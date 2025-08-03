@@ -19,7 +19,7 @@ namespace LearnLink_Backend.DTOs
     {
         public int Id { get; set; }
         public string? MeetingLink { get; set; } = string.Empty;
-        public IEnumerable<string> AttendendStudent { get; set; } = [];
+        public int AttendendStudentCount { get; set; }
         public int CourseId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -39,7 +39,7 @@ namespace LearnLink_Backend.DTOs
             {
                 Id = session.Id,
                 MeetingLink = session.MeetingLink,
-                AttendendStudent = session.AttendendStudent.Select(x => x.Id).Select(x => x.ToString()),
+                AttendendStudentCount = session.AttendendStudent.Count,
                 CourseId = session.Course.Id,
                 StartTime = session.StartTime,
                 EndTime = session.EndTime,

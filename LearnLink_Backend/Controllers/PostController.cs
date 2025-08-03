@@ -43,7 +43,7 @@ namespace LearnLink_Backend.Controllers
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentPosts(int limit = 10, int page = 1)   // query parameter utillizing pagination for performance
         {
-            var result = await postService.GetRecentPostsAsync(limit, page);  // limit is hard coded to 10 for now
+            var result = await postService.GetRecentPostsAsync(limit, page);
             return Ok(result);
         }
         [HttpPatch("{id}/react")]

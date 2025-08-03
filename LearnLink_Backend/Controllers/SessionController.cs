@@ -33,10 +33,10 @@ namespace LearnLink_Backend.Controllers
         }
 
         [HttpGet()]
-        [Authorize(Policy = "AdminPolicy")]
-        public IActionResult GetAll()
+        [Authorize(Policy = "User")]
+        public IActionResult GetAll(int courseId)
         {
-            return Ok(service.GetAll());
+            return Ok(service.GetAll(courseId));
         }
 
         [HttpGet("{sessionId}/attendance")]

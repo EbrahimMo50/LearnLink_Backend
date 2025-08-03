@@ -28,9 +28,9 @@ namespace LearnLink_Backend.Repositories.SessionsRepo
                 .FirstOrDefault(x => x.Id == id);
         }
 
-        public IEnumerable<SessionModel> GetAll()
+        public IEnumerable<SessionModel> GetAll(int courseId)
         {
-            return [.. DbContext.Sessions.Include(x => x.AttendendStudent)];
+            return [.. DbContext.Sessions.Include(x => x.AttendendStudent).Include(x => x.Course).Where(x => x.CourseId == courseId)];
         }
 
         public async Task<SessionModel> UpdateAsync(SessionModel session)

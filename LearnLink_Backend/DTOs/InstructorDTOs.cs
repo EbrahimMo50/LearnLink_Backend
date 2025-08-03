@@ -45,8 +45,8 @@ namespace LearnLink_Backend.DTOs
         public string Id { get; set; } = string.Empty;
         [EmailAddress]
         public string Email { get; set; } = null!;
-        public string? PhoneNumber { get; set; } = null;
-        [Range(1,1000)]
-        public decimal? FeesPerHour { get; set; } = null;
+        public string PhoneNumber { get; set; } = null!;
+        [Range(1,100)]
+        public decimal FeesPerHour { get; set; }
     }
 }

@@ -50,12 +50,14 @@ namespace LearnLink_Backend.Repositories.PostsRepo
 
         public async Task<IEnumerable<PostGet>> GetRecentPostsAsync(int limit, int page)
         {
+            // will it work on comment count without making a join?
             var posts = await dbContext.Posts.Select(x=> new PostGet 
             { 
                 Id = x.Id,
                 Description = x.Description,
                 Title = x.Title, 
                 ReactCount = x.Likes.Count(),
+                CommentCount = x.Comments.Count(),
                 AuthorId = x.Author.Id.ToString(),
                 AuthorName = x.Author.Name,
                 MediaLink = x.ImagePath

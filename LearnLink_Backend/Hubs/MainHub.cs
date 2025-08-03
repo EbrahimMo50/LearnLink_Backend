@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
 using System.Security.Claims;
 
 namespace LearnLink_Backend.Hubs
@@ -11,7 +10,8 @@ namespace LearnLink_Backend.Hubs
     {
         public async override Task OnConnectedAsync()
         {
-
+            Console.WriteLine("conn established");
+            Console.WriteLine(Context.ConnectionId);
             await Groups.AddToGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.User.FindFirstValue("id")!);
 
 

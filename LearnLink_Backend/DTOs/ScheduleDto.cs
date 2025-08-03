@@ -23,7 +23,8 @@ public class ScheduleUpdate : IValidatableObject
                     yield return new ValidationResult($"Start time {interval.Start} can not be after end time {interval.End}",
                         [nameof(NewSchedule)]);
                 }
-                if ((interval.End - interval.End).Minutes < 30)
+                Console.WriteLine((interval.End - interval.Start).Minutes);
+                if ((interval.End - interval.Start).TotalMinutes < 30)
                 {
                     yield return new ValidationResult("minimum meeting time is 30 minutes", [nameof(NewSchedule)]);
                 }

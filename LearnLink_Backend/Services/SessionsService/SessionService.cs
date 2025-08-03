@@ -37,9 +37,9 @@ namespace LearnLink_Backend.Services.SessionsService
         {
             return SessionGet.ToDTO(sessionRepo.GetById(id) ?? throw new NotFoundException("could not find session"));
         }
-        public IEnumerable<SessionGet> GetAll()
+        public IEnumerable<SessionGet> GetAll(int courseId)
         {
-            return SessionGet.ToDTO(sessionRepo.GetAll());
+            return SessionGet.ToDTO(sessionRepo.GetAll(courseId));
         }
         public async Task<SessionModel> UpdateAsync(int id, SessionSet sessionSet, string issuerId)
         {

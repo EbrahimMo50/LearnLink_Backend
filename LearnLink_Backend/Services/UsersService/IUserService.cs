@@ -11,5 +11,7 @@ namespace LearnLink_Backend.Services.UsersService
         public IEnumerable<InstructorGet> GetInstructors(List<string> ids);
         public StudentGet GetStudent(string id);
         public InstructorGet GetInstructor(string id);
+        public InstructorGet UpdateInstructor(InstructorUpdate instructor);
+        public IEnumerable<DayAvailability> GetInstructorSchedule(string id);
     }
 }

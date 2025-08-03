@@ -11,15 +11,17 @@ namespace LearnLink_Backend.DTOs
         [MinLength(4)]
         public string Description { get; set; } = string.Empty;
         public int CourseId { get; set; }
+        public DateTime AtDate { get; set; }
 
         public static AnnouncementGet ToDTO(AnnouncementModel announcement)
         {
-            return new AnnouncementGet() 
-            { 
-                Id = announcement.Id, 
-                Title = announcement.Title, 
+            return new AnnouncementGet()
+            {
+                Id = announcement.Id,
+                Title = announcement.Title,
                 Description = announcement.Description,
-                CourseId = announcement.CourseId 
+                CourseId = announcement.CourseId,
+                AtDate = announcement.AtDate
             };
         }
 
