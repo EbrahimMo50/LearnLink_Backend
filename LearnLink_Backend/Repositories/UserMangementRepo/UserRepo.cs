@@ -117,5 +117,39 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
         {
             return dbContext.Instructors.Include(i => i.Schedule).ThenInclude(i => i.Intervals).FirstOrDefault(i => i.Id.ToString() == id)!.Schedule;
         }
+
+        public void BlockUser(string id)
+        {
+            var instructor = dbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == id);
+            if(instructor != null)
+            {
+                instructor.IsBlocked = true;
+                dbContext.SaveChanges();
+                return;
+            }
+            var student = dbContext.Students.FirstOrDefault(x => x.Id.ToString() == id);
+            if(student != null)
+            {
+                student.IsBlocked = true;
+                dbContext.SaveChanges();
+            }
+        }
+
+        public void UnBlockUser(string id)
+        {
+            var instructor = dbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == id);
+            if (instructor != null)
+            {
+                instructor.IsBlocked = false;
+                dbContext.SaveChanges();
+                return;
+            }
+            var student = dbContext.Students.FirstOrDefault(x => x.Id.ToString() == id);
+            if (student != null)
+            {
+                student.IsBlocked = false;
+                dbContext.SaveChanges();
+            }
+        }
     }
 }

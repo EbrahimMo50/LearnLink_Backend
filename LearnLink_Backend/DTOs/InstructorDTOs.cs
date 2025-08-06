@@ -15,6 +15,7 @@ namespace LearnLink_Backend.DTOs
         public string Nationality { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
+        public bool IsBlocked { get; set; }
 
         public static InstructorGet ToDTO(Instructor instructor)
         {
@@ -24,7 +25,8 @@ namespace LearnLink_Backend.DTOs
                 FeesPerHour = instructor.FeesPerHour, 
                 Name = instructor.Name, Id = instructor.Id.ToString(),
                 Nationality = instructor.Nationality, 
-                SpokenLanguages = instructor.SpokenLanguages
+                SpokenLanguages = instructor.SpokenLanguages,
+                IsBlocked = instructor.IsBlocked
             };
         }
 

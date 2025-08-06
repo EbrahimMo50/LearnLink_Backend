@@ -228,10 +228,7 @@ app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
-if (app.Environment.IsProduction())
-{
-    app.UseMiddleware<ExceptionHandlingMiddleWare>();   // note there is a pre built middleware for catchinf logging exceptions but we will use our own
-}
+app.UseMiddleware<ExceptionHandlingMiddleWare>();   // note there is a pre built middleware for catchinf logging exceptions but we will use our own
 
 app.UseAuthentication();
 

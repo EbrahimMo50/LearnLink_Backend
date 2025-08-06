@@ -11,7 +11,7 @@ namespace LearnLink_Backend.Policies.StudentPolicy
             if(IdClaim== null)
                 return Task.CompletedTask;
 
-            var user = DbContext.Students.FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
+            var user = DbContext.Students.Where(x => x.IsBlocked == false).FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
 
             if (user != null)
                 context.Succeed(requirement);

@@ -51,20 +51,30 @@ namespace LearnLink_Backend.Services.AuthService
         {
             var StudentUser = userRepo.GetStudentByEmail(user.Email);
             if (StudentUser != null)
-                if (StudentUser.HashedPassword == Hash(StudentUser.Salt, user.Password))
+                if (StudentUser.IsBlocked)
+                    throw new UnauthorizedException("Your account is blocked");
+                else if (StudentUser.HashedPassword == Hash(StudentUser.Salt, user.Password))
                     return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(StudentUser)), User = UniversalUser.ToUser(StudentUser) };
-
+                else
+                    throw new BadRequestException("incorrect password");
 
             var InstructorUser = userRepo.GetInstructorByEmail(user.Email);
             if (InstructorUser != null)
-                if (InstructorUser.HashedPassword == Hash(InstructorUser.Salt, user.Password))
+                if (InstructorUser.IsBlocked)
+                    throw new UnauthorizedException("Your account is blocked");
+                else if (InstructorUser.HashedPassword == Hash(InstructorUser.Salt, user.Password))
                     return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(InstructorUser)), User = UniversalUser.ToUser(InstructorUser) };
-
+                else
+                    throw new BadRequestException("incorrect password");
 
             var AdminUser = userRepo.GetAdminByEmail(user.Email);
             if (AdminUser != null)
-                if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
+               if (AdminUser.IsBlocked)
+                   throw new UnauthorizedException("Your account is blocked");
+               else if (AdminUser.HashedPassword == Hash(AdminUser.Salt, user.Password))
                     return new LoginSuccessDto() { AccessToken = tokenService.GenerateToken(UniversalUser.ToUser(AdminUser)), User = UniversalUser.ToUser(AdminUser) };
+               else
+                    throw new BadRequestException("incorrect password");
 
             throw new NotFoundException("User not found");
         }

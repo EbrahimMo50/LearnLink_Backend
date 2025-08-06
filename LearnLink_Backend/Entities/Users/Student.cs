@@ -15,6 +15,7 @@ namespace LearnLink_Backend.Models
         public decimal Balance { get; set; }
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; } = string.Empty;
+        public bool IsBlocked { get; set; } = false;
         public string Nationality { get; set; } = string.Empty;
         public virtual IList<string> SpokenLanguages { get; set; } = [];
         public string Address { get; set; } = string.Empty;

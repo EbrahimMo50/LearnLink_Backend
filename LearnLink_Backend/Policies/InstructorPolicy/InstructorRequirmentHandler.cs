@@ -12,7 +12,7 @@ namespace LearnLink_Backend.Policies.InstructorPolicy
             if (IdClaim == null)
                 return Task.CompletedTask;
 
-            var user = DbContext.Instructors.FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
+            var user = DbContext.Instructors.Where(x => x.IsBlocked == false).FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
 
             if (user != null)
                 context.Succeed(requirement);

@@ -30,7 +30,7 @@ namespace LearnLink_Backend.Controllers
 
             applicationService.AcceptApplication(id, issuerId);
             // might add email notification using email service in future here
-            return Ok("signed instructor");
+            return NoContent();
         }
 
         [HttpGet]

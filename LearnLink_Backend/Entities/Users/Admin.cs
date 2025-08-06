@@ -19,6 +19,7 @@ namespace LearnLink_Backend.Models
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime? UpdateTime { get; set; }
         public string? UpdatedBy { get; set; }
+        public bool IsBlocked { get; set; } = false;
 
     }
 }

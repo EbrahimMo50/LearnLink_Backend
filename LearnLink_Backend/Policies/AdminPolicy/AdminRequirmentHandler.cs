@@ -13,7 +13,7 @@ namespace LearnLink_Backend.Policies.AdminPolicy
             if (IdClaim == null)
                 return Task.CompletedTask;
 
-            var user = DbContext.Admins.FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
+            var user = DbContext.Admins.Where(x => x.IsBlocked == false).FirstOrDefault(x => x.Id.ToString() == IdClaim.Value);
 
             if (user != null)
                 context.Succeed(requirement);

@@ -43,18 +43,19 @@ namespace LearnLink_Backend.DTOs
         public string Nationality { get; set; } = string.Empty;
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
         public string Address { get; set; } = string.Empty;
-
+        public bool IsBlocked { get; set; }
         public static StudentGet ToDTO(Student student)
         {
-            return new StudentGet() 
+            return new StudentGet()
             {
                 Id = student.Id.ToString(),
                 Name = student.Name,
                 Balance = student.Balance,
-                Email = student.Email, 
+                Email = student.Email,
                 Nationality = student.Nationality,
-                SpokenLanguages = student.SpokenLanguages, 
-                Address = student.Address 
+                SpokenLanguages = student.SpokenLanguages,
+                Address = student.Address,
+                IsBlocked = student.IsBlocked
             };
         }
         public static IEnumerable<StudentGet> ToDTO(IEnumerable<Student> student)

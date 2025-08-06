@@ -22,5 +22,7 @@ namespace LearnLink_Backend.Repositories.UserMangementRepo
         public Student UpdateStudent(Student student);
         public Instructor UpdateInstructor(Instructor instructor);
         IEnumerable<DayAvailability> GetInstructorSchedule(string id);
+        public void BlockUser(string id);
+        public void UnBlockUser(string id);
     }
 }

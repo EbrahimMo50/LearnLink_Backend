@@ -13,24 +13,31 @@ namespace LearnLink_Backend.MiddleWares
             {
                 await _next.Invoke(context);
             }
-            catch (BadHttpRequestException ex)
+            catch (BadRequestException ex)
             {
-                _logger.LogError(ex, "A bad request exception occurred.");
+                _logger.LogInformation(ex, "A bad request exception occurred.");
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { Error = ex.Message });
             }
             catch (NotFoundException ex)
             {
-                _logger.LogError(ex, "A bad request exception occurred.");
+                _logger.LogInformation(ex, "A bad request exception occurred.");
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { Error = ex.Message });
             }
             catch (ConfilctException ex)
             {
-                _logger.LogError(ex, "A bad request exception occurred.");
+                _logger.LogInformation(ex, "A bad request exception occurred.");
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsJsonAsync(new { Error = ex.Message });
+            }
+            catch(UnauthorizedException ex)
+            {
+                _logger.LogInformation(ex, "A bad request exception occurred.");
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { Error = ex.Message });
             }

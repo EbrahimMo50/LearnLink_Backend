@@ -10,7 +10,7 @@ namespace LearnLink_Backend.Entities
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public string Messsage { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
         public string Nationality { get; set; } = string.Empty;
         public IList<string> SpokenLanguages { get; set; } = [];
         public DateTime AtDate { get; set; } = DateTime.UtcNow;

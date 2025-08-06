@@ -39,5 +39,15 @@ namespace LearnLink_Backend.Services.AdminstrationsService
                 userRepo.DeleteInstructor(id);
             }
         }
+
+        public void BlockUser(string id)
+        {
+            userRepo.BlockUser(id);
+        }
+
+        public void UnBlockUser(string id)
+        {
+            userRepo.UnBlockUser(id);
+        }
     }
 }

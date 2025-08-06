@@ -9,5 +9,7 @@ namespace LearnLink_Backend.Services.AdminstrationsService
         public IEnumerable<StudentGet> GetAllStudents();
         public IEnumerable<InstructorGet> GetAllInstructors();
         public void RemoveUser(string id);
+        public void BlockUser(string id);
+        public void UnBlockUser(string id);
     }
 }

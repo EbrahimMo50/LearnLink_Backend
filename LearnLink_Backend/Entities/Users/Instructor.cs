@@ -19,6 +19,7 @@ namespace LearnLink_Backend.Models
         public string PhoneNumber { get; set; } = string.Empty;
         public decimal FeesPerHour { get; set; } = 0;   //this is meeting releated
         public string Nationality { get; set; } = string.Empty;
+        public bool IsBlocked { get; set; } = false;
         public virtual IList<string> SpokenLanguages { get; set; } = [];
         public virtual ICollection<CourseModel> Courses { get; set; } = [];
         public virtual ICollection<DayAvailability> Schedule { get; set; } = [];

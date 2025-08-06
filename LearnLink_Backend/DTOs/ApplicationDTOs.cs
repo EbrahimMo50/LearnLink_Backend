@@ -22,7 +22,7 @@ namespace LearnLink_Backend.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Messsage { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
         public string Nationality { get; set; } = string.Empty;
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
         public static ApplicationGet ToDTO(ApplicationModel app)
@@ -32,7 +32,7 @@ namespace LearnLink_Backend.DTOs
                 Id = app.Id,
                 Name = app.Name, 
                 Email = app.Email, 
-                Messsage = app.Messsage,
+                Message = app.Message,
                 Nationality = app.Nationality,
                 SpokenLanguages = app.SpokenLanguages
             };
