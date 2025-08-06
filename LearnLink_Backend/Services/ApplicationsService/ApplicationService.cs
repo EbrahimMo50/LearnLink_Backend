@@ -15,7 +15,7 @@ namespace LearnLink_Backend.Services.ApplicationsService
             if (applicationRepo.GetApplicationByEmail(applicationSet.Email) != null)
                 throw new BadRequestException("application already exists");
 
-            if (userRepo.GetInstructorByEmail(applicationSet.Email) is null)
+            if (userRepo.GetInstructorByEmail(applicationSet.Email) is not null)
                 throw new ConfilctException("email is already used");
 
             ApplicationModel application = new()
@@ -23,7 +23,7 @@ namespace LearnLink_Backend.Services.ApplicationsService
                 Name = applicationSet.Name,
                 Email = applicationSet.Email,
                 Password = applicationSet.Password,
-                Message = applicationSet.Messsage,
+                Message = applicationSet.Message,
                 Nationality = applicationSet.Nationality,
                 SpokenLanguages = applicationSet.SpokenLanguages.ToArray(),
                 CreatedBy = "self"

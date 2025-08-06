@@ -11,8 +11,7 @@ namespace LearnLink_Backend.DTOs
         public string Email { get; set; } = string.Empty;
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
-        [MinLength(10)]
-        public string Messsage { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
         [MinLength(4)]
         public string Nationality { get; set; } = string.Empty;
         public IEnumerable<string> SpokenLanguages { get; set; } = [];
