@@ -16,7 +16,7 @@ namespace LearnLink_Backend.Controllers
     {
         [HttpPost()]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> CreatePost(PostSet post)
+        public async Task<IActionResult> CreatePost([FromForm]PostSet post)
         {
             
             if (post.Image != null)

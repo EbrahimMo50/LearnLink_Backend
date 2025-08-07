@@ -7,9 +7,9 @@ namespace LearnLink_Backend.DTOs
 {
     public class PostSet
     {
-        [MinLength(4)]
+        [StringLength(10000, MinimumLength = 1, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.")]
         public string Title { get; set; } = string.Empty;
-        [MinLength(10)]
+        [StringLength(10000, MinimumLength = 1, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.")]
         public string Description { get; set; } = string.Empty;
         [BindNever]
         [JsonIgnore]

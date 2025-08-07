@@ -8,10 +8,10 @@ namespace LearnLink_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "AdminPolicy")]
     public class AdministrationController(IAdminstrationService administrationService, IHttpContextAccessor httpContextAccess) : ControllerBase
     {
         [HttpPost("admins")]
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult AddAdmin(AdminSignDTO adminAccount)
         {
             string? issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id");
@@ -22,19 +22,21 @@ namespace LearnLink_Backend.Controllers
         }
 
         [HttpGet("students")]
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult GetStudents()
         {
             return Ok(administrationService.GetAllStudents());
         }
 
         [HttpGet("instructors")]
+        [Authorize(Policy = "User")]
         public IActionResult GetInstructors()
         {
             return Ok(administrationService.GetAllInstructors());
         }
 
         [HttpDelete("user/{id}")]
-        
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult DeleteUser(string id)
         {
             administrationService.RemoveUser(id);
@@ -42,6 +44,7 @@ namespace LearnLink_Backend.Controllers
         }
         
         [HttpPatch("user/{id}/block")]
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult BlockUser(string id)
         {
             administrationService.BlockUser(id);
@@ -49,6 +52,7 @@ namespace LearnLink_Backend.Controllers
         }
 
         [HttpPatch("user/{id}/unblock")]
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult UnBlockUser(string id)
         {
             administrationService.UnBlockUser(id);

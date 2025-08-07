@@ -18,7 +18,9 @@ namespace LearnLink_Backend.Services.PostsService
             post.Description = postSet.Description;
             post.CreatedBy = IssuerId;
             post.ImagePath = postSet.ImageName;
-            return await postRepo.CreatePostAsync(post);
+            var result = await postRepo.CreatePostAsync(post);
+            result.ImagePath = "https://localhost:7209/api/post/media/" + result.ImagePath;
+            return result;
         }
 
         public PostGet GetPost(int id)
@@ -31,7 +33,9 @@ namespace LearnLink_Backend.Services.PostsService
             var posts = await postRepo.GetRecentPostsAsync(limit, page);
 
             foreach(var post in posts)
-                post.MediaLink = $"https://localhost:7209/api/post/media/{post.MediaLink}";
+                if(post.MediaLink != "" && post.MediaLink is not null)
+                    post.MediaLink = $"https://localhost:7209/api/post/media/{post.MediaLink}";
+            
             
             var postCount = postRepo.GetPostCount();
             return new PaggedModel<PostGet>(posts, postCount, page, posts.Count());
