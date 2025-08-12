@@ -67,9 +67,9 @@ namespace LearnLink_Backend.Controllers
             return File(fileStream, GetContentType(fileName), fileName);
         }
 
-        [HttpPost("/post/{postId}/comment")]
+        [HttpPost("{postId}/comment")]
         [Authorize(Policy = "StudentPolicy")]
-        public IActionResult AddComment(CommentDto commentDto, int postId)
+        public IActionResult AddComment(CommentSet commentDto, int postId)
         {
             commentDto.PostId = postId;
             var Issuer = HttpContext.User.FindFirst("id") ?? throw new BadRequestException("cant extract user");
@@ -78,14 +78,14 @@ namespace LearnLink_Backend.Controllers
             return CreatedAtAction(nameof(GetCommentById), new { commentId = comment.Id}, comment);
         }
 
-        [HttpGet("/post/{postId}/comment")]
+        [HttpGet("{postId}/comment")]
         [Authorize("User")]
         public IActionResult GetAllComments(int postId)
         {
             return Ok(postService.GetAllComments(postId));
         }
 
-        [HttpGet("/post/comment/{commentId}")]
+        [HttpGet("comment/{commentId}")]
         [Authorize("User")]
         public IActionResult GetCommentById(int commentId)
         {

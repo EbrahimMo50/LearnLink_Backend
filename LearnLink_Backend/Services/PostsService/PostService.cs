@@ -61,21 +61,21 @@ namespace LearnLink_Backend.Services.PostsService
             return postRepo.UpdatePost(post);
         }
 
-        public Comment GetComment(int id)
+        public CommentGet GetComment(int id)
         {
-            return postRepo.GetCommentById(id) ?? throw new NotFoundException("comment not found");
+            return CommentGet.ToDto(postRepo.GetCommentById(id)) ?? throw new NotFoundException("comment not found");
         }
 
-        public IEnumerable<Comment> GetAllComments(int postId)
+        public IEnumerable<CommentGet> GetAllComments(int postId)
         {
-            return postRepo.GetAllComments(postId);
+            return CommentGet.ToDto(postRepo.GetAllComments(postId));
         }
 
-        public Comment AddComment(CommentDto commentDto)
+        public Comment AddComment(CommentSet CommentSet)
         {  
-            PostModel post = postRepo.GetPostById(commentDto.PostId) ?? throw new NotFoundException("post not found");
-            Student user = userRepo.GetStudentById(commentDto.UserGuid) ?? throw new NotFoundException("usre not defined");
-            return postRepo.AddComment(new Comment() { Content = commentDto.Content, Post = post, Commenter = user });
+            PostModel post = postRepo.GetPostById(CommentSet.PostId) ?? throw new NotFoundException("post not found");
+            Student user = userRepo.GetStudentById(CommentSet.UserGuid) ?? throw new NotFoundException("usre not defined");
+            return postRepo.AddComment(new Comment() { Content = CommentSet.Content, Post = post, Commenter = user });
         }
 
         public int ReactToPost(int id, string userId)

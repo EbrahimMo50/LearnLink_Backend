@@ -12,8 +12,8 @@ namespace LearnLink_Backend.Services.PostsService
         public void DeletePost(int id);
         public int ReactToPost(int id, string userId);
         public PostModel UpdatePost(int id, PostSet newPost, string IssuerId);
-        public Comment GetComment(int id);
-        public IEnumerable<Comment> GetAllComments(int postId);
-        public Comment AddComment(CommentDto commentDto);
+        public CommentGet GetComment(int id);
+        public IEnumerable<CommentGet> GetAllComments(int postId);
+        public Comment AddComment(CommentSet CommentSet);
     }
 }

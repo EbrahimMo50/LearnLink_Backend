@@ -29,7 +29,7 @@ namespace LearnLink_Backend.Repositories.PostsRepo
 
         public IEnumerable<Comment> GetAllComments(int postId)
         {
-            return [.. dbContext.Comments];
+            return [.. dbContext.Comments.Include(c => c.Commenter).Where(c=> c.Post.Id == postId)];
         }
 
         public Comment? GetCommentById(int id)
