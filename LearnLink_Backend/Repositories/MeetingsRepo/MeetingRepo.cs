@@ -22,7 +22,8 @@ namespace LearnLink_Backend.Repositories.MeetingsRepo
         public async Task<IEnumerable<MeetingModel>> GetMeetingsForInstructorAsync(string issuerId)
         {
             var result = await dbContext.Meetings
-                .Where(x => x.StudentId == issuerId)
+                .Include(m => m.Instructor)
+                .Where(x => x.Instructor.Id.ToString() == issuerId)
                 .ToListAsync();
             return result;
         }
@@ -30,7 +31,8 @@ namespace LearnLink_Backend.Repositories.MeetingsRepo
         public async Task<IEnumerable<MeetingModel>> GetMeetingsForStudentAsync(string issuerId)
         {
             var result = await dbContext.Meetings
-             .Where(x => x.InstructorId == issuerId)
+             .Include(m => m.Student)
+             .Where(x => x.Student.Id.ToString() == issuerId)
              .ToListAsync();
             return result;
         }

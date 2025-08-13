@@ -30,6 +30,7 @@ namespace LearnLink_Backend.Repositories.PostsRepo
         public IEnumerable<Comment> GetAllComments(int postId)
         {
             return [.. dbContext.Comments.Include(c => c.Commenter).Where(c=> c.Post.Id == postId)];
+
         }
 
         public Comment? GetCommentById(int id)
@@ -50,7 +51,6 @@ namespace LearnLink_Backend.Repositories.PostsRepo
 
         public async Task<IEnumerable<PostGet>> GetRecentPostsAsync(int limit, int page)
         {
-            // will it work on comment count without making a join?
             var posts = await dbContext.Posts.Select(x=> new PostGet 
             { 
                 Id = x.Id,

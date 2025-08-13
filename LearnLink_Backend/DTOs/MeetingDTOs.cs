@@ -1,10 +1,14 @@
 ﻿using LearnLink_Backend.Entities;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LearnLink_Backend.DTOs
 {
     public class MeetingSet : IValidatableObject
     {
+        [BindNever]
+        [JsonIgnore]
         public string StudentId { get; set; } = string.Empty;
         public string InstructorId { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
@@ -16,7 +20,7 @@ namespace LearnLink_Backend.DTOs
             {
                 yield return new ValidationResult($"Start time {StartDate} can not be after end time {EndDate}", [nameof(StartDate), nameof(EndDate)]);
             }
-            if ((EndDate - StartDate).Minutes < 30)
+            if ((EndDate - StartDate) < new TimeSpan(0,30,0))
             {
                 yield return new ValidationResult("minimum meeting time is 30 minutes", [nameof(StartDate), nameof(EndDate)]);
             }

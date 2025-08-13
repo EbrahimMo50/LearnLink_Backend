@@ -1,6 +1,7 @@
 ﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Entities;
 using LearnLink_Backend.Models;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Services.PostsService
 {
@@ -15,5 +16,6 @@ namespace LearnLink_Backend.Services.PostsService
         public CommentGet GetComment(int id);
         public IEnumerable<CommentGet> GetAllComments(int postId);
         public Comment AddComment(CommentSet CommentSet);
+        public bool CheckLike(int postId, string issuerId);
     }
 }

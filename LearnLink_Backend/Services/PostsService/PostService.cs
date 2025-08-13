@@ -4,6 +4,7 @@ using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Models;
 using LearnLink_Backend.Repositories.PostsRepo;
 using LearnLink_Backend.Repositories.UserMangementRepo;
+using System.Security.Claims;
 
 namespace LearnLink_Backend.Services.PostsService
 {
@@ -92,6 +93,12 @@ namespace LearnLink_Backend.Services.PostsService
                 postRepo.RemoveReact(post, user);
                 return post.Likes.Count;
             }
+        }
+
+        public bool CheckLike(int postId, string issuerId)
+        {
+            var post = postRepo.GetPostById(postId) ?? throw new NotFoundException("post not found");
+            return post.Likes.Any(s => s.Id.ToString() == issuerId);
         }
     }
 }

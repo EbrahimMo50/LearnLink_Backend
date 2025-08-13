@@ -19,6 +19,8 @@ namespace LearnLink_Backend.Controllers
             if (issuerId == null)
                 return BadRequest("could not extract issuer id from http context");
 
+            meeting.StudentId = issuerId;
+            meeting.StudentId = meeting.StudentId;
             var response = await service.CreateMeetingAsync(meeting, issuerId);
             return CreatedAtRoute(RouteData, response);
         }
@@ -43,7 +45,7 @@ namespace LearnLink_Backend.Controllers
             return Ok(await service.GetMeetingsForInstructorAsync(issuerId));
         }
         [HttpGet("students")]
-        [Authorize(Policy = "StudentPoilcy")]
+        [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> GetMeetingsForStudent()
         {
             string issuerId = httpContextAccess.HttpContext!.User.FindFirstValue("id")!;

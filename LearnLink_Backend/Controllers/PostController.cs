@@ -1,5 +1,4 @@
-﻿using Azure;
-using LearnLink_Backend.DTOs;
+﻿using LearnLink_Backend.DTOs;
 using LearnLink_Backend.Exceptions;
 using LearnLink_Backend.Services;
 using LearnLink_Backend.Services.PostsService;
@@ -76,6 +75,14 @@ namespace LearnLink_Backend.Controllers
             commentDto.UserGuid = Issuer.Value;
             var comment = postService.AddComment(commentDto);
             return CreatedAtAction(nameof(GetCommentById), new { commentId = comment.Id}, comment);
+        }
+
+        [HttpGet("{postId}/check-like")]
+        [Authorize(Policy = "StudentPolicy")]
+        public IActionResult CheckLike(int postId)
+        {
+            var issuerId = HttpContext.User.FindFirst("id") ?? throw new BadRequestException("cant extract user");
+            return Ok(postService.CheckLike(postId, issuerId.Value));
         }
 
         [HttpGet("{postId}/comment")]
